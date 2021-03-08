@@ -1,3 +1,3 @@
 ## SailorMoon
 
-菊花战士们
+本项目为SailorMoon的工程实践代码。
