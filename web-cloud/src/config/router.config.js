@@ -15,6 +15,38 @@ export const asyncRouterMap = [
     meta: { title: 'menu.home' },
     redirect: '/dashboard/workplace',
     children: [
+      // permission
+      {
+        path: '/permission',
+        name: 'permission',
+        redirect: '/permission/PermissionList',
+        component: RouteView,
+        meta: { title: 'menu.permission', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
+        children: [
+          {
+            path: '/permission/PermissionList',
+            name: 'PermissionList',
+            component: () => import('@/views/permission/PermissionList'),
+            meta: { title: 'menu.permission.list', keepAlive: false, permission: ['dashboard'] }
+          }
+        ]
+      },
+      // attendance
+      {
+        path: '/attendance',
+        name: 'attendance',
+        redirect: '/attendance/AttendanceList',
+        component: RouteView,
+        meta: { title: 'menu.attendance', keepAlive: true, icon: 'carry-out', permission: ['dashboard'] },
+        children: [
+          {
+            path: '/attendance/AttendanceList',
+            name: 'AttendanceList',
+            component: () => import('@/views/attendance/AttendanceList'),
+            meta: { title: 'menu.attendance.list', keepAlive: false, permission: ['dashboard'] }
+          }
+        ]
+      },
       // dashboard
       {
         path: '/dashboard',

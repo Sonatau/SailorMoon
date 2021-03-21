@@ -1,7 +1,11 @@
 export default {
     'menu.welcome': '欢迎',
     'menu.home': '主页',
+    'menu.permission': '权限管理',
+    'menu.permission.list': '权限列表',
     'menu.dashboard': '仪表盘',
+    'menu.attendance': '考勤管理',
+    'menu.attendance.list': '考勤列表',
     'menu.dashboard.analysis': '分析页',
     'menu.dashboard.monitor': '监控页',
     'menu.dashboard.workplace': '工作台',
