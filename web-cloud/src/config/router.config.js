@@ -54,11 +54,25 @@ export const asyncRouterMap = [
             meta: { title: 'menu.attendance.list', keepAlive: false, permission: ['dashboard'] }
           },
           {
+            // 新建签到
+            path: '/attendance/AddAttendance',
+            name: 'AddAttendance',
+            component: () => import('@/views/attendance/AddAttendance'),
+            meta: { title: 'menu.attendance.add', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
             // 考勤分值等设置
             path: '/attendance/Setting',
             name: 'Setting',
             component: () => import('@/views/attendance/Setting'),
             meta: { title: 'menu.attendance.setting', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 签到详情查看
+            path: '/attendance/AttendanceDetail',
+            name: 'AttendanceDetail',
+            component: () => import('@/views/attendance/AttendanceDetail'),
+            meta: { title: 'menu.attendance.detail', keepAlive: false, permission: ['dashboard'] }
           }
         ]
       },
@@ -81,7 +95,7 @@ export const asyncRouterMap = [
             // 新建权限
             path: '/institution/AddInstitution',
             name: 'AddInstitution',
-            component: () => import('@/views//institution/AddInstitution'),
+            component: () => import('@/views/institution/AddInstitution'),
             meta: { title: 'menu.institution.add', keepAlive: false, permission: ['dashboard'] }
           }
         ]
@@ -269,6 +283,12 @@ export const asyncRouterMap = [
             name: 'Exception500',
             component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
             meta: { title: 'menu.exception.server-error', permission: ['exception'] }
+          },
+          {
+            path: '/exception/600',
+            name: 'Exception600',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600'),
+            meta: { title: 'menu.exception.custom-exception', permission: ['exception'] }
           }
         ]
       },

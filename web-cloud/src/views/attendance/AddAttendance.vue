@@ -41,12 +41,16 @@ import FooterToolBar from '@/components/FooterToolbar'
 import { baseMixin } from '@/store/app-mixin'
 
 const fieldLabels = {
-  experience: '签到经验',
-  activity: '活动经验'
+  name: '签到名称',
+  activity: '活动经验',
+  approver: '发起人',
+  start: '开始时间',
+  end: '结束时间',
+  course: '所属课程'
 }
 
 export default {
-  name: 'AddInstitution',
+  name: 'AddAttendance',
   mixins: [baseMixin],
   components: {
     FooterToolBar,

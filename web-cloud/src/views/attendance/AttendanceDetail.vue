@@ -1,6 +1,6 @@
 <template>
   <page-header-wrapper>
-    <a-card :bordered="false">
+    <a-card :bordered="false" title="未打卡">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
           <a-row :gutter="48">
@@ -9,43 +9,13 @@
                 <a-input v-model="queryParam.id" placeholder="" />
               </a-form-item>
             </a-col>
+
             <a-col :md="8" :sm="24">
-              <a-form-item label="状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">进行中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
+              <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px">批量补卡</a-button>
+              <a-button type="Danger" icon="minus" @click="handleAdd">批量提醒</a-button>
             </a-col>
           </a-row>
         </a-form>
-      </div>
-
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="handleAdd">新建签到</a-button>
-        <a-button type="Danger" icon="minus" @click="handleAdd">批量删除</a-button>
-        <a-dropdown v-action:edit v-if="this.selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
-        </a-dropdown>
       </div>
 
       <s-table
@@ -70,11 +40,66 @@
 
         <span slot="action" slot-scope="text, record">
           <template>
-            <a @click="handleEdit(record)">编辑</a>
+            <a @click="handleEdit(record)">补卡</a>
             <a-divider type="vertical" />
-            <a @click="handleDetail(record)">详情</a>
-            <a-divider type="vertical" />
-            <a @click="handleSub(record)">删除</a>
+            <a @click="handleSub(record)">提醒</a>
+          </template>
+        </span>
+      </s-table>
+
+      <create-form
+        ref="createModal"
+        :visible="visible"
+        :loading="confirmLoading"
+        :model="mdl"
+        @cancel="handleCancel"
+        @ok="handleOk"
+      />
+      <step-by-step-modal ref="modal" @ok="handleOk" />
+    </a-card>
+
+    <!-- 已打卡 -->
+    <a-card :bordered="false" title="已打卡">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="48">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="签到名称">
+                <a-input v-model="queryParam.id" placeholder="" />
+              </a-form-item>
+            </a-col>
+
+            <a-col :md="8" :sm="24">
+              <!-- <a-button type="primary" icon="plus" @click="handleAdd" style="margin-right: 10px">批量补卡</a-button> -->
+              <a-button type="Danger" icon="minus" @click="handleAdd">批量删除</a-button>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
+
+      <s-table
+        ref="table"
+        size="default"
+        rowKey="key"
+        :columns="columns"
+        :data="loadData"
+        :alert="true"
+        :rowSelection="rowSelection"
+        showPagination="auto"
+      >
+        <span slot="serial" slot-scope="text, record, index">
+          {{ index + 1 }}
+        </span>
+        <span slot="status" slot-scope="text">
+          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
+        </span>
+        <span slot="description" slot-scope="text">
+          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
+        </span>
+
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="handleSub(record)">删除记录</a>
           </template>
         </span>
       </s-table>
