@@ -10,6 +10,8 @@
 
 REST API调用文件：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/services/http.service.ts
 
+http拦截器：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/core/http
+
 
 
 后台管理相关链接：
