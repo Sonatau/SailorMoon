@@ -4,6 +4,7 @@ export default {
     'menu.dashboard': 'Dashboard',
     'menu.permission': 'Permission',
     'menu.permission.list': 'Permission List',
+    'menu.permission.add': 'Add Permission',
     'menu.attendance': 'Attendance',
     'menu.attendance.list': 'Attendance List',
     'menu.dashboard.analysis': 'Analysis',

@@ -72,6 +72,8 @@
           <template>
             <a @click="handleEdit(record)">编辑</a>
             <a-divider type="vertical" />
+            <a @click="handleDetail(record)">详情</a>
+            <a-divider type="vertical" />
             <a @click="handleSub(record)">删除</a>
           </template>
         </span>
@@ -207,6 +209,7 @@ export default {
       this.visible = true
       this.mdl = { ...record }
     },
+    handleDetail(record) {},
     handleOk() {
       const form = this.$refs.createModal.form
       this.confirmLoading = true

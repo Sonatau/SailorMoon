@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, BlankLayout } from '@/layouts'
+import {UserLayout, BasicLayout, BlankLayout } from '@/layouts'
 import { bxAnaalyse } from '@/core/icons'
 
 const RouteView = {
@@ -13,7 +13,7 @@ export const asyncRouterMap = [
     name: 'index',
     component: BasicLayout,
     meta: { title: 'menu.home' },
-    redirect: '/dashboard/workplace',
+    redirect: '/permission/PermissionList',
     children: [
       // permission
       {
@@ -24,10 +24,18 @@ export const asyncRouterMap = [
         meta: { title: 'menu.permission', keepAlive: true, icon: bxAnaalyse, permission: ['dashboard'] },
         children: [
           {
+            // 权限列表
             path: '/permission/PermissionList',
             name: 'PermissionList',
             component: () => import('@/views/permission/PermissionList'),
             meta: { title: 'menu.permission.list', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 新建权限
+            path: '/permission/AddPermission',
+            name: 'AddPermission',
+            component: () => import('@/views/permission/AddPermission'),
+            meta: { title: 'menu.permission.add', keepAlive: false, permission: ['dashboard'] }
           }
         ]
       },
@@ -44,6 +52,51 @@ export const asyncRouterMap = [
             name: 'AttendanceList',
             component: () => import('@/views/attendance/AttendanceList'),
             meta: { title: 'menu.attendance.list', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 新建签到
+            path: '/attendance/AddAttendance',
+            name: 'AddAttendance',
+            component: () => import('@/views/attendance/AddAttendance'),
+            meta: { title: 'menu.attendance.add', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 考勤分值等设置
+            path: '/attendance/Setting',
+            name: 'Setting',
+            component: () => import('@/views/attendance/Setting'),
+            meta: { title: 'menu.attendance.setting', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 签到详情查看
+            path: '/attendance/AttendanceDetail',
+            name: 'AttendanceDetail',
+            component: () => import('@/views/attendance/AttendanceDetail'),
+            meta: { title: 'menu.attendance.detail', keepAlive: false, permission: ['dashboard'] }
+          }
+        ]
+      },
+      // institution
+      {
+        path: '/institution',
+        name: 'institution',
+        redirect: '/institution/InstitutionList',
+        component: RouteView,
+        meta: { title: 'menu.institution', keepAlive: true, icon: 'cluster', permission: ['dashboard'] },
+        children: [
+          {
+            // 权限列表
+            path: '/institution/InstitutionList',
+            name: 'InstitutionList',
+            component: () => import('@/views/institution/InstitutionList'),
+            meta: { title: 'menu.institution.list', keepAlive: false, permission: ['dashboard'] }
+          },
+          {
+            // 新建权限
+            path: '/institution/AddInstitution',
+            name: 'AddInstitution',
+            component: () => import('@/views/institution/AddInstitution'),
+            meta: { title: 'menu.institution.add', keepAlive: false, permission: ['dashboard'] }
           }
         ]
       },
@@ -230,6 +283,12 @@ export const asyncRouterMap = [
             name: 'Exception500',
             component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/500'),
             meta: { title: 'menu.exception.server-error', permission: ['exception'] }
+          },
+          {
+            path: '/exception/600',
+            name: 'Exception600',
+            component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600'),
+            meta: { title: 'menu.exception.custom-exception', permission: ['exception'] }
           }
         ]
       },

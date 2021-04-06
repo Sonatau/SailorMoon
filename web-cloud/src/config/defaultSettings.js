@@ -21,7 +21,7 @@ export default {
   fixSiderbar: false, // sticky siderbar
   colorWeak: false,
   menu: {
-    locale: true
+    locale: false // 关闭国际化
   },
   title: '到云后台管理系统',
   pwa: false,
