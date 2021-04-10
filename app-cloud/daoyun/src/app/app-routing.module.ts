@@ -38,10 +38,6 @@ const routes: Routes = [
     loadChildren: () => import('./pages/passport/register/register.module').then( m => m.RegisterPageModule)
   },
   {
-    path: 'reg-usermsg',
-    loadChildren: () => import('./pages/passport/reg-usermsg/reg-usermsg.module').then( m => m.RegUsermsgPageModule)
-  },
-  {
     path: 'change-pass',
     loadChildren: () => import('./pages/passport/change-pass/change-pass.module').then( m => m.ChangePassPageModule)
   },
