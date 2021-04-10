@@ -1,17 +1,11 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { StartAppGuard } from './core/start-app.guard';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'welcome', 
     pathMatch: 'full'
-  },
-  { 
-    path: 'welcome',
-    loadChildren: './pages/welcome/welcome.module#WelcomePageModule',
-    canActivate: [StartAppGuard]
   },
   {
     path: '',
