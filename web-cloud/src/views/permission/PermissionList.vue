@@ -6,46 +6,16 @@
           <a-row :gutter="48">
             <a-col :md="8" :sm="24">
               <a-form-item label="角色名称">
-                <a-input v-model="queryParam.id" placeholder="" />
+                <a-input v-model="queryParam.name" placeholder="按名称查找" />
               </a-form-item>
             </a-col>
             <a-col :md="8" :sm="24">
-              <a-form-item label="使用状态">
-                <a-select v-model="queryParam.status" placeholder="请选择" default-value="0">
-                  <a-select-option value="0">全部</a-select-option>
-                  <a-select-option value="1">关闭</a-select-option>
-                  <a-select-option value="2">使用中</a-select-option>
-                </a-select>
-              </a-form-item>
-            </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
+              <div class="table-operator">
+                <a-button type="primary" icon="plus" @click="handleAdd">新建角色</a-button>
+              </div>
             </a-col>
           </a-row>
         </a-form>
-      </div>
-
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="handleAdd">新建角色</a-button>
-        <a-button type="Danger" icon="minus" @click="handleAdd">批量删除</a-button>
-        <a-dropdown v-action:edit v-if="this.selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
-        </a-dropdown>
       </div>
 
       <s-table
@@ -128,11 +98,11 @@ const columns = [
 const statusMap = {
   0: {
     status: 'processing',
-    text: '关闭'
+    text: '禁用'
   },
   1: {
     status: 'success',
-    text: '使用中'
+    text: '可用'
   }
   // 2: {
   //   status: 'success',

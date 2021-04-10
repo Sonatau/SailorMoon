@@ -8,8 +8,8 @@
         <div class="top">
           <div class="header">
             <a href="/">
-              <img src="~@/assets/logo.svg" class="logo" alt="logo" />
-              <span class="title">Ant Design</span>
+              <img src="~@/assets/daoyun.svg" class="logo" alt="logo" />
+              <span class="title">Daoyun</span>
             </a>
           </div>
           <div class="desc">
