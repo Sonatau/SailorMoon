@@ -24,3 +24,36 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+.row{
+    padding-top: 10px;
+    width:80%;
+    margin:auto;
+}
+.btn{
+    width:100%;
+}
+.searchbar{
+    --background: #0000000a;
+}
+.my_inf{
+    text-align:-webkit-right;
+}
+.signup_warn {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .warn {
+    font-size: 10px;
+    display: block;
+    margin: 0 0;
+  }
+  .thum{
+    text-align: center;
+    background-color: #3dc2ff;
+    border-radius: 5px;
+  }
+  .thum-icon{
+    width: 85%;
+    height: 100%;
+  }

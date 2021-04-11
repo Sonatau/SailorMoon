@@ -12,7 +12,8 @@ import { NgForm } from '@angular/forms';
 })
 export class RegisterPage implements OnInit {
 
-  // public email: any = '';
+  public register_name: string = '';
+  public register_no: string = '';
   public register_email: string = '';
   public password1: string = '';
   public password2: string = '';
@@ -113,10 +114,11 @@ export class RegisterPage implements OnInit {
         email: this.register_email,
       };
       //获取邮箱，将邮箱发给后台，请求后台返回验证码
-      var api = '/sendCode';//后台接口
+      var api = '/sendCode?email=' + this.register_email;//后台接口
       this.httpService.post(api, params).then((response: any) => {
         this.return_code = response.data.respCode;//返回参数
       })
+
       // var api = '/loginByCode';//后台接口
       // this.httpService.post(api, params).then(async (response: any) => {
       //   if (response.data.role == "-1") {

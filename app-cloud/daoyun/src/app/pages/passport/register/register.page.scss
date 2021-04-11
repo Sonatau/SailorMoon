@@ -1,3 +1,4 @@
+//页面背景
 .background{
     height:100%;
     width:100%;
@@ -7,29 +8,37 @@
     // background-size: contain;
 }
 
-.input-user{
-    // text-align: center;
-    text-indent: 5;
-    border: solid 1px #7468BE;
-    border-radius: 5px;
-    background: white;
+//input框样式
+.text_input{
+    // 利用阴影填充文本框背景
+    cursor: no-drop;
+    box-shadow: 40px 40px 40px 40px #ffffff inset;
+    border: 1px solid #ffffff;
+    //设置文本框为圆角
+    border-radius: 10px;
+    //设置placeholder颜色
+    color: #808080;
 }
-.row{
-    padding-top: 10px;
-    width:80%;
-    margin:auto;
+.verify_input{
+    height: 80%;
+    margin: auto 0px;
+    //同text_input
+    cursor: no-drop;
+    box-shadow: 40px 40px 40px 40px #ffffff inset;
+    border: 1px solid #ffffff;
+    border-radius: 10px;
+    color: #808080;
 }
 .input_icon{
     margin: 0px 5px;
     color: #808080;
 }
-.verify_text{
-    // text-align: center;
-    border: solid 1px #7468BE;
-    border-radius: 5px;
-    height: 80%;
-    margin: auto 0px;
-    background: white;
+
+//行高等杂项
+.row{
+    padding-top: 10px;
+    width:80%;
+    margin:auto;
 }
 .btn-verify{
     width:100%;
