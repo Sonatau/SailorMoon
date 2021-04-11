@@ -1,9 +1,95 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>login</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content>
+  <div class="background">
+    <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm" novalidate>
+      <ion-grid>
+        <ion-row class="row" style="margin-top:80px">
+          <ion-segment mode="md" name="tab" [(ngModel)]="tab" style="background-color: rgba(225,225,225,0);">
+            <ion-segment-button value="tab1">
+              <ion-label class="login_tabs">密码登录</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="tab2">
+              <ion-label class="login_tabs">验证码登录</ion-label>
+            </ion-segment-button>
+          </ion-segment>
+        </ion-row>
+
+        <div [ngSwitch]="tab">
+
+          <div *ngSwitchCase="'tab1'">
+            <ion-row style="margin-top:20px;"></ion-row>
+            <ion-row class="row">
+              <ion-input name="email" type="tel" class="text_input" placeholder="邮箱/手机号"
+                required [(ngModel)]="login.email" #email=ngModel>
+                <ion-icon name="mail-outline" class="input_icon"></ion-icon>
+              </ion-input>
+            </ion-row>
+            <div class="signup_warn">
+              <ion-text text-left color="danger" *ngIf="email.invalid && email.touched">
+                <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入邮箱/手机号</p>
+              </ion-text>
+            </div>
+
+            <ion-row class="row">
+              <ion-input name="password" type="password" class="text_input" placeholder="密码"
+               [(ngModel)]="login.password" #password=ngModel>
+               <ion-icon name="lock-closed-outline" class="input_icon"></ion-icon>
+              </ion-input>
+            </ion-row>
+            <div class="signup_warn">
+              <ion-text text-left color="danger" *ngIf="password.invalid && password.touched">
+                <p class="warn" [hidden]="!password.errors?.required" padding-start>请输入密码</p>
+              </ion-text>
+            </div>
+
+            <ion-row class="row">
+              <ion-button color="primary" type="submit" class="btn"
+              [disabled]="loginForm.invalid" [routerLink]="['']"> 登录 </ion-button>
+            </ion-row>
+            <ion-row class="row" style="display: block;text-align: right;">
+              <ion-label color="primary" [routerLink]="['/find-by-email']">忘记密码</ion-label>
+            </ion-row>
+          </div>
+
+
+          <div *ngSwitchCase="'tab2'">
+            <ion-row style="margin-top:20px;"></ion-row>
+            <ion-row class="row">
+              <ion-input name="email" type="text" class="text_input" placeholder="请输入邮箱"
+                required pattern="\w+@([0-9a-zA-Z]+[-0-9a-zA-Z]*)(\.[0-9a-zA-Z]+[-0-9a-zA-Z]*)+"
+                [(ngModel)]="login_email" #email="ngModel">
+                <ion-icon name="mail-outline" class="input_icon"></ion-icon>
+              </ion-input>
+            </ion-row>
+            <div class="signup_warn">
+              <ion-text text-left color="danger" *ngIf="email.invalid && email.touched">
+                <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入邮箱</p>
+                <p class="warn" [hidden]="!email.errors?.pattern" padding-start>请输入正确的邮箱</p>
+              </ion-text>
+            </div>
+
+            <ion-row class="row">
+              <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码" [(ngModel)]="verify_code">
+                <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
+              </ion-input>
+              <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
+                {{verifyCode.verifyCodeTips}}</ion-button>
+            </ion-row>
+
+            <ion-row class="row">
+              <ion-button color="primary" type="submit" class="btn"
+              [disabled]="loginForm.invalid" [routerLink]="['']"> 登录 </ion-button>
+            </ion-row>
+          </div>
+        </div>
+
+        <ion-row style="margin-top:30px;"></ion-row>
+        <ion-row class="row" style="display: block;text-align: center;">
+          <ion-label color="primary" style="font-size: 17px; font-weight: bold;"
+          [routerLink]="['/register']">———— 新用户注册 ————</ion-label>
+        </ion-row>
+
+      </ion-grid>
+    </form>
+  </div>
 
 </ion-content>
