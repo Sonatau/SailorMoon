@@ -47,16 +47,12 @@ const info = (options) => {
       'permissionName': '考勤管理'
     },
     {
-      'permissionId': 'menu',
-      'permissionName': '菜单管理'
-    },
-    {
       'permissionId': 'institution',
       'permissionName': '机构管理'
     },
     {
-      'permissionId': 'user',
-      'permissionName': '个人设置'
+      'permissionId': 'setting',
+      'permissionName': '系统设置'
     }]
   }
   userInfo.role = roleObj

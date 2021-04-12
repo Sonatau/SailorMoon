@@ -1,105 +1,103 @@
 <template>
   <page-header-wrapper>
-    <a-card class="card" title="基本信息" :bordered="false">
-      <repository-form ref="repository" :showSubmit="false" />
-    </a-card>
-
-    <!-- table -->
-    <a-card>
-      <a-table :columns="columns" :dataSource="data" :pagination="false" :loading="memberLoading">
-        <template v-for="(col, i) in ['level', 'ratio']" :slot="col" slot-scope="text, record">
+    <a-card class="card" title="分值设置" :bordered="false">
+      <a-form :form="form" style="max-width: 700px; margin: 20px auto 40px;" @submit="handleSubmit">
+        <a-form-item label="签到经验值" :labelCol="labelCol" :wrapperCol="wrapperCol">
           <a-input
-            :key="col"
-            v-if="record.editable"
-            style="margin: -5px 0"
-            :value="text"
-            :placeholder="columns[i].title"
-            @change="e => handleChange(e.target.value, record.key, col)"
+            placeholder="2"
+            v-decorator="[
+              'score1',
+              {
+                initialValue: '2',
+                rules: [{ required: true, message: '请输入签到经验值' }],
+                validateTrigger: 'blur'
+              }
+            ]"
           />
-          <template v-else>{{ text }}</template>
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <template v-if="record.editable">
-            <span v-if="record.isNew">
-              <a @click="saveRow(record)">添加</a>
+        </a-form-item>
+
+        <a-form-item label="活动经验值" :labelCol="labelCol" :wrapperCol="wrapperCol">
+          <a-input
+            placeholder="2"
+            v-decorator="[
+              'score2',
+              { initialValue: '2', rules: [{ required: true, message: '请输入活动经验值' }], validateTrigger: 'blur' }
+            ]"
+          />
+        </a-form-item>
+
+        <a-table :columns="columns" :dataSource="data" :pagination="false" :loading="memberLoading">
+          <template v-for="(col, i) in ['level', 'ratio']" :slot="col" slot-scope="text, record">
+            <a-input
+              :key="col"
+              v-if="record.editable"
+              style="margin: -5px 0"
+              :value="text"
+              :placeholder="columns[i].title"
+              @change="e => handleChange(e.target.value, record.key, col)"
+            />
+            <template v-else>{{ text }}</template>
+          </template>
+          <template slot="operation" slot-scope="text, record">
+            <template v-if="record.editable">
+              <span v-if="record.isNew">
+                <a @click="saveRow(record)">添加</a>
+                <a-divider type="vertical" />
+                <a-popconfirm title="是否要删除此行？" @confirm="remove(record.key)">
+                  <a>删除</a>
+                </a-popconfirm>
+              </span>
+              <span v-else>
+                <a @click="saveRow(record)">保存</a>
+                <a-divider type="vertical" />
+                <a @click="cancel(record.key)">取消</a>
+              </span>
+            </template>
+            <span v-else>
+              <a @click="toggle(record.key)">编辑</a>
               <a-divider type="vertical" />
               <a-popconfirm title="是否要删除此行？" @confirm="remove(record.key)">
                 <a>删除</a>
               </a-popconfirm>
             </span>
-            <span v-else>
-              <a @click="saveRow(record)">保存</a>
-              <a-divider type="vertical" />
-              <a @click="cancel(record.key)">取消</a>
-            </span>
           </template>
-          <span v-else>
-            <a @click="toggle(record.key)">编辑</a>
-            <a-divider type="vertical" />
-            <a-popconfirm title="是否要删除此行？" @confirm="remove(record.key)">
-              <a>删除</a>
-            </a-popconfirm>
-          </span>
-        </template>
-      </a-table>
-      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">
-        新增等级
-      </a-button>
-    </a-card>
-
-    <!-- fixed footer toolbar -->
-    <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
-      <span class="popover-wrapper">
-        <a-popover
-          title="表单校验信息"
-          overlayClassName="antd-pro-pages-forms-style-errorPopover"
-          trigger="click"
-          :getPopupContainer="trigger => trigger.parentNode"
+        </a-table>
+        <a-button
+          style="width: 100%; margin-top: 16px; margin-bottom: 8px"
+          type="dashed"
+          icon="plus"
+          @click="newMember"
         >
-          <template slot="content">
-            <li
-              v-for="item in errors"
-              :key="item.key"
-              @click="scrollToField(item.key)"
-              class="antd-pro-pages-forms-style-errorListItem"
-            >
-              <a-icon type="cross-circle-o" class="antd-pro-pages-forms-style-errorIcon" />
-              <div class="">{{ item.message }}</div>
-              <div class="antd-pro-pages-forms-style-errorField">{{ item.fieldLabel }}</div>
-            </li>
-          </template>
-          <span class="antd-pro-pages-forms-style-errorIcon" v-if="errors.length > 0">
-            <a-icon type="exclamation-circle" />{{ errors.length }}
-          </span>
-        </a-popover>
-      </span>
-      <a-button type="primary" @click="validate" :loading="loading">提交</a-button>
-    </footer-tool-bar>
+          新增等级
+        </a-button>
+        <div style="float: right; margin-top: 30px;">
+          <a-button htmlType="submit" type="primary" style="margin-right: 15px">
+            提交
+          </a-button>
+          <a-button type="default" style="float: right" @click="handleCancel">
+            取消
+          </a-button>
+        </div>
+      </a-form>
+    </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import RepositoryForm from './RepositoryForm'
-import FooterToolBar from '@/components/FooterToolbar'
-import { baseMixin } from '@/store/app-mixin'
-
-const fieldLabels = {
-  experience: '签到经验',
-  activity: '活动经验'
-}
 
 export default {
   name: 'Setting',
-  mixins: [baseMixin],
   components: {
-    FooterToolBar,
     RepositoryForm
   },
   data() {
     return {
+      labelCol: { lg: { span: 5 }, sm: { span: 5 } },
+      wrapperCol: { lg: { span: 19 }, sm: { span: 19 } },
       loading: false,
       memberLoading: false,
-
+      form: this.$form.createForm(this),
       // table
       columns: [
         {
@@ -146,6 +144,16 @@ export default {
   methods: {
     handleSubmit(e) {
       e.preventDefault()
+      this.form.validateFields((err, values) => {
+        console.log(values)
+        if (!err) {
+          this.$message.success('提交成功')
+          this.$router.push({ name: 'AttendanceList' })
+        }
+      })
+    },
+    handleCancel() {
+      this.$router.push({ name: 'AttendanceList' })
     },
     newMember() {
       const length = this.data.length
@@ -203,56 +211,6 @@ export default {
       if (target) {
         target[column] = value
         this.data = newData
-      }
-    },
-
-    // 最终全页面提交
-    validate() {
-      const {
-        $refs: { repository },
-        $notification
-      } = this
-      const repositoryForm = new Promise((resolve, reject) => {
-        repository.form.validateFields((err, values) => {
-          if (err) {
-            reject(err)
-            return
-          }
-          resolve(values)
-        })
-      })
-
-      // clean this.errors
-      this.errors = []
-      Promise.all([repositoryForm])
-        .then(values => {
-          $notification['error']({
-            message: 'Received values of form:',
-            description: JSON.stringify(values)
-          })
-        })
-        .catch(() => {
-          const errors = Object.assign({}, repository.form.getFieldsError())
-          const tmp = { ...errors }
-          this.errorList(tmp)
-        })
-    },
-    errorList(errors) {
-      if (!errors || errors.length === 0) {
-        return
-      }
-      this.errors = Object.keys(errors)
-        .filter(key => errors[key])
-        .map(key => ({
-          key: key,
-          message: errors[key][0],
-          fieldLabel: fieldLabels[key]
-        }))
-    },
-    scrollToField(fieldKey) {
-      const labelNode = document.querySelector(`label[for="${fieldKey}"]`)
-      if (labelNode) {
-        labelNode.scrollIntoView(true)
       }
     }
   }

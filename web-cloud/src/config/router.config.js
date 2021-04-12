@@ -141,13 +141,13 @@ export const asyncRouterMap = [
         component: RouteView,
         redirect: '/account/settings',
         // name: 'account',
-        meta: { title: 'menu.account', icon: 'user', keepAlive: true, permission: ['user'] },
+        meta: { title: '系统设置', icon: 'user', keepAlive: true, permission: ['setting'] },
         children: [
           {
             path: '/account/settings',
             name: 'settings',
             component: () => import('@/views/account/settings/Index'),
-            meta: { title: 'menu.account.settings', hideHeader: true, permission: ['user'] },
+            meta: { title: '个人参数', hideHeader: true, permission: ['setting'] },
             redirect: '/account/settings/basic',
             hideChildrenInMenu: true,
             children: [
@@ -155,9 +155,15 @@ export const asyncRouterMap = [
                 path: '/account/settings/basic',
                 name: 'BasicSettings',
                 component: () => import('@/views/account/settings/BasicSetting'),
-                meta: { title: 'account.settings.menuMap.basic', hidden: true, permission: ['user'] }
+                meta: { title: 'account.settings.menuMap.basic', hidden: true, permission: ['setting'] }
               }
             ]
+          },
+          {
+            path: '/account/settings/DataDictionary',
+            name: 'DataDictionary',
+            component: () => import('@/views/account/settings/DataDictionary'),
+            meta: { title: '数据字典', hideHeader: true, permission: ['setting'] }
           }
         ]
       }
