@@ -1,39 +1,39 @@
 import Mock from 'mockjs2'
 import { builder, getBody } from '../util'
 
-const username = ['admin', 'super']
+const username = ['fqlxd23d112@163.com']
 // 强硬要求 ant.design 相同密码
 // '21232f297a57a5a743894a0e4a801fc3',
-const password = ['8914de686ab28dc22f30d3d8e107ff6c', '21232f297a57a5a743894a0e4a801fc3'] // admin, ant.design
+const password = ['1231234'] // admin, ant.design
 
 const login = (options) => {
+  // option: url: "/api/auth/login", type: "POST", body: "{"password":"xxx","username":"xxxx"}"
   const body = getBody(options)
-  console.log('mock: body', body)
-  if (!username.includes(body.username) || !password.includes(body.password)) {
+  if (!username.includes(body.email) || !password.includes(body.password)) {
     return builder({ isLogin: true }, '账户或密码错误', 401)
   }
 
   return builder({
-    'id': Mock.mock('@guid'),
-    'name': Mock.mock('@name'),
-    'username': 'admin',
-    'password': '',
-    'avatar': 'https://gw.alipayobjects.com/zos/rmsportal/jZUIxmJycoymBprLOUbT.png',
-    'status': 1,
-    'telephone': '',
-    'lastLoginIp': '27.154.74.117',
+    'role': 0,
+    'email': 'fqlxd23d112@163.com',
     'lastLoginTime': 1534837621348,
-    'creatorId': 'admin',
-    'createTime': 1497160610259,
-    'deleted': 0,
-    'roleId': 'admin',
-    'lang': 'zh-CN',
-    'token': '4291d7da9005377ec9aec4a71ea837f'
-  }, '', 200, { 'Custom-Header': Mock.mock('@guid') })
+    'token': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI3In0.q4yTHo0rFiOAC4Rq7nGDwFX3rgdLeS3QiwpaFLj7pqQ'
+  }, '', 200, {})
 }
 
 const logout = () => {
   return builder({}, '[测试接口] 注销成功')
+}
+
+// 修改密码
+const updatePassword = (options) => {
+  // console.log('options', options)
+  // const body = getBody(options)
+  // console.log(body)
+  return builder({
+    'msg': '密码修改成功',
+    'respCode': 1
+  }, '', 200, {})
 }
 
 const smsCaptcha = () => {
@@ -46,5 +46,6 @@ const twofactor = () => {
 
 Mock.mock(/\/auth\/login/, 'post', login)
 Mock.mock(/\/auth\/logout/, 'post', logout)
+Mock.mock(/\/auth\/update-password/, 'post', updatePassword)
 Mock.mock(/\/account\/sms/, 'post', smsCaptcha)
 Mock.mock(/\/auth\/2step-code/, 'post', twofactor)

@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import store from '../store'
 
 const api = {
   user: '/user',
@@ -6,7 +7,8 @@ const api = {
   service: '/service',
   permission: '/permission',
   permissionNoPager: '/permission/no-pager',
-  orgTree: '/org/tree'
+  orgTree: '/org/tree',
+  updatePwd: '/auth/update-password'
 }
 
 export default api
@@ -66,5 +68,29 @@ export function saveSub (sub) {
     url: '/sub',
     method: sub.id === 0 ? 'post' : 'put',
     data: sub
+  })
+}
+
+export function finePhone (parameter) {
+  return request({
+    url: 'https://api04.aliyun.venuscn.com/mobile',
+    method: 'get',
+    params: {
+      mobile: parameter
+    },
+    headers: {
+      'Authorization': 'APPCODE b56e5839f6cc4e09b9b878d203af3ce0'
+    }
+  })
+}
+
+export function updatePassword(parameter) {
+  return request({
+    url: api.updatePwd,
+    method: 'post',
+    data: parameter,
+    headers: {
+      'token': store.getters.token
+    }
   })
 }

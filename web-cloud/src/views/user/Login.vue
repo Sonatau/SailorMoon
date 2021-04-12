@@ -18,7 +18,7 @@
             <a-input
               size="large"
               type="text"
-              :placeholder="$t('user.login.username.placeholder')"
+              placeholder="请输入账号"
               v-decorator="[
                 'username',
                 {
@@ -37,7 +37,7 @@
           <a-form-item>
             <a-input-password
               size="large"
-              :placeholder="$t('user.login.password.placeholder')"
+              placeholder="请输入密码"
               v-decorator="[
                 'password',
                 { rules: [{ required: true, message: $t('user.password.required') }], validateTrigger: 'blur' }
@@ -47,7 +47,9 @@
             </a-input-password>
           </a-form-item>
         </a-tab-pane>
-        <a-tab-pane key="tab2" :tab="$t('user.login.tab-login-mobile')">
+
+        <!-- 手机号码登陆 -->
+        <!-- <a-tab-pane key="tab2" :tab="$t('user.login.tab-login-mobile')">
           <a-form-item>
             <a-input
               size="large"
@@ -63,9 +65,9 @@
             >
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
-          </a-form-item>
+          </a-form-item> -->
 
-          <a-row :gutter="16">
+        <!-- <a-row :gutter="16">
             <a-col class="gutter-row" :span="16">
               <a-form-item>
                 <a-input
@@ -93,15 +95,17 @@
                 v-text="(!state.smsSendBtn && $t('user.register.get-verification-code')) || state.time + ' s'"
               ></a-button>
             </a-col>
-          </a-row>
-        </a-tab-pane>
+          </a-row> -->
+        <!-- </a-tab-pane> -->
       </a-tabs>
 
       <a-form-item>
         <a-checkbox v-decorator="['rememberMe', { valuePropName: 'checked' }]">{{
           $t('user.login.remember-me')
         }}</a-checkbox>
-        <router-link :to="{ name: 'recover' }" class="forge-password" style="float: right;">{{
+
+        <!-- 要在permission.js中设置跳转权限 -->
+        <router-link :to="{ name: 'forgetPassword' }" class="forge-password" style="float: right;">{{
           $t('user.login.forgot-password')
         }}</router-link>
       </a-form-item>
@@ -129,7 +133,7 @@
         <a>
           <a-icon class="item-icon" type="weibo-circle"></a-icon>
         </a>
-        <router-link class="register" :to="{ name: 'register' }">{{ $t('user.login.signup') }}</router-link>
+        <!-- <router-link class="register" :to="{ name: 'register' }">{{ $t('user.login.signup') }}</router-link> -->
       </div>
     </a-form>
 
@@ -143,7 +147,7 @@
 </template>
 
 <script>
-import md5 from 'md5'
+// import md5 from 'md5'
 import TwoStepCaptcha from '@/components/tools/TwoStepCaptcha'
 import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
@@ -218,7 +222,8 @@ export default {
           const loginParams = { ...values }
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
-          loginParams.password = md5(values.password)
+          // loginParams.password = md5(values.password)
+          loginParams.password = values.password
           Login(loginParams)
             .then(res => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
@@ -281,18 +286,6 @@ export default {
       })
     },
     loginSuccess(res) {
-      console.log(res)
-      // check res.homePage define, set $router.push name res.homePage
-      // Why not enter onComplete
-      /*
-      this.$router.push({ name: 'analysis' }, () => {
-        console.log('onComplete')
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      })
-      */
       this.$router.push({ path: '/' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
