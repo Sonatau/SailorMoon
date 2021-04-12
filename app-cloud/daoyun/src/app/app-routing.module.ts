@@ -1,17 +1,11 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { StartAppGuard } from './core/start-app.guard';
 
 const routes: Routes = [
   {
     path: '',
     redirectTo: 'welcome', 
     pathMatch: 'full'
-  },
-  { 
-    path: 'welcome',
-    loadChildren: './pages/welcome/welcome.module#WelcomePageModule',
-    canActivate: [StartAppGuard]
   },
   {
     path: '',
@@ -36,10 +30,6 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./pages/passport/register/register.module').then( m => m.RegisterPageModule)
-  },
-  {
-    path: 'reg-usermsg',
-    loadChildren: () => import('./pages/passport/reg-usermsg/reg-usermsg.module').then( m => m.RegUsermsgPageModule)
   },
   {
     path: 'change-pass',
