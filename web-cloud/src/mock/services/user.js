@@ -41,7 +41,20 @@ const info = (options) => {
     }, {
       'permissionId': 'exception',
       'permissionName': '异常页显示'
-    }, {
+    },
+    {
+      'permissionId': 'attendance',
+      'permissionName': '考勤管理'
+    },
+    {
+      'permissionId': 'menu',
+      'permissionName': '菜单管理'
+    },
+    {
+      'permissionId': 'institution',
+      'permissionName': '机构管理'
+    },
+    {
       'permissionId': 'user',
       'permissionName': '个人设置'
     }]

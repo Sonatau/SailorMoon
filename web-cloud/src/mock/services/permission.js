@@ -1,14 +1,12 @@
 import Mock from 'mockjs2'
-import { builder, getBody } from '../util'
+import { builder } from '../util'
 
 // 获取权限列表
 const getPerList = (options) => {
-    const body = getBody(options)
-    console.log(body)
+    // 传递的是参数 没有body体
     return builder({
-        'total': 3,
         'respCode': 1,
-        'list': [
+        'data': [
             {
                 'id': 1,
                 'name': 'user1',
@@ -47,5 +45,5 @@ const deletePer = (options) => {
 }
 
 Mock.mock(/\/permission\/getPerList/, 'get', getPerList)
-Mock.mock(/\/permission\/upsertPer/, 'get', upsertPer)
+Mock.mock(/\/permission\/upsertPer/, 'post', upsertPer)
 Mock.mock(/\/permission\/deletePer/, 'get', deletePer)

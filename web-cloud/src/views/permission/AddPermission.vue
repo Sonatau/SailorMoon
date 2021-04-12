@@ -5,57 +5,50 @@
       <a-form @submit="handleSubmit" :form="form">
         <!-- 权限名称 -->
         <a-form-item
-          :label="$t('permission.name')"
+          label="权限名称"
           :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
           :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
         >
           <a-input
-            v-decorator="['name', { rules: [{ required: true, message: $t('permission.name.required') }] }]"
+            v-decorator="['name', { rules: [{ required: true, message: '请输入权限名称' }] }]"
             name="name"
-            :placeholder="$t('permission.name.placeholder')"
+            placeholder="二十字以内"
           />
         </a-form-item>
 
         <!-- 状态选择 -->
         <a-form-item
-          :label="$t('permission.status')"
+          label="状态"
           :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
           :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
-          :required="false"
+          :required="true"
         >
-          <a-radio-group v-decorator="['target', { initialValue: 1 }]">
-            <a-radio :value="1">{{ $t('permission.status.closed') }}</a-radio>
-            <a-radio :value="2">{{ $t('permission.status.using') }}</a-radio>
+          <a-radio-group v-decorator="['state', { initialValue: 1 }]">
+            <a-radio :value="0">禁用</a-radio>
+            <a-radio :value="1">可用</a-radio>
           </a-radio-group>
-          <!-- <a-form-item v-show="form.getFieldValue('target') === 2">
-            <a-select mode="multiple">
-              <a-select-option value="4">{{ $t('permission.status.A') }}</a-select-option>
-              <a-select-option value="5">{{ $t('permission.status.B') }}</a-select-option>
-            </a-select>
-          </a-form-item> -->
+        </a-form-item>
+
+        <!-- 权限说明 -->
+        <a-form-item
+          label="说明"
+          :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
+          :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
+        >
+          <a-textarea
+            v-decorator="['roleDescribe', { rules: [{ required: false, message: '请输入权限名称' }] }]"
+            name="roleDescribe"
+            placeholder="可补充说明权限信息"
+            :auto-size="{ minRows: 3, maxRows: 5 }"
+          />
         </a-form-item>
 
         <!-- 权限管理分配 -->
         <a-form-item
-          :label="$t('permission.permission-assignment')"
+          label="授权分配"
           :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
           :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
-          :required="false"
-        >
-          <div>
-            <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
-              全选
-            </a-checkbox>
-          </div>
-          <a-checkbox-group v-model="checkedList" :options="plainOptions" @change="onChange" />
-        </a-form-item>
-
-        <!-- 用户管理分配 -->
-        <a-form-item
-          :label="$t('permission.user-assignment')"
-          :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
-          :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
-          :required="false"
+          :required="true"
         >
           <div>
             <a-checkbox :indeterminate="indeterminate" :checked="checkAll" @change="onCheckAllChange">
@@ -66,8 +59,8 @@
         </a-form-item>
 
         <a-form-item :wrapperCol="{ span: 24 }" style="text-align: center">
-          <a-button htmlType="submit" type="primary">{{ $t('permission.submit') }}</a-button>
-          <a-button style="margin-left: 8px">{{ $t('permission.cancel') }}</a-button>
+          <a-button htmlType="submit" type="primary">提交</a-button>
+          <a-button style="margin-left: 8px" @click="handleCancel">取消</a-button>
         </a-form-item>
       </a-form>
     </a-card>
@@ -75,18 +68,24 @@
 </template>
 
 <script>
-const plainOptions = ['创建用户', '分配权限', '允许分享']
-const defaultCheckedList = ['分配权限', '允许分享']
-
+import { upsertPer } from '@/api/permission'
+const plainOptions = ['权限管理', '用户管理', '考勤管理', '机构管理']
+const defaultCheckedList = ['权限管理']
 export default {
   name: 'AddPermission',
   data() {
     return {
-      form: this.$form.createForm(this),
       checkedList: defaultCheckedList,
-      indeterminate: true,
+      indeterminate: false,
       checkAll: false,
       plainOptions
+    }
+  },
+  created() {
+    this.form = this.$form.createForm(this)
+    if (this.$route.params.record) {
+      const record = JSON.parse(decodeURIComponent(this.$route.params.record))
+      console.log(record)
     }
   },
   methods: {
@@ -95,10 +94,29 @@ export default {
       e.preventDefault()
       this.form.validateFields((err, values) => {
         if (!err) {
-          console.log('Received values of form: ', values)
+          const requestParameters = Object.assign({}, values)
+          requestParameters['role'] = this.checkedList
+          if (requestParameters['role'].length !== 0) {
+            upsertPer(requestParameters)
+              .then(res => {
+                this.$message.success(res.result.msg)
+                this.$router.push({ name: 'PermissionList' })
+              })
+              .catch(err => {
+                this.$message.error('新建失败', err)
+              })
+          } else {
+            this.$message.error('至少选择一个权限进行分配')
+          }
         }
       })
     },
+
+    // 取消新建
+    handleCancel() {
+      this.$router.push({ name: 'PermissionList' })
+    },
+
     onChange(checkedList) {
       this.indeterminate = !!checkedList.length && checkedList.length < plainOptions.length
       this.checkAll = checkedList.length === plainOptions.length

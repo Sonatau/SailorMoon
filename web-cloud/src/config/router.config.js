@@ -32,7 +32,7 @@ export const asyncRouterMap = [
           },
           {
             // 新建权限
-            path: '/permission/AddPermission',
+            path: '/permission/AddPermission/:record?',
             name: 'AddPermission',
             component: () => import('@/views/permission/AddPermission'),
             meta: { title: 'menu.permission.add', keepAlive: false, permission: ['permission'] }
