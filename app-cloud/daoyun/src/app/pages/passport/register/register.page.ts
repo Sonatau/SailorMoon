@@ -12,19 +12,19 @@ import { NgForm } from '@angular/forms';
 })
 export class RegisterPage implements OnInit {
 
-  public register_name: string = '';
-  public register_no: string = '';
   public register_email: string = '';
   public password1: string = '';
   public password2: string = '';
-  public verify_code: string = '';
-  public return_code: string = '1';
+  public register_name: string = '';
+  public register_no: string = '';
+  public verify_code: string = '';//--------------------------------------------
+  public return_code: string = '1';//+++++++++++++++++++++++++++++++++++++++
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
     countdown: 60,
     disable: true
   }
-  public role = '3';
+  public role = '3';//```````````````````````````````````````
 
   constructor(public httpService: HttpService,
     public http: HttpClient,
@@ -45,14 +45,14 @@ export class RegisterPage implements OnInit {
       if (form.valid) {
         //验证验证码是否正确
         // await this.onSendSMS();
-        if (this.verify_code == this.return_code) {
+        if (this.verify_code == this.return_code) {//----------------------------------++++++++++++
           //两次密码输入是否一致
           if (this.password1 == this.password2) {
             var params = {
               email: this.register_email,
               password: this.password1
             }
-            if (this.role == '3') {
+            if (this.role == '3') {//````````````````````````````
               params["role_id"] = '3';
             }
             console.log(params);
@@ -107,6 +107,7 @@ export class RegisterPage implements OnInit {
       }
     }
   }
+
   onSendSMS() {
     //点击按钮后请求后台数据 开始倒计时
     if (this.verifyCode.disable == true) {
@@ -114,9 +115,9 @@ export class RegisterPage implements OnInit {
         email: this.register_email,
       };
       //获取邮箱，将邮箱发给后台，请求后台返回验证码
-      var api = '/sendCode?email=' + this.register_email;//后台接口
-      this.httpService.post(api, params).then((response: any) => {
-        this.return_code = response.data.respCode;//返回参数
+      var api = '/sendCode';//后台接口
+      this.httpService.get(api, params).then((response: any) => {
+        this.return_code = response.data.respCode;//返回参数++++++++++++++++
       })
 
       // var api = '/loginByCode';//后台接口
@@ -149,7 +150,7 @@ export class RegisterPage implements OnInit {
   }
 
   hasCode() {
-    if (this.verify_code != null && this.return_code != null) {
+    if (this.verify_code != null && this.return_code != null) {//-----------------------------------++++++++++++++++++++++++++++++
       return true;
     } else {
       return false;
@@ -179,8 +180,8 @@ export class RegisterPage implements OnInit {
     var api = '/user/info';//后台接口
     this.httpService.get(api, params).then(async (response: any) => {
       if (response.status == 200) {
-        console.log(response.data.role)
-        localStorage.setItem("role", response.data.role);
+        console.log(response.data.role)//````````````````````````````````````
+        localStorage.setItem("role", response.data.role);//```````````````````````````````````
       }
     })
   }

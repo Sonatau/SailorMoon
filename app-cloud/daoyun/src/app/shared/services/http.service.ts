@@ -9,8 +9,8 @@ export class HttpService {
 
   constructor(public http: HttpClient) { }
 
-  //commonUrl = 'http://39.97.108.239:8080';
-  commonUrl = 'http://localhost:8100/';
+  commonUrl = 'http://47.93.231.158:8080';
+  //commonUrl = 'http://localhost:8100/';
   
   //获取数据
   get(api, params) {
