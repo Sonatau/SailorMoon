@@ -63,9 +63,9 @@
 
         <!-- 输入密码 -->
         <ion-row class="row">
-          <ion-input name='pwd1' type="password" class="text_input" placeholder="请输入密码"
+          <ion-input name='r_pwd' type="password" class="text_input" placeholder="请输入密码"
             required pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$"
-            [(ngModel)]="password1" #pwd1="ngModel">
+            [(ngModel)]="register_password" #r_pwd="ngModel">
             <ion-icon name="lock-closed-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
@@ -96,15 +96,15 @@
         <ion-radio-group name="role" [(ngModel)]="role" mode="md">
           <ion-row class="row">
             <ion-col>
-              <ion-label>身份</ion-label>
+              <ion-label style="margin-left: 15px; font-weight: bold;" color="light">身份</ion-label>
             </ion-col>
             <ion-col>
               <ion-radio color="success" value="0"></ion-radio>
-              <ion-label style="margin-left: 15px;">教师</ion-label>
+              <ion-label style="margin-left: 15px;" color="light">教师</ion-label>
             </ion-col>
             <ion-col>
               <ion-radio color="warning" value="3"></ion-radio>
-              <ion-label style="margin-left: 15px;">学生</ion-label>
+              <ion-label style="margin-left: 15px;" color="light">学生</ion-label>
             </ion-col>
           </ion-row>
         </ion-radio-group>

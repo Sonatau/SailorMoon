@@ -234,13 +234,13 @@ export class CouresPage implements OnInit {
           {
             text: '使用班课号加入班课',
             handler: () => {
-              this.router.navigateByUrl('join-by-code');
+              this.router.navigateByUrl('/coures/join-by-code');
             }
           },
           {
             text: '使用二维码加入班课',
             handler: () => {
-              this.router.navigateByUrl('qr-scanner');
+              this.router.navigateByUrl('/coures/join-by-qr');
             }
           },
           {
