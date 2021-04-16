@@ -7,32 +7,6 @@
     background-size:100% 100%;
 }
 
-//input框样式
-.text_input{
-    // 利用阴影填充文本框背景
-    cursor: no-drop;
-    box-shadow: 40px 40px 40px 40px #ffffff inset;
-    border: 1px solid #ffffff;
-    //设置文本框为圆角
-    border-radius: 10px;
-    //设置placeholder
-    color: #808080;
-}
-.input_icon{
-    margin: 0px 5px;
-    color: #808080;
-}
-.verify_input{
-    height: 80%;
-    margin: auto 0px;
-    //同text_input
-    cursor: no-drop;
-    box-shadow: 40px 40px 40px 40px #ffffff inset;
-    border: 1px solid #ffffff;
-    border-radius: 10px;
-    color: #808080;
-}
-
 .login_tabs{
     font-size: 17px;
     font-weight: bold;

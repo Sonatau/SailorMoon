@@ -34,7 +34,11 @@ const routes: Routes = [
   {
     path: 'change-pass',
     loadChildren: () => import('./pages/passport/change-pass/change-pass.module').then( m => m.ChangePassPageModule)
+  },  {
+    path: 'find-by-email',
+    loadChildren: () => import('./pages/passport/find-by-email/find-by-email.module').then( m => m.FindByEmailPageModule)
   },
+
 ];
 @NgModule({
   imports: [

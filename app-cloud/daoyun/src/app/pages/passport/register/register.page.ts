@@ -146,6 +146,7 @@ export class RegisterPage implements OnInit {
       }
     }
   }
+}
 
 
   //---------------没啥用标记着准备删掉---------------//
@@ -169,4 +170,3 @@ export class RegisterPage implements OnInit {
   //       }
   //     })
   //   }
-  // }
