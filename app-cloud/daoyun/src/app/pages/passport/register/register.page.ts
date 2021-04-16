@@ -147,26 +147,3 @@ export class RegisterPage implements OnInit {
     }
   }
 }
-
-
-  //---------------没啥用标记着准备删掉---------------//
-  // hasCode() {
-  //   if (this.verify_code != null && this.return_code != null) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-  //   //获取个人信息
-  //   getInf(email) {
-  //     var params = {//后台所需参数
-  //       email: email,
-  //     };
-  //     var api = '/user/info';//后台接口
-  //     this.httpService.get(api, params).then(async (response: any) => {
-  //       if (response.status == 200) {
-  //         console.log(response.data.role)//````````````````````````````````````
-  //         localStorage.setItem("role", response.data.role);//```````````````````````````````````
-  //       }
-  //     })
-  //   }
