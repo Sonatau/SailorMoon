@@ -3,7 +3,7 @@
     <form (ngSubmit)="onLogin(loginForm)" #loginForm="ngForm" novalidate>
       <ion-grid>
         <ion-row class="row" style="margin-top:80px">
-          <ion-segment mode="md" name="tab" [(ngModel)]="tab" style="background-color: rgba(225,225,225,0);">
+          <ion-segment mode="md" name="tab" [(ngModel)]="tab" color="light">
             <ion-segment-button value="tab1">
               <ion-label class="login_tabs">密码登录</ion-label>
             </ion-segment-button>
@@ -43,10 +43,10 @@
 
             <ion-row class="row">
               <ion-button color="primary" type="submit" class="btn"
-              [disabled]="loginForm.invalid" [routerLink]="['']"> 登录 </ion-button>
+              [disabled]="loginForm.invalid" [routerLink]="['/coures']"> 登录 </ion-button>
             </ion-row>
             <ion-row class="row" style="display: block;text-align: right;">
-              <ion-label color="primary" [routerLink]="['/find-by-email']">忘记密码</ion-label>
+              <ion-label color="light" [routerLink]="['/find-by-email']">忘记密码</ion-label>
             </ion-row>
           </div>
 
@@ -77,15 +77,14 @@
 
             <ion-row class="row">
               <ion-button color="primary" type="submit" class="btn"
-              [disabled]="loginForm.invalid" [routerLink]="['']"> 登录 </ion-button>
+              [disabled]="loginForm.invalid" [routerLink]="['/coures']"> 登录 </ion-button>
             </ion-row>
           </div>
         </div>
 
         <ion-row style="margin-top:30px;"></ion-row>
         <ion-row class="row" style="display: block;text-align: center;">
-          <ion-label color="primary" style="font-size: 17px; font-weight: bold;"
-          [routerLink]="['/register']">———— 新用户注册 ————</ion-label>
+          <ion-label class="login_tabs" [routerLink]="['/register']">—— 新用户注册 ——</ion-label>
         </ion-row>
 
       </ion-grid>

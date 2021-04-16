@@ -19,7 +19,7 @@ export class LoginPage implements OnInit {
     password: ''
   }
   public verify_code: string = '';
-  public return_code: string = '1';
+  public return_code = -1;  //1: 发送成功   -1: 发送失败
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
     countdown: 60,
@@ -41,6 +41,44 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
   }
+
+  //----------------------------------------------------------------------------------//
+  //------------------------------------获取验证码-------------------------------------//
+  //----------------------------------------------------------------------------------//
+  onSendSMS() {
+    //请求后台发送验证码
+    if (this.verifyCode.disable == true) {
+      this.verifyCode.disable = false;
+      this.settime();
+      var params = {
+        email: this.login.email,
+      };
+      var api = '/sendCode';
+      this.httpService.get_withoutToken(api, params).then((response: any) => {
+        //console.log(response);
+        this.return_code = response.data.respCode;
+        // console.log(this.return_code);
+      })
+    }
+  }
+
+  settime() {
+    if (this.verifyCode.countdown == 1) {
+      this.verifyCode.countdown = 60;
+      this.verifyCode.verifyCodeTips = "获取验证码";
+      this.verifyCode.disable = true;
+      return;
+    } else {
+      this.verifyCode.countdown--;
+    }
+    this.verifyCode.verifyCodeTips = "重新获取(" + this.verifyCode.countdown + "秒)";
+    setTimeout(() => {
+      this.verifyCode.verifyCodeTips = "重新获取(" + this.verifyCode.countdown + "秒)";
+      this.settime();
+    }, 1000);
+  }
+  //----------------------------------------------------------------------------------//
+  //----------------------------------------------------------------------------------//
 
   async onLogin(form: NgForm) {
     if (form.valid) {

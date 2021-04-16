@@ -9,23 +9,13 @@ export class HttpService {
 
   constructor(public http: HttpClient) { }
 
-  //commonUrl = 'http://39.97.108.239:8080';
+  //commonUrl = 'http://47.93.231.158:8080';
   commonUrl = 'http://localhost:8100/';
   
   //获取数据
   get(api, params) {
     return new Promise((resolve, reject) => {
-      this.setToken();
-      axios.interceptors.request.use((config) => {
-        if (localStorage.getItem("token")) {
-          config.headers['token']=localStorage.getItem("token");
-        }
-        // console.log(this.commonUrl);
-        return config;
-      },(error) =>{
-        console.log('错误参数')
-        return Promise.reject(error);
-      });
+      this.setToken(); 
       axios.get(this.commonUrl + api, {
         params: params,
       }).then(function (response) {
@@ -53,6 +43,17 @@ export class HttpService {
         })
     })
   }
+  get_withoutToken(api, params) {
+    return new Promise((resolve, reject) => {
+      axios.get(this.commonUrl + api, {
+        params: params,
+      }).then(function (response) {
+        resolve(response);
+      }).catch(function (error) {
+        reject(error);
+      })
+    })
+  }
 
   //新增数据
   post(api, params) {
@@ -76,6 +77,20 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api
+      }).then(function (response) {
+        resolve(response);
+      })
+        .catch(function (error) {
+          reject(error);
+        });
+    })
+  }
+  post_withoutToken(api, params) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'post',
+        url: this.commonUrl + api,
+        data: params,
       }).then(function (response) {
         resolve(response);
       })
@@ -152,7 +167,6 @@ export class HttpService {
   setToken(){
     //拦截器 头部设置token
     axios.interceptors.request.use((config) => {
-      // this.setToken();
      if (localStorage.getItem("token")) {
        config.headers['token']=localStorage.getItem("token");
      }

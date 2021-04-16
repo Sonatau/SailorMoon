@@ -2,35 +2,9 @@
 .background{
     height:100%;
     width:100%;
-    background-image:url(/assets/img/login/login.png);
+    background-image:url("/assets/img/login/login.png");
     background-repeat:no-repeat;
     background-size:100% 100%;
-}
-
-//input框样式
-.text_input{
-    // 利用阴影填充文本框背景
-    cursor: no-drop;
-    box-shadow: 40px 40px 40px 40px #ffffff inset;
-    border: 1px solid #ffffff;
-    //设置文本框为圆角
-    border-radius: 10px;
-    //设置placeholder颜色
-    color: #808080;
-}
-.verify_input{
-    height: 80%;
-    margin: auto 0px;
-    //同text_input
-    cursor: no-drop;
-    box-shadow: 40px 40px 40px 40px #ffffff inset;
-    border: 1px solid #ffffff;
-    border-radius: 10px;
-    color: #808080;
-}
-.input_icon{
-    margin: 0px 5px;
-    color: #808080;
 }
 
 //行高等杂项
