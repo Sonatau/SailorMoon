@@ -14,7 +14,7 @@
         <!-- 姓名 -->
         <ion-row class="row">
           <ion-input name="name" type="text" class="text_input" placeholder="请输入姓名"
-            [(ngModel)]="register_name" #name="ngModel">
+            [(ngModel)]="register_name" #name="ngModel" required>
             <ion-icon name="person-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
@@ -27,7 +27,7 @@
         <!-- 学号/工号 -->
         <ion-row class="row">
           <ion-input name="no" type="text" class="text_input" placeholder="请输入学号/工号"
-            [(ngModel)]="register_no" #no="ngModel">
+            [(ngModel)]="register_no" #no="ngModel" required>
             <ion-icon name="ribbon-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
@@ -54,12 +54,18 @@
         
         <!-- 验证码 -->
         <ion-row class="row">
-          <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码" [(ngModel)]="verify_code" #code="ngModel">
+          <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码"
+          [(ngModel)]="verify_code" #code="ngModel" required>
             <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
           </ion-input>
           <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
             {{verifyCode.verifyCodeTips}}</ion-button>
         </ion-row>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="code.invalid && code.touched">
+            <p class="warn" [hidden]="!code.errors?.required" padding-start>请输入验证码</p>
+          </ion-text>
+        </div>
 
         <!-- 输入密码 -->
         <ion-row class="row">
@@ -80,7 +86,7 @@
         <!-- 确认密码 -->
         <ion-row class="row">
           <ion-input name="v_pwd" type="password" class="text_input" placeholder="请确认密码"
-            [(ngModel)]="verify_password" #v_pwd="ngModel">
+            [(ngModel)]="verify_password" #v_pwd="ngModel" required>
             <ion-icon name="bag-check-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
@@ -88,13 +94,10 @@
           <ion-text text-left color="danger" *ngIf="v_pwd.invalid && v_pwd.touched">
             <p class="warn" [hidden]="!v_pwd.errors?.required" padding-start>必填：请再次确认您的密码</p>
           </ion-text>
-          <ion-text text-left color="danger" *ngIf="v_pwd.touched && v_pwd!==r_pwd">
-            <p class="warn" padding-start>两次密码不一致</p>
-          </ion-text>
         </div> 
 
         <!-- 身份选择 -->
-        <ion-radio-group name="role" [(ngModel)]="roleID" mode="md">
+        <ion-radio-group name="role" [(ngModel)]="roleID" mode="md" required>
           <ion-row class="row">
             <ion-col>
               <ion-label style="margin-left: 15px; font-weight: bold;" color="light">身份</ion-label>

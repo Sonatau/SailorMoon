@@ -19,7 +19,7 @@
             <ion-row style="margin-top:20px;"></ion-row>
             <ion-row class="row">
               <ion-input name="email" type="tel" class="text_input" placeholder="邮箱/手机号"
-                required [(ngModel)]="login.email" #email=ngModel>
+                required [(ngModel)]="login_email" #email=ngModel>
                 <ion-icon name="mail-outline" class="input_icon"></ion-icon>
               </ion-input>
             </ion-row>
@@ -28,10 +28,9 @@
                 <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入邮箱/手机号</p>
               </ion-text>
             </div>
-
             <ion-row class="row">
               <ion-input name="password" type="password" class="text_input" placeholder="密码"
-               [(ngModel)]="login.password" #password=ngModel>
+                [(ngModel)]="login_password" #password=ngModel required>
                <ion-icon name="lock-closed-outline" class="input_icon"></ion-icon>
               </ion-input>
             </ion-row>
@@ -55,25 +54,28 @@
             <ion-row style="margin-top:20px;"></ion-row>
             <ion-row class="row">
               <ion-input name="email" type="text" class="text_input" placeholder="请输入邮箱"
-                required pattern="\w+@([0-9a-zA-Z]+[-0-9a-zA-Z]*)(\.[0-9a-zA-Z]+[-0-9a-zA-Z]*)+"
-                [(ngModel)]="login_email" #email="ngModel">
+                required [(ngModel)]="login_email" #email="ngModel">
                 <ion-icon name="mail-outline" class="input_icon"></ion-icon>
               </ion-input>
             </ion-row>
             <div class="signup_warn">
               <ion-text text-left color="danger" *ngIf="email.invalid && email.touched">
-                <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入邮箱</p>
-                <p class="warn" [hidden]="!email.errors?.pattern" padding-start>请输入正确的邮箱</p>
+                <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入邮箱地址</p>
               </ion-text>
             </div>
-
             <ion-row class="row">
-              <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码" [(ngModel)]="verify_code">
+              <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码"
+                [(ngModel)]="verify_code" #code="ngModel" required>
                 <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
               </ion-input>
               <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
                 {{verifyCode.verifyCodeTips}}</ion-button>
             </ion-row>
+            <div class="signup_warn">
+              <ion-text text-left color="danger" *ngIf="code.invalid && code.touched">
+                <p class="warn" [hidden]="!code.errors?.required" padding-start>请输入验证码</p>
+              </ion-text>
+            </div>
 
             <ion-row class="row">
               <ion-button color="primary" type="submit" class="btn"

@@ -49,9 +49,6 @@
           <ion-text text-left color="danger" *ngIf="pwd2.invalid && pwd2.touched">
             <p class="warn" [hidden]="!pwd2.errors?.required" padding-start>必填：请再次确认您的密码</p>
           </ion-text>
-          <ion-text text-left color="danger" *ngIf="pwd2.touched && pwd1v!==vpwd2">
-            <p class="warn" padding-start>两次密码不一致</p>
-          </ion-text>
         </div> 
 
         <ion-row class="row">
