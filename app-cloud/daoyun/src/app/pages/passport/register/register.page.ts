@@ -108,8 +108,8 @@ export class RegisterPage implements OnInit {
           });
           toast.present();
         }else{
-          var api = '/register';
-          var params = {
+          var api = '/register';//-------------------------后台接口
+          var params = {        //-------------------------后台参数
             email: this.register_email,
             password: this.register_password,
             name: this.register_name,

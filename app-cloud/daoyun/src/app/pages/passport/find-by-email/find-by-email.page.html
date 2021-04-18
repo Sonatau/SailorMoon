@@ -11,7 +11,7 @@
       <ion-grid>
         <ion-row style="margin-top:30px;"></ion-row>
         <ion-row class="row">
-          <ion-input name="email" type="text" class="text_input" [(ngModel)]="changeinf.email" #email="ngModel"
+          <ion-input name="email" type="text" class="text_input" [(ngModel)]="find_email" #email="ngModel"
           placeholder="请输入邮箱" required pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" >
             <ion-icon name="mail-outline" class="input_icon"></ion-icon>
           </ion-input>
@@ -24,16 +24,22 @@
         </div>
 
         <ion-row class="row">
-          <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码" [(ngModel)]="verify_code" #code="ngModel">
+          <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码"
+          [(ngModel)]="verify_code" #code="ngModel" required>
             <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
           </ion-input>
           <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
             {{verifyCode.verifyCodeTips}}</ion-button>
         </ion-row>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="code.invalid && code.touched">
+            <p class="warn" [hidden]="!code.errors?.required" padding-start>请输入验证码</p>
+          </ion-text>
+        </div>
 
         <ion-row class="row">
           <ion-input name="pwd1" type="password" class="text_input" placeholder="请输入新密码" required
-          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="changeinf.password1" #pwd1="ngModel">
+          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="password1" #pwd1="ngModel">
             <ion-icon name="lock-closed-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
@@ -47,7 +53,7 @@
 
         <ion-row class="row">
           <ion-input name="pwd2" type="password" class="text_input" placeholder="请再次输入新密码" required
-          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="changeinf.password2" #pwd2="ngModel">
+          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="password2" #pwd2="ngModel">
             <ion-icon name="bag-check-outline" class="input_icon"></ion-icon>
           </ion-input>
         </ion-row>
