@@ -23,6 +23,14 @@ const routes: Routes = [
     path: 'create-success',
     loadChildren: () => import('./create-success/create-success.module').then( m => m.CreateSuccessPageModule)
   },
+  {
+    path: 'coures-detail',
+    loadChildren: () => import('./coures-detail/coures-detail.module').then( m => m.CouresDetailPageModule)
+  },
+  {
+    path: 'edit-deatil',
+    loadChildren: () => import('./edit-deatil/edit-deatil.module').then( m => m.EditDeatilPageModule)
+  },
 
 
 ];

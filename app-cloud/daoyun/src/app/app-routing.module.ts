@@ -38,6 +38,10 @@ const routes: Routes = [
     path: 'find-by-email',
     loadChildren: () => import('./pages/passport/find-by-email/find-by-email.module').then( m => m.FindByEmailPageModule)
   },
+  {
+    path: 'checkin',
+    loadChildren: () => import('./pages/checkin/checkin.module').then( m => m.CheckinPageModule)
+  },
 
 ];
 @NgModule({

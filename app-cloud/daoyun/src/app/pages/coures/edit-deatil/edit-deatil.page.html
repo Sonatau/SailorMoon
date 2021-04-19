@@ -1,11 +1,11 @@
 <ion-header>
   <ion-toolbar>
       <ion-buttons slot="start">
-          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/coures']">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/coures/coures-detail']">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title style="text-align:center;margin-right: 30px;">创建班课</ion-title>
+      <ion-title style="text-align:center;margin-right: 30px;">编辑班课</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -20,10 +20,10 @@
             <ion-note slot="end" style="font-size: 14px">点击图片上传封面</ion-note>
           </ion-item>
 
-          <!-- <ion-item>
+          <ion-item>
               <ion-label slot="start">课程编号</ion-label>
               <ion-note slot="end"  class="my_inf">{{lesson.no}}</ion-note>
-          </ion-item> -->
+          </ion-item>
 
           <ion-item>
               <ion-label slot="start">课程名称</ion-label>
@@ -62,7 +62,7 @@
 
           <ion-row style="margin: top 30px;" class="row">
             <ion-button class="btn" type="submit" color="primary" [disabled]="createForm.invalid"
-            [routerLink]="['/coures/create-success']">创建班课
+            [routerLink]="['/coures/create-success']">确定修改
             </ion-button>
           </ion-row>
       </ion-list>

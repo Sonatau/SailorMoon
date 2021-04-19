@@ -24,9 +24,9 @@
 </ion-header>
 
 <ion-content>
-  <ion-card style="text-align: center;border: solid 1px var(--ion-color-secondary-tint);">
+  <ion-card style="text-align: center;border: solid 1px var(--ion-color-primary-tint);">
     <ion-card-header>
-      <img src="/assets/img/coures/test_qr.png">
+      <img src="/assets/img/coures/test_qr.png" [routerLink]="['/coures/coures-detail']">
       <!-- <div>
         <ngx-qrcode [value]='createdCode' qrc-class="aclass" width=280 height=280 qrc-errorCorrectionLevel="L">
         </ngx-qrcode>
