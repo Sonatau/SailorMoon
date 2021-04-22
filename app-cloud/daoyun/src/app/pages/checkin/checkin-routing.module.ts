@@ -7,6 +7,18 @@ const routes: Routes = [
   {
     path: '',
     component: CheckinPage
+  },
+  {
+    path: 'checkin-result',
+    loadChildren: () => import('./checkin-result/checkin-result.module').then( m => m.CheckinResultPageModule)
+  },
+  {
+    path: 'create-checkin',
+    loadChildren: () => import('./create-checkin/create-checkin.module').then( m => m.CreateCheckinPageModule)
+  },
+  {
+    path: 'coures-checkin',
+    loadChildren: () => import('./coures-checkin/coures-checkin.module').then( m => m.CouresCheckinPageModule)
   }
 ];
 

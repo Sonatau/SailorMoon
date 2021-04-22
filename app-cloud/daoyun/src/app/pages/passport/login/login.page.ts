@@ -13,13 +13,11 @@ import { HttpService } from 'src/app/shared/services/http.service';
 export class LoginPage implements OnInit {
 
   public tab = "tab1";
-  public login_result: any;
-  public login_msg: string = '';
   public login_email: string = '';
   public login_password: string = '';
   public verify_code: string = '';
   public return_code = -1;  //1: 发送成功   -1: 发送失败
-  public return_token: string = '';
+
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
     countdown: 60,
@@ -35,7 +33,7 @@ export class LoginPage implements OnInit {
     //登录状态为1时自动登录
     if (localStorage.getItem("isLogin") == "1") {
       if (this.isOverTime() == false) {
-        this.router.navigateByUrl('\coures');
+        this.router.navigateByUrl('/tabs/coures');
       }
     }
   }
@@ -58,7 +56,7 @@ export class LoginPage implements OnInit {
       this.httpService.get_withoutToken(api, params).then((response: any) => {
         //console.log(response);
         this.return_code = response.data.respCode;
-        // console.log(this.return_code);
+        //console.log(this.return_code);
       })
     }
   }
@@ -103,11 +101,12 @@ export class LoginPage implements OnInit {
     let startDate = localStorage.getItem("loginTime");
     //时间差的毫秒数 
     let date3 = endDate.getTime() - new Date(startDate).getTime();
+    var hours=Math.floor(date3/(3600*1000));//计算小时数
     //计算出相差天数
-    var days = Math.floor(date3 / (24 * 3600 * 1000));
-    // //计算出小时数
-    // var leave1=date3%(24*3600*1000)    //计算天数后剩余的毫秒数
-    // var hours=Math.floor(leave1/(3600*1000))
+    //var days = Math.floor(date3 / (24 * 3600 * 1000));
+    //计算出小时数
+    //var leave1=date3%(24*3600*1000)    //计算天数后剩余的毫秒数
+    //var hours=Math.floor(leave1/(3600*1000))
     // //计算相差分钟数
     // var leave2=leave1%(3600*1000)        //计算小时数后剩余的毫秒数
     // var minutes=Math.floor(leave2/(60*1000))
@@ -115,7 +114,7 @@ export class LoginPage implements OnInit {
     // var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
     // var seconds=Math.round(leave3/1000)
     // alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
-    if (days > 7) return true;
+    if (hours > 2) return true;
     else return false;
   }
   //----------------------------------------------------------------------------------//
@@ -137,39 +136,47 @@ export class LoginPage implements OnInit {
       toast.present();
     }else{
       if (this.tab == 'tab2') {//验证码登录
-        var api = '/loginByCode';//后台接口
+        var api = '/login-code';//后台接口
         var params_tab2 = {//后台所需参数
           email: this.login_email,
           mailVerificationCode: this.verify_code
         };
         this.httpService.post_withoutToken(api, params_tab2).then(async (response: any) => {
-          this.login_result = response.data.respCode;
-          this.login_msg = response.data.msg;
-          this.return_token = response.data.token;
+          this.return_code = response.data.respCode;
+          if(this.return_code == 1){
+            localStorage.setItem("token", response.data.data.token);
+            localStorage.setItem("isTeacher", response.data.data.isTeacher);
+            localStorage.setItem("Adimn", response.data.data.admin);
+          }
         })
       } else {//密码登录
-        var api = '/loginByPass';//后台接口
+        var api = '/login';//后台接口
         var params_tab1 = {//后台所需参数
           email: this.login_email,
           password: this.login_password
         };
+        console.log(params_tab1);
         this.httpService.post_withoutToken(api, params_tab1).then(async (response: any) => {
-          this.login_result = response.data.respCode;
-          this.login_msg = response.data.msg;
-          this.return_token = response.data.token;
+          console.log(response);
+          this.return_code = response.data.respCode;
+          if(this.return_code == 1){
+            localStorage.setItem("token", response.data.data.token);
+            localStorage.setItem("isTeacher", response.data.data.isTeacher);
+            localStorage.setItem("Adimn", response.data.data.admin);
+          }
         })
       }
       await loading.dismiss();
-      if (this.login_result == "-1") {
+      if (this.return_code == -1) {
         let alert = await this.alertController.create({
           header: '提示',
-          message: this.login_msg,
+          message: '登录失败',
           buttons: ['确定']
         });
         alert.present();
       } else {
-        this.router.navigateByUrl('/coures');
-        localStorage.setItem("token", this.return_token);
+        console.log('login_test:success!');
+        this.router.navigateByUrl('/tabs/coures');
         localStorage.setItem("isLogin", "1");
         this.setLoginTime();
       }

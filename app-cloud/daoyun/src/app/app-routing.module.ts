@@ -34,13 +34,18 @@ const routes: Routes = [
   {
     path: 'change-pass',
     loadChildren: () => import('./pages/passport/change-pass/change-pass.module').then( m => m.ChangePassPageModule)
-  },  {
+  },
+  {
     path: 'find-by-email',
     loadChildren: () => import('./pages/passport/find-by-email/find-by-email.module').then( m => m.FindByEmailPageModule)
   },
   {
     path: 'checkin',
     loadChildren: () => import('./pages/checkin/checkin.module').then( m => m.CheckinPageModule)
+  },
+  {
+    path: 'member-list',
+    loadChildren: () => import('./pages/member-list/member-list.module').then( m => m.MemberListPageModule)
   },
 
 ];

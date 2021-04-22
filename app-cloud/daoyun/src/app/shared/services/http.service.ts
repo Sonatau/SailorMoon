@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import axios from 'axios';
+axios.defaults.withCredentials=true;
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,7 @@ export class HttpService {
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params,
+        params: params
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
@@ -90,7 +91,7 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params,
+        data: params
       }).then(function (response) {
         resolve(response);
       })

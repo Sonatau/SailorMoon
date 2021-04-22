@@ -7,9 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CheckinPage implements OnInit {
 
+  public isTeacher: any;
+
   constructor() { }
 
   ngOnInit() {
+    this.isTeacher = localStorage.getItem("isTeacher");
   }
 
 }

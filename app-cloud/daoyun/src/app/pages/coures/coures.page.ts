@@ -43,7 +43,7 @@ export class CouresPage implements OnInit {
     private activatedRoute: ActivatedRoute) {
       //请求后台获取 我创建的班课列表
     this.activatedRoute.queryParams.subscribe(async queryParams => {
-      if (localStorage.getItem("role") == '0') {//教师
+      if (localStorage.getItem("isTeacher") == '1') {//教师
         this.flag = '0';
         this.getCreateLesson();
       } else {

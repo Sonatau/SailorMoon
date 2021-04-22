@@ -11,6 +11,14 @@ const routes: Routes = [
   {
     path: 'edit-usermsg',
     loadChildren: () => import('./edit-usermsg/edit-usermsg.module').then( m => m.EditUsermsgPageModule)
+  },
+  {
+    path: 'usermsg',
+    loadChildren: () => import('./usermsg/usermsg.module').then( m => m.UsermsgPageModule)
+  },
+  {
+    path: 'about-us',
+    loadChildren: () => import('./about-us/about-us.module').then( m => m.AboutUsPageModule)
   }
 ];
 

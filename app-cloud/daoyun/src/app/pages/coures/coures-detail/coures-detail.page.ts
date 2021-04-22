@@ -52,8 +52,12 @@ export class CouresDetailPage implements OnInit {
     public pickerController: PickerController,
     private alertController: AlertController,
     //private statusBar: StatusBar,
-  ) {
-  }
+  ) {}
+
+  ionViewWillEnter(){
+		console.log("当将要进入页面时触发");
+    this.isTeacher = localStorage.getItem("isTeacher");
+	}
 
   ngOnInit() {
     // this.statusBar.backgroundColorByHexString('#3dc2ff;'); //状态栏的样式设置
@@ -82,8 +86,8 @@ export class CouresDetailPage implements OnInit {
 
       }
     });
-    this.lesson.name = localStorage.getItem("lesson_name");
-    this.lesson.no = localStorage.getItem("lesson_no");
+    // this.lesson.name = localStorage.getItem("lesson_name");
+    // this.lesson.no = localStorage.getItem("lesson_no");
     this.isTeacher = localStorage.getItem("isTeacher");
     this.getLesson();
   }
@@ -331,17 +335,20 @@ export class CouresDetailPage implements OnInit {
               message: '删除成功！',
               buttons: [{
                 text: "确认",
+                // handler: () => {
+                //   var params = {
+                //     code: localStorage.getItem("lesson_no")
+                //   }
+                //   var api = '/courses';
+                //   this.httpService.delete(api, params).then(async (response: any) => {
+                //     if (response.data.respCode == 1) {
+                //       this.router.navigate(['/lesson-tabs/mylesson'], {queryParams: {delete: '1'}});
+                //   // location.replace('/lesson-tabs');
+                //     }
+                //   })
+                // }
                 handler: () => {
-                  var params = {
-                    code: localStorage.getItem("lesson_no")
-                  }
-                  var api = '/courses';
-                  this.httpService.delete(api, params).then(async (response: any) => {
-                    if (response.data.respCode == 1) {
-                      this.router.navigate(['/lesson-tabs/mylesson'], {queryParams: {delete: '1'}});
-                  // location.replace('/lesson-tabs');
-                    }
-                  })
+                  this.router.navigate(['/tabs/coures'], {queryParams: {join: '1'}});
                 }
               }]
             });
@@ -366,29 +373,30 @@ export class CouresDetailPage implements OnInit {
           cssClass: 'medium'
         }, {
           text: '确认',
-          handler: async () => {
-            var params = {
-              code: localStorage.getItem("lesson_no"),
-              email: localStorage.getItem("email")
-            }
-            var api = '/courses';
-            this.httpService.delete(api, params).then(async (response: any) => {
-              if (response.data.respCode == 1) {
-                const alert = await this.alertController.create({
-                  // header: '提示',
-                  message: '退出成功！',
-                  buttons: [{
-                    text: "确认",
-                    handler: () => {
-                      this.router.navigate(['/lesson-tabs/mylesson'], {queryParams: {join: '1'}});
-                    }
-                  }]
-                });
-                await alert.present();
-              }
-            })
-
-            
+          // handler: async () => {
+          //   var params = {
+          //     code: localStorage.getItem("lesson_no"),
+          //     email: localStorage.getItem("email")
+          //   }
+          //   var api = '/courses';
+          //   this.httpService.delete(api, params).then(async (response: any) => {
+          //     if (response.data.respCode == 1) {
+          //       const alert = await this.alertController.create({
+          //         // header: '提示',
+          //         message: '退出成功！',
+          //         buttons: [{
+          //           text: "确认",
+          //           handler: () => {
+          //             this.router.navigate(['/tabs/coures'], {queryParams: {join: '1'}});
+          //           }
+          //         }]
+          //       });
+          //       await alert.present();
+          //     }
+          //   })
+          // }
+          handler: () => {
+            this.router.navigate(['/tabs/coures'], {queryParams: {join: '1'}});
           }
         }
       ]
