@@ -35,7 +35,7 @@ export class HttpService {
           'Content-Type': 'application/json'
         },
         method: 'get',
-        url: this.commonUrl + api
+        url: this.commonUrl + api,
       }).then(function (response) {
         resolve(response);
       })
@@ -47,7 +47,8 @@ export class HttpService {
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params
+        params: params,
+        withCredentials: true
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
@@ -91,7 +92,8 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: true
       }).then(function (response) {
         resolve(response);
       })

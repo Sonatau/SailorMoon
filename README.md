@@ -4,7 +4,7 @@
 
 移动端相关连接：
 
-列表页：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/pages/coures
+列表页：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/pages/course
 
 编辑页：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/pages/mine/edit-usermsg
 

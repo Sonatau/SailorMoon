@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar *ngIf="isTeacher == '1'">
       <ion-buttons slot="start">
-          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/coures/coures-detail']">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
@@ -10,7 +10,7 @@
 
   <ion-toolbar color="primary" *ngIf="isTeacher == '0'">
       <ion-buttons slot="start">
-          <ion-button color="light" expand="block" fill="clear" shape="round" [routerLink]="['/coures/coures-detail']">
+          <ion-button color="light" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>

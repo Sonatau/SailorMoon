@@ -17,8 +17,8 @@ const routes: Routes = [
     loadChildren: () => import('./create-checkin/create-checkin.module').then( m => m.CreateCheckinPageModule)
   },
   {
-    path: 'coures-checkin',
-    loadChildren: () => import('./coures-checkin/coures-checkin.module').then( m => m.CouresCheckinPageModule)
+    path: 'course-checkin',
+    loadChildren: () => import('./course-checkin/course-checkin.module').then( m => m.CourseCheckinPageModule)
   }
 ];
 

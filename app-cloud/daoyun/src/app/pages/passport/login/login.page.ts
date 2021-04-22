@@ -16,7 +16,7 @@ export class LoginPage implements OnInit {
   public login_email: string = '';
   public login_password: string = '';
   public verify_code: string = '';
-  public return_code = -1;  //1: 发送成功   -1: 发送失败
+  public return_code: any;  //1: 发送成功   -1: 发送失败
 
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
@@ -33,7 +33,7 @@ export class LoginPage implements OnInit {
     //登录状态为1时自动登录
     if (localStorage.getItem("isLogin") == "1") {
       if (this.isOverTime() == false) {
-        this.router.navigateByUrl('/tabs/coures');
+        this.router.navigateByUrl('/tabs/course');
       }
     }
   }
@@ -139,44 +139,55 @@ export class LoginPage implements OnInit {
         var api = '/login-code';//后台接口
         var params_tab2 = {//后台所需参数
           email: this.login_email,
-          mailVerificationCode: this.verify_code
+          mailVerificationCode: this.verify_code,
+          device: 0
         };
         this.httpService.post_withoutToken(api, params_tab2).then(async (response: any) => {
+          console.log(response);
           this.return_code = response.data.respCode;
-          if(this.return_code == 1){
+          if(this.return_code == '1'){
             localStorage.setItem("token", response.data.data.token);
-            localStorage.setItem("isTeacher", response.data.data.isTeacher);
-            localStorage.setItem("Adimn", response.data.data.admin);
+            if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');
+            else localStorage.setItem("isTeacher", '0');
+            if(response.data.data.admin.course == '1') localStorage.setItem("course-admin", '1');
+            else localStorage.setItem("course-adimn", '0');
+            if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
+            else localStorage.setItem("checkin-adimn", '0');
           }
         })
       } else {//密码登录
         var api = '/login';//后台接口
         var params_tab1 = {//后台所需参数
           email: this.login_email,
-          password: this.login_password
+          password: this.login_password,
+          device: 0
         };
-        console.log(params_tab1);
         this.httpService.post_withoutToken(api, params_tab1).then(async (response: any) => {
           console.log(response);
           this.return_code = response.data.respCode;
-          if(this.return_code == 1){
+          console.log(this.return_code);
+          if(this.return_code == '1'){
             localStorage.setItem("token", response.data.data.token);
-            localStorage.setItem("isTeacher", response.data.data.isTeacher);
-            localStorage.setItem("Adimn", response.data.data.admin);
+            if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');
+            else localStorage.setItem("isTeacher", '0');
+            if(response.data.data.admin.course == '1') localStorage.setItem("course-adimn", '1');
+            else localStorage.setItem("course-adimn", '0');
+            if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-adimn", '1');
+            else localStorage.setItem("checkin-adimn", '0');
           }
         })
       }
       await loading.dismiss();
-      if (this.return_code == -1) {
+      if (this.return_code == '-1') {
         let alert = await this.alertController.create({
           header: '提示',
           message: '登录失败',
           buttons: ['确定']
         });
         alert.present();
-      } else {
+      } else if (this.return_code == '1'){
         console.log('login_test:success!');
-        this.router.navigateByUrl('/tabs/coures');
+        this.router.navigateByUrl('/tabs/course');
         localStorage.setItem("isLogin", "1");
         this.setLoginTime();
       }
