@@ -6,20 +6,17 @@ import { HttpService } from 'src/app/shared/services/http.service';
 import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.page.html',
-  styleUrls: ['./register.page.scss'],
+  selector: 'app-find-by-email',
+  templateUrl: './find-by-email.page.html',
+  styleUrls: ['./find-by-email.page.scss'],
 })
-export class RegisterPage implements OnInit {
+export class FindByEmailPage implements OnInit {
 
-  public register_email: string = '';
-  public register_password: string = '';
-  public register_name: string = '';
-  public register_no: string = '';
-  public verify_password: string = '';
+  public find_email: string = '';
+  public password1: string = '';
+  public password2: string = '';
   public verify_code: string = '';
   public return_code = -1;  //1: 发送成功   -1: 发送失败
-  public roleID: any; //1: 教师    2: 学生    0: 非法数据
 
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
@@ -47,7 +44,7 @@ export class RegisterPage implements OnInit {
       this.verifyCode.disable = false;
       this.settime();
       var params = {
-        email: this.register_email,
+        email: this.find_email,
       };
       var api = '/sendCode';
       this.httpService.get_withoutToken(api, params).then((response: any) => {
@@ -77,13 +74,12 @@ export class RegisterPage implements OnInit {
   //----------------------------------------------------------------------------------//
 
   //----------------------------------------------------------------------------------//
-  //-----------------------------------提交注册信息------------------------------------//
+  //-----------------------------------验证更改密码------------------------------------//
   //----------------------------------------------------------------------------------//
-  async onRegister(form: NgForm) {
+  async onVerify(form: NgForm) {
     const loading = await this.loadingController.create({
-      message: '请稍等...',
+      message: '修改中...',
     });
-    await loading.present();
     if(form.invalid){ //检验输入信息是否有效
       await loading.dismiss();
       let toast = await this.toastController.create({
@@ -100,7 +96,7 @@ export class RegisterPage implements OnInit {
         });
         toast.present();
       }else{
-        if (this.register_password != this.verify_password){
+        if (this.password1 != this.password2){
           await loading.dismiss();
           let toast = await this.toastController.create({
             message: '两次密码不一致！',
@@ -108,17 +104,14 @@ export class RegisterPage implements OnInit {
           });
           toast.present();
         }else{
-          var api = '/register';//-------------------------后台接口
-          var params = {        //-------------------------后台参数
-            email: this.register_email,
-            password: this.register_password,
-            name: this.register_name,
-            sno: this.register_no,
-            mailVerificationCode: this.verify_code,
-            roleId: this.roleID
+          var api = '/forget-password'; //----------------后台接口
+          var params = {                //----------------后台参数
+            email: this.find_email,
+            newPassword: this.password1,
+            mailVerificationCode: this.verify_code
           }
           //console.log(params);
-          this.httpService.post(api, params).then(async (response: any) => {
+          this.httpService.post_withoutToken(api, params).then(async (response: any) => {
             await loading.dismiss();
             if(response.data.respCode == -1){
               let alert = await this.alertController.create({
@@ -130,7 +123,7 @@ export class RegisterPage implements OnInit {
             }else if(response.data.respCode == 1){
               let alert = await this.alertController.create({
                 header: '提示',
-                message: '注册成功！',
+                message: '修改成功！',
                 buttons: [{
                   text: '确认',
                   cssClass: 'primary',
@@ -146,4 +139,5 @@ export class RegisterPage implements OnInit {
       }
     }
   }
+
 }

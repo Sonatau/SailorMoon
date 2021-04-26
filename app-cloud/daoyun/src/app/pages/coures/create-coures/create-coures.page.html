@@ -1,0 +1,64 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/coures']">
+              <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title style="text-align:center;margin-right: 30px;">创建班课</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="onCreate(createForm)" #createForm="ngForm" novalidate>
+      <ion-list lines="full">
+          <ion-item slot="center" class="show_cover" lines="none">
+            <img src="assets/img/coures/default-cover.jpg">
+          </ion-item>
+          <ion-item>
+            <ion-label slot="start">课程封面</ion-label>
+            <ion-note slot="end" style="font-size: 14px">点击图片上传封面</ion-note>
+          </ion-item>
+
+          <ion-item>
+              <ion-label slot="start">课程编号</ion-label>
+              <ion-note slot="end"  class="my_inf">{{lesson.no}}</ion-note>
+          </ion-item>
+
+          <ion-item>
+              <ion-label slot="start">课程名称</ion-label>
+              <ion-input name="name" type="text" class="my_inf" slot="end"
+                placeholder="未设置" [(ngModel)]="coures_name" #name="ngModel">
+              </ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-label slot="start">开设学校</ion-label>
+            <ion-input name="school" type="text" class="my_inf" slot="end"
+              placeholder="未设置" [(ngModel)]="coures_school" #school="ngModel">
+            </ion-input>
+        </ion-item>
+        
+        <ion-item>
+            <ion-label slot="start">开设学院</ion-label>
+            <ion-input name="academy" type="text" class="my_inf" slot="end"
+              placeholder="未设置" [(ngModel)]="coures_academy" #academy="ngModel">
+            </ion-input>
+        </ion-item>
+
+          <ion-item lines="none">
+            <ion-label slot="start">课程简介</ion-label>
+          </ion-item>
+          <div style="text-align:center;">
+            <textarea slot="center" class="my_textarea" placeholder="介绍一下您的课程吧！"></textarea>
+          </div>
+
+          <ion-row style="margin: top 30px;" class="row">
+            <ion-button class="btn" type="submit" color="primary" [disabled]="createForm.invalid"
+            [routerLink]="['/coures/create-success']">创建班课
+            </ion-button>
+          </ion-row>
+      </ion-list>
+  </form>
+
+</ion-content>

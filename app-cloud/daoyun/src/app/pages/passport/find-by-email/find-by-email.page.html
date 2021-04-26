@@ -1,0 +1,76 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-icon slot="start" name="chevron-back-outline" [routerLink]="['/login']"></ion-icon>
+    <ion-title class="ion-text-center">找回密码</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="background">
+    <form (ngSubmit)="onVerify(verifyForm)" #verifyForm="ngForm" novalidate>
+      <ion-grid>
+        <ion-row style="margin-top:30px;"></ion-row>
+        <ion-row class="row">
+          <ion-input name="email" type="text" class="text_input" [(ngModel)]="find_email" #email="ngModel"
+          placeholder="请输入邮箱" required pattern="^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$" >
+            <ion-icon name="mail-outline" class="input_icon"></ion-icon>
+          </ion-input>
+        </ion-row>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="email.invalid && email.touched">
+            <p class="warn" [hidden]="!email.errors?.required" padding-start>必填：请输入邮箱地址</p>
+            <p class="warn" [hidden]="!email.errors?.pattern" padding-start>您输入的邮箱格式不正确</p>
+          </ion-text>
+        </div>
+
+        <ion-row class="row">
+          <ion-input name="code" type="text" class="verify_input" placeholder="请输入验证码"
+          [(ngModel)]="verify_code" #code="ngModel" required>
+            <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
+          </ion-input>
+          <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
+            {{verifyCode.verifyCodeTips}}</ion-button>
+        </ion-row>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="code.invalid && code.touched">
+            <p class="warn" [hidden]="!code.errors?.required" padding-start>请输入验证码</p>
+          </ion-text>
+        </div>
+
+        <ion-row class="row">
+          <ion-input name="pwd1" type="password" class="text_input" placeholder="请输入新密码" required
+          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="password1" #pwd1="ngModel">
+            <ion-icon name="lock-closed-outline" class="input_icon"></ion-icon>
+          </ion-input>
+        </ion-row>
+        <div class="signup_warn">
+          <ion-text name='pwd1' text-left color="danger" *ngIf="pwd1.invalid && pwd1.touched">
+            <p class="warn" [hidden]="!pwd1.errors?.required" padding-start>必填：请输入新密码</p>
+            <p class="warn" [hidden]="!pwd1.errors?.pattern" padding-start>
+              6至16位，由数字、英文、符号三种字符类型构成，至少包含两种类型字符</p>
+          </ion-text>
+        </div>
+
+        <ion-row class="row">
+          <ion-input name="pwd2" type="password" class="text_input" placeholder="请再次输入新密码" required
+          pattern="^(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$" [(ngModel)]="password2" #pwd2="ngModel">
+            <ion-icon name="bag-check-outline" class="input_icon"></ion-icon>
+          </ion-input>
+        </ion-row>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="pwd2.invalid && pwd2.touched">
+            <p class="warn" [hidden]="!pwd2.errors?.required" padding-start>必填：请再次确认您的密码</p>
+          </ion-text>
+          <ion-text text-left color="danger" *ngIf="pwd2.touched && pwd1v!==vpwd2">
+            <p class="warn" padding-start>两次密码不一致</p>
+          </ion-text>
+        </div> 
+
+        <ion-row class="row">
+          <ion-button color="primary" class="btn" type="submit" [disabled]="verifyForm.invalid">确认</ion-button>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </div>
+
+</ion-content>
