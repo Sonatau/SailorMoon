@@ -12,7 +12,7 @@
             <a-col :md="8" :sm="24">
               <div class="table-operator">
                 <a-button type="default" @click="handleSearchByName">查找</a-button>
-                <a-button type="primary" icon="plus" @click="handleAdd">新建权限</a-button>
+                <a-button type="primary" icon="plus" @click="handleAdd">添加权限</a-button>
               </div>
             </a-col>
           </a-row>

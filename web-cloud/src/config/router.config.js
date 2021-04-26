@@ -35,7 +35,7 @@ export const asyncRouterMap = [
             path: '/permission/AddPermission/:record?',
             name: 'AddPermission',
             component: () => import('@/views/permission/AddPermission'),
-            meta: { title: 'menu.permission.add', keepAlive: false, permission: ['permission'] }
+            meta: { title: '添加权限', keepAlive: false, permission: ['permission'] }
           }
         ]
       },
@@ -98,6 +98,7 @@ export const asyncRouterMap = [
             component: () => import('@/views/institution/AddInstitution'),
             meta: { title: 'menu.institution.add', keepAlive: false, permission: ['institution'] }
           }
+
         ]
       },
       // Exception
@@ -130,7 +131,7 @@ export const asyncRouterMap = [
             path: '/exception/600',
             name: 'Exception600',
             component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/600'),
-            meta: { title: 'menu.exception.custom-exception', permission: ['exception'] }
+            meta: { title: '自定义异常页', permission: ['exception'] }
           }
         ]
       },

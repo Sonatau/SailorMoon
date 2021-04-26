@@ -10,7 +10,12 @@
           :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
         >
           <a-input
-            v-decorator="['name', { rules: [{ required: true, message: '请输入权限名称' }] }]"
+            v-decorator="[
+              'name',
+              {
+                rules: [{ required: true, message: '请输入权限名称' }]
+              }
+            ]"
             name="name"
             placeholder="二十字以内"
           />
@@ -71,6 +76,7 @@
 import { upsertPer } from '@/api/permission'
 const plainOptions = ['权限管理', '用户管理', '考勤管理', '机构管理']
 const defaultCheckedList = ['权限管理']
+
 export default {
   name: 'AddPermission',
   data() {
@@ -82,13 +88,31 @@ export default {
     }
   },
   created() {
-    this.form = this.$form.createForm(this)
-    if (this.$route.params.record) {
-      const record = JSON.parse(decodeURIComponent(this.$route.params.record))
-      console.log(record)
-    }
+    this.$watch(
+      () => this.$route.params,
+      () => {
+        this.fetchData()
+      },
+      // 组件创建完后获取数据，
+      // 此时 data 已经被 observed 了
+      { immediate: true }
+    )
   },
   methods: {
+    fetchData() {
+      this.form = this.$form.createForm(this)
+      if (this.$route.params.record) {
+        this.record = JSON.parse(decodeURIComponent(this.$route.params.record))
+        this.$nextTick(() => {
+          console.log(this.record)
+          this.form.setFieldsValue({
+            name: this.record.name,
+            state: this.record.state,
+            roleDescribe: this.record.roleDescribe
+          })
+        })
+      }
+    },
     // handler
     handleSubmit(e) {
       e.preventDefault()
