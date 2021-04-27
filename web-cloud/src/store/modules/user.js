@@ -1,6 +1,6 @@
 import storage from 'store'
 import { login, getInfo, logout, loginCode } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { ACCESS_TOKEN, USER_INFO } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
@@ -11,7 +11,7 @@ const user = {
     avatar: '',
     roles: [],
     info: {},
-    temp: {}
+    temp: ''
   },
 
   mutations: {
@@ -47,6 +47,7 @@ const user = {
             const user = Object.assign({}, userInfo, response.data)
             user['role'] = response.data.permissions
             commit('SET_TEMP', user) // 提前设置用户信息 和 角色权限
+            storage.set(USER_INFO, user)
             commit('SET_TOKEN', result.token)
             resolve()
           }).catch(error => {
@@ -61,6 +62,7 @@ const user = {
             const user = Object.assign({}, userInfo, response.data)
             user['role'] = response.data.permissions
             commit('SET_TOKEN', result.token)
+            storage.set(USER_INFO, user)
             commit('SET_TEMP', user) // 提前设置用户信息 和 角色权限
             resolve()
           }).catch(error => {
@@ -109,6 +111,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           storage.remove(ACCESS_TOKEN)
+          storage.remove(USER_INFO) // 移除
           resolve()
         }).catch(() => {
           resolve()

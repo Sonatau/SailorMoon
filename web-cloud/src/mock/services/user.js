@@ -1,4 +1,5 @@
 import Mock from 'mockjs2'
+// import { mapGetters } from 'node_modules/vuex/types/helpers'
 import store from '../../store'
 import { builder } from '../util'
 

@@ -61,6 +61,7 @@
 import { STable } from '@/components'
 import { getPerList, deletePer } from '@/api/permission'
 import CreateForm from './modules/CreateForm'
+// import { mapGetters } from 'vuex'
 
 const columns = [
   {
