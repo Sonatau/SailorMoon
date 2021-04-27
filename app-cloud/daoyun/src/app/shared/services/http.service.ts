@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import axios from 'axios';
-axios.defaults.withCredentials=true;
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +9,8 @@ export class HttpService {
 
   constructor(public http: HttpClient) { }
 
-  //commonUrl = 'http://47.93.231.158:8080';
-  commonUrl = 'http://localhost:8100/';
+  commonUrl = 'http://47.93.231.158:8080';
+  //commonUrl = 'http://localhost:8100/';
   
   //获取数据
   get(api, params) {
@@ -47,8 +46,7 @@ export class HttpService {
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params,
-        withCredentials: true
+        params: params
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
@@ -92,12 +90,27 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params,
-        withCredentials: true
+        data: params
       }).then(function (response) {
         resolve(response);
       })
         .catch(function (error) {
+          reject(error);
+        });
+    })
+  }
+  post_byURL(api, params) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'post',
+        url: api,
+        data: params,
+      }).then(function (response) {
+        console.log(response);
+        resolve(response);
+      })
+        .catch(function (error) {
+          console.log(error);
           reject(error);
         });
     })

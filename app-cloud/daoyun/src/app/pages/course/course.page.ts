@@ -12,6 +12,7 @@ import { HttpService } from 'src/app/shared/services/http.service';
 })
 export class CoursePage implements OnInit {
 
+  public isTeacher: any;
   public tab = "tab1";
   public lessonName = '';
   public lessonNo = '';
@@ -43,6 +44,7 @@ export class CoursePage implements OnInit {
     private activatedRoute: ActivatedRoute) {
       //请求后台获取 我创建的班课列表
     this.activatedRoute.queryParams.subscribe(async queryParams => {
+
       if (localStorage.getItem("isTeacher") == '1') {//教师
         this.flag = '0';
         this.getCreateLesson();
@@ -66,7 +68,8 @@ export class CoursePage implements OnInit {
   }
 
   ngOnInit() {
-    if (localStorage.getItem("role") == '0') {//教师
+    this.isTeacher = localStorage.getItem("isTeacher");
+    if (this.isTeacher == '1') {//教师
       this.flag = '0';
       this.getCreateLesson();
     } else {
@@ -208,8 +211,7 @@ export class CoursePage implements OnInit {
     // this.router.navigateByUrl("/tabs/member],")
   }
   
-  async addLesson() {
-    // if (localStorage.getItem("role") == '0') {
+  async AddorCreate() {
     if (this.tab == 'tab1') {
       const actionSheet = await this.actionSheetController.create({
         mode: "ios",

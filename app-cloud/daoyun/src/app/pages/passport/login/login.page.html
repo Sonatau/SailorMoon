@@ -47,20 +47,25 @@
             <ion-row class="row" style="display: block;text-align: right;">
               <ion-label color="light" [routerLink]="['/find-by-email']">忘记密码</ion-label>
             </ion-row>
+
+            <ion-row style="margin-top:30px;"></ion-row>
+            <ion-row class="row" style="display: block;text-align: center;">
+              <ion-label class="login_tabs" [routerLink]="['/register']">—— 邮箱注册 ——</ion-label>
+            </ion-row>
           </div>
 
 
           <div *ngSwitchCase="'tab2'">
             <ion-row style="margin-top:20px;"></ion-row>
             <ion-row class="row">
-              <ion-input name="email" type="text" class="text_input" placeholder="请输入邮箱"
-                required [(ngModel)]="login_email" #email="ngModel">
-                <ion-icon name="mail-outline" class="input_icon"></ion-icon>
+              <ion-input name="phone" type="text" class="text_input" placeholder="请输入手机号"
+                required [(ngModel)]="login_phone" #phone="ngModel">
+                <ion-icon name="call-outline" class="input_icon"></ion-icon>
               </ion-input>
             </ion-row>
             <div class="signup_warn">
-              <ion-text text-left color="danger" *ngIf="email.invalid && email.touched">
-                <p class="warn" [hidden]="!email.errors?.required" padding-start>请输入手机号</p>
+              <ion-text text-left color="danger" *ngIf="phone.invalid && phone.touched">
+                <p class="warn" [hidden]="!phone.errors?.required" padding-start>请输入手机号</p>
               </ion-text>
             </div>
             <ion-row class="row">
@@ -68,7 +73,7 @@
                 [(ngModel)]="verify_code" #code="ngModel" required>
                 <ion-icon name="mail-open-outline" class="input_icon"></ion-icon>
               </ion-input>
-              <ion-button color="primary" (click)="onSendSMS()" [disabled]="!verifyCode.disable">
+              <ion-button color="primary" (click)="onSendMsg()" [disabled]="!verifyCode.disable">
                 {{verifyCode.verifyCodeTips}}</ion-button>
             </ion-row>
             <div class="signup_warn">
@@ -79,14 +84,20 @@
 
             <ion-row class="row">
               <ion-button color="primary" type="submit" class="btn"
-              [disabled]="loginForm.invalid" [routerLink]="['/tabs/course']"> 登录 </ion-button>
+              [disabled]="loginForm.invalid"> 登录 </ion-button>
+            </ion-row>
+
+            <ion-row style="margin-top:30px;"></ion-row>
+            <ion-row class="row" style="display: block;text-align: center;">
+              <ion-label class="login_tabs" [routerLink]="['/register-phone']">—— 手机快速注册 ——</ion-label>
             </ion-row>
           </div>
         </div>
 
         <ion-row style="margin-top:30px;"></ion-row>
-        <ion-row class="row" style="display: block;text-align: center;">
-          <ion-label class="login_tabs" [routerLink]="['/register']">—— 新用户注册 ——</ion-label>
+        <ion-row class="row" style="display: block;text-align: center;" class="login_tabs" (click)="loginByGitHub()">
+          <ion-icon name="logo-github" color="light" style="font-size: 25px;"></ion-icon>
+          <ion-label>&nbsp;&nbsp;Gitee登录</ion-label>
         </ion-row>
 
       </ion-grid>
