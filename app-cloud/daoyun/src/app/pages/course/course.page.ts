@@ -212,7 +212,7 @@ export class CoursePage implements OnInit {
   }
   
   async AddorCreate() {
-    if (this.tab == 'tab1') {
+    if (this.isTeacher == '1') {//教师
       const actionSheet = await this.actionSheetController.create({
         mode: "ios",
         buttons: [

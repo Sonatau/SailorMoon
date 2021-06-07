@@ -13,8 +13,6 @@ import { NgForm } from '@angular/forms';
 export class RegisterPhonePage implements OnInit {
 
   public register_phone: string = '';
-  public register_name: string = '';
-  public register_no: string = '';
   public verify_code: string = '';
   public return_code = -1;  //1: 发送成功   -1: 发送失败
   public roleID: any; //1: 教师    2: 学生    0: 非法数据
@@ -102,8 +100,6 @@ export class RegisterPhonePage implements OnInit {
           var api = '/register-phone';//-------------------------后台接口
           var params = {        //-------------------------后台参数
             telephone: this.register_phone,
-            name: this.register_name,
-            sno: this.register_no,
             verificationCode: this.verify_code,
             roleId: this.roleID
           }

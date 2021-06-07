@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import axios from 'axios';
 
 @Injectable({
@@ -7,10 +8,11 @@ import axios from 'axios';
 })
 export class HttpService {
 
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient, public navCtrl: NavController) { }
 
-  commonUrl = 'http://47.93.231.158:8080';
-  //commonUrl = 'http://localhost:8100/';
+  public commonUrl = 'http://47.93.231.158:8080';
+  //public commonUrl = 'http://localhost:8100/';
+  public headers:any;
   
   //获取数据
   get(api, params) {
@@ -20,8 +22,7 @@ export class HttpService {
         params: params,
       }).then(function (response) {
         resolve(response);
-      })
-        .catch(function (error) {
+      }).catch(function (error) {
           reject(error);
         })
     })
@@ -53,6 +54,7 @@ export class HttpService {
         reject(error);
       })
     })
+
   }
 
   //新增数据
@@ -99,6 +101,7 @@ export class HttpService {
         });
     })
   }
+
   post_byURL(api, params) {
     return new Promise((resolve, reject) => {
       axios({

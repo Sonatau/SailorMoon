@@ -12,18 +12,20 @@
 <ion-content>
   <form (ngSubmit)="onCreate(createForm)" #createForm="ngForm" novalidate>
       <ion-list lines="full">
-          <ion-item slot="center" class="show_cover" lines="none">
-            <img src="assets/img/course/default-cover.jpg">
+          <!-- <ion-item slot="center" class="show_cover" lines="none">
+            <img src="assets/img/course/cover-default.jpg">
           </ion-item>
           <ion-item>
             <ion-label slot="start">课程封面</ion-label>
             <ion-note slot="end" style="font-size: 14px">点击图片上传封面</ion-note>
-          </ion-item>
-
-          <!-- <ion-item>
-              <ion-label slot="start">课程编号</ion-label>
-              <ion-note slot="end"  class="my_inf">{{lesson.no}}</ion-note>
           </ion-item> -->
+
+          <ion-item-divider color="light">
+            <ion-thumbnail *ngFor="let image of course.covers">
+              <img *ngIf="images != null" src="{{image}}">
+            </ion-thumbnail>
+            <ion-note slot="end" style="font-size: 15px">上传图片请小于1M</ion-note>
+          </ion-item-divider>
 
           <ion-item>
               <ion-label slot="start">课程名称</ion-label>
@@ -51,20 +53,13 @@
           <ion-input name="subject" type="text" class="my_inf" slot="end"
             placeholder="未设置" [(ngModel)]="course_subject" #academy="ngModel">
           </ion-input>
-      </ion-item>
+        </ion-item>
 
-          <ion-item lines="none">
-            <ion-label slot="start">课程简介</ion-label>
-          </ion-item>
-          <div style="text-align:center;">
-            <textarea slot="center" class="my_textarea" placeholder="介绍一下您的课程吧！"></textarea>
-          </div>
-
-          <ion-row style="margin: top 30px;" class="row">
-            <ion-button class="btn" type="submit" color="primary" [disabled]="createForm.invalid"
-            [routerLink]="['/course/create-success']">创建班课
-            </ion-button>
-          </ion-row>
+        <ion-row style="margin: top 30px;" class="row">
+          <ion-button class="btn" type="submit" color="primary" [disabled]="createForm.invalid"
+          [routerLink]="['/course/create-success']">创建班课
+          </ion-button>
+        </ion-row>
       </ion-list>
   </form>
 
