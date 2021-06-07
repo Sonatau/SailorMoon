@@ -4,7 +4,7 @@
 
 移动端相关连接：
 
-列表页：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/pages/coures
+列表页：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/pages/course
 
 REST API调用文件：https://github.com/Sonatau/SailorMoon/app-cloud/daoyun/src/app/shared/services/http.service.ts
 

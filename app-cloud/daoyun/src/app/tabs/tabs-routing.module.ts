@@ -18,25 +18,25 @@ const routes: Routes = [
         ]
       },
       {
-        path: 'coures',
+        path: 'course',
         children: [
           {
             path: '',
             loadChildren: () =>
-              import('../pages/coures/coures.module').then(m => m.CouresPageModule)
+              import('../pages/course/course.module').then(m => m.CoursePageModule)
           }
         ]
       },
       {
         path: '',
-        redirectTo: '/tabs/coures',
+        redirectTo: '/tabs/course',
         pathMatch: 'full'
       }
     ]
   },
   {
     path: '',
-    redirectTo: '/tabs/coures',
+    redirectTo: '/tabs/course',
     pathMatch: 'full'
   }
 ];

@@ -1,0 +1,133 @@
+<ion-header>
+  <ion-toolbar color="primary">
+      <!-- <div style="width:100%;height:20px;background:white"></div> -->
+      <ion-buttons slot="start">
+          <ion-button color="light" expand="block" fill="clear" shape="round" [routerLink]="['/tabs/course']">
+              <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+
+      <ion-title style="text-align:center;margin-right: 30px;">{{lesson.name}}</ion-title>
+
+      <ion-buttons slot="end" *ngIf="isTeacher == '0'">
+        <ion-button color="light" expand="block" fill="clear" shape="round" (click)="outLesson()">
+            <ion-icon name="log-out-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+
+    <ion-buttons slot="end" *ngIf="isTeacher == '1'">
+        <ion-button color="light" expand="block" fill="clear" shape="round" (click)="deleteLesson()">
+            <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar style="--background:linear-gradient(#7468BE 0%,#7468BE 60%,white 60%,white 100%);--border-width: 0 0 0px;">
+      <ion-card mode="ios">
+        <ion-row style="margin-top:10px;"></ion-row>
+          <ion-item lines="none">
+              <ion-thumbnail class="thum">
+                  <ion-icon class="thum-icon" color="light" name="cloud-circle-outline"></ion-icon>
+              </ion-thumbnail>
+              <ion-label>
+                  <h5>&nbsp;&nbsp;&nbsp;{{lesson.name}}</h5>
+                  <h5>&nbsp;&nbsp;&nbsp;{{lesson.tname}}</h5>
+              </ion-label>
+              <ion-button *ngIf="isTeacher == '1'" fill="clear" [routerLink]="['/course/edit-deatil']" style="margin-top: -40px;
+  width: 30px;">
+                  <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+          </ion-item>
+          <ion-row style="margin-block-end:10px;"></ion-row>
+      </ion-card>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content>
+  <ion-list>
+      <ion-item lines="none">
+          <ion-label slot="start">
+              <p>课程号</p>
+          </ion-label>
+          <ion-label slot="end">
+              <p>{{lesson.no}}</p>
+          </ion-label>
+      </ion-item>
+      <!-- <ion-item lines="none" routerLink="/create-success" [queryParams]="{lessonNo:lesson.no} "> -->
+        <ion-item lines="none" [routerLink]="['/course/create-success']">
+          <ion-label slot="start">
+              <p>课程二维码</p>
+          </ion-label>
+          <!-- <ion-label slot="end"> -->
+              <ion-icon slot="end" name="qr-code-outline" style="color: gray;"></ion-icon>
+          <!-- </ion-label> -->
+      </ion-item>
+      <ion-item lines="none" *ngIf="isTeacher == '1'">
+          <ion-label slot="start">
+              <p>允许加入</p>
+          </ion-label>
+          <ion-label slot="end">
+              <ion-toggle color="primary" (click)="updateJoin()" [(ngModel)]="lesson.checked"></ion-toggle>
+          </ion-label>
+      </ion-item>
+      <!-- <ion-item (click)="openPicker(1,schoolOptions,school,1)">
+          <ion-label>
+              <h3>学校</h3>
+              <p>{{schoolChoosed}}</p>
+          </ion-label>
+      </ion-item>
+      <ion-item (click)="openPicker(1,academyOptions,academy,0)">
+          <ion-label>
+              <h3>学院</h3>
+              <p>{{academyChoosed}}</p>
+          </ion-label>
+      </ion-item>
+      <ion-item (click)="openPicker(1,subjectOptions,subject,0)">
+        <ion-label>
+            <h3>专业</h3>
+            <p>{{subjcetChoosed}}</p>
+        </ion-label>
+    </ion-item> -->
+    <ion-item lines="none">
+      <ion-label slot="start">开设学校</ion-label>
+      <ion-label class="my_inf" slot="end" color="medium">未设置</ion-label>
+  </ion-item>
+  
+  <ion-item lines="none">
+      <ion-label slot="start">开设学院</ion-label>
+      <ion-label class="my_inf" slot="end" color="medium">未设置</ion-label>
+  </ion-item>
+
+  <ion-item lines="none">
+    <ion-label slot="start">开设专业</ion-label>
+    <ion-label class="my_inf" slot="end" color="medium">未设置</ion-label>
+</ion-item>
+
+<ion-item lines="none">
+  <ion-label slot="start">课程简介</ion-label>
+</ion-item>
+<div style="text-align:center;">
+  <textarea slot="center" class="my_textarea" placeholder="这是个课程简介"></textarea>
+</div>
+
+  </ion-list>
+
+<ion-item *ngIf="isTeacher == '1'" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
+    <ion-button class="lesson-btn" fill="clear" style="color:#7468be" [routerLink]="['/member-list']">成员列表</ion-button>
+</ion-item>
+<ion-item *ngIf="isTeacher == '1'" class="lesson-row" lines="none" style="border:solid 1px yellowgreen;">
+    <ion-button class="lesson-btn" fill="clear" style="color:yellowgreen" [routerLink]="['/checkin/course-checkin']">签到历史</ion-button>
+</ion-item>
+<ion-item *ngIf="isTeacher == '1'" class="lesson-row" lines="none" style="border:solid 1px green;">
+    <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin/create-checkin']">发起签到</ion-button>
+</ion-item>
+
+<ion-item *ngIf="isTeacher == '0'" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
+  <ion-button class="lesson-btn" fill="clear" style="color:#7468be" [routerLink]="['/member-list']">成员列表</ion-button>
+</ion-item>
+<ion-item *ngIf="isTeacher == '0'" class="lesson-row" lines="none" style="border:solid 1px green;">
+  <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin']">课程签到</ion-button>
+</ion-item>
+
+</ion-content>
