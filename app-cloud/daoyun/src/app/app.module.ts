@@ -10,6 +10,9 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
+import { Camera } from '@ionic-native/camera/ngx';
+import { ImagePicker } from '@ionic-native/image-picker/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -23,6 +26,8 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
   ],
   providers: [
     InAppBrowser,
+    Camera,
+    ImagePicker,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent],
