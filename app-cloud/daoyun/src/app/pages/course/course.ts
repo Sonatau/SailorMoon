@@ -6,8 +6,9 @@ export interface Course {
   school: string;
   academy: string;
   major: string;
+  teacher: string;
   schoolId: number;
   academyId: number;
   majorId: number;
-  teacher: string
+  teacherId: number;
 }

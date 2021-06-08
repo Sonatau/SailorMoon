@@ -12,6 +12,7 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 import { Camera } from '@ionic-native/camera/ngx';
 import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { QRCodeModule } from 'angular2-qrcode';
 
 @NgModule({
   declarations: [AppComponent],
@@ -23,6 +24,7 @@ import { ImagePicker } from '@ionic-native/image-picker/ngx';
     SharedModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    QRCodeModule
   ],
   providers: [
     InAppBrowser,

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-success',
@@ -7,9 +8,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class CreateSuccessPage implements OnInit {
 
-  constructor() { }
+  public code: string;
+  constructor(public activeRoute: ActivatedRoute,
+    public router: Router) {
+    this.code = this.activeRoute.snapshot.queryParams['code']
+  }
 
   ngOnInit() {
+  }
+
+  gotoDetail(){
+    this.router.navigate(['/course/course-detail'], {queryParams:{code: this.code} });
   }
 
 }

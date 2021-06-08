@@ -254,7 +254,8 @@ export class CreateCoursePage implements OnInit {
    * 上传图片
    * @returns {Promise<void>}
    */
-   async onPresentActiveSheet() {
+  async onPresentActiveSheet() {
+    this.covers = [];
     const actionSheet = await this.actionSheetCtrl.create({
       header: '选择您的操作',
       buttons: [
@@ -297,7 +298,6 @@ export class CreateCoursePage implements OnInit {
       // imageData is either a base64 encoded string or a file URI
       // If it's base64 (DATA_URL):
       const base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.covers = [];
       this.covers.push(base64Image);
     }, (err) => {
       // Handle error
@@ -318,7 +318,6 @@ export class CreateCoursePage implements OnInit {
       for (let i = 0; i < results.length; i++) {
         console.log('Image URI: ' + results[i]);
         let base64Image = 'data:image/jpeg;base64,' + results[i];
-        this.covers = [];
         this.covers.push(base64Image);
       }
     }, (err) => {console.log(err); });
@@ -339,13 +338,16 @@ export class CreateCoursePage implements OnInit {
         });
         toast.present();
       } else {
+        let image = this.covers[0];
+        if(image == null) image = "image_null";
         var param = {
-          //image: this.covers[0]
+          image: image,
           name: this.course_name,
           schoolId: this.schoolChoosed.id,
           acadeId: this.academyChoosed.id,
           majorId: this.majorChoosed.id
         };
+        console.log(param);
         var api = '/course';
         this.httpService.post(api, param).then(async (response: any) => {
           console.log(response);
@@ -358,7 +360,7 @@ export class CreateCoursePage implements OnInit {
                 text: '确认',
                 cssClass: 'secondary',
                 handler: (blah) => {
-                  this.router.navigate(['/course/create-success'], {queryParams:{course_code: this.course_code} });
+                  this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code} });
                 }
               }
             ]

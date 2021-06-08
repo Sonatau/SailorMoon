@@ -29,8 +29,8 @@ const routes: Routes = [
     loadChildren: () => import('./course-detail/course-detail.module').then( m => m.CourseDetailPageModule)
   },
   {
-    path: 'edit-deatil',
-    loadChildren: () => import('./edit-deatil/edit-deatil.module').then( m => m.EditDeatilPageModule)
+    path: 'edit-detail',
+    loadChildren: () => import('./edit-detail/edit-detail.module').then( m => m.EditDetailPageModule)
   },
 
 

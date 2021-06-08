@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-edit-deatil',
-  templateUrl: './edit-deatil.page.html',
-  styleUrls: ['./edit-deatil.page.scss'],
+  selector: 'app-edit-detail',
+  templateUrl: './edit-detail.page.html',
+  styleUrls: ['./edit-detail.page.scss'],
 })
-export class EditDeatilPage implements OnInit {
+export class EditDetailPage implements OnInit {
 
   lesson = {
     no: "8E2A7B",

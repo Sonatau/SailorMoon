@@ -20,11 +20,12 @@ export class HttpService {
       this.setToken(); 
       axios.get(this.commonUrl + api, {
         params: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
-          reject(error);
-        })
+        reject(error);
+      })
     })
   }
   getAll(api) {
@@ -36,6 +37,7 @@ export class HttpService {
         },
         method: 'get',
         url: this.commonUrl + api,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -47,7 +49,8 @@ export class HttpService {
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params
+        params: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
@@ -65,6 +68,7 @@ export class HttpService {
         method: 'post',
         url: this.commonUrl + api,
         data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -78,7 +82,8 @@ export class HttpService {
       this.setToken();
       axios({
         method: 'post',
-        url: this.commonUrl + api
+        url: this.commonUrl + api,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -92,7 +97,8 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -108,6 +114,7 @@ export class HttpService {
         method: 'post',
         url: api,
         data: params,
+        withCredentials: false
       }).then(function (response) {
         console.log(response);
         resolve(response);
@@ -127,6 +134,7 @@ export class HttpService {
         method: 'put',
         url: this.commonUrl + api,
         data: params,
+        withCredentials: false
       }).then(function (response) {
         // console.log(response);
         resolve(response);
@@ -147,7 +155,8 @@ export class HttpService {
         },
         method: 'patch',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -167,7 +176,8 @@ export class HttpService {
         },
         method: 'delete',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })

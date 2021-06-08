@@ -17,7 +17,7 @@
           <ion-thumbnail *ngFor="let image of covers">
             <img src={{image}}>
           </ion-thumbnail>
-          <ion-thumbnail slot="end" (click)="onPresentActiveSheet()" *ngIf="covers[0] == null">
+          <ion-thumbnail slot="end" (click)="onPresentActiveSheet()">
             <img src="assets/img/course/add.png">
           </ion-thumbnail>
         </ion-item-divider>
