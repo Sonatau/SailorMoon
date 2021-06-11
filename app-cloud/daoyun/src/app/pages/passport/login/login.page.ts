@@ -46,7 +46,6 @@ export class LoginPage implements OnInit {
     this.github_code = this.activatedRoute.snapshot.queryParams.code;
     console.log(this.github_code)
     if(this.github_code != null){
-      // var api = '/login-github';//后台接口
       var api = 'http://192.168.43.225:8080/login-github';
       var params = {//后台所需参数
           code: this.github_code

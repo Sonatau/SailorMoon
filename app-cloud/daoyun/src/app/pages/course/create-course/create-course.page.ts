@@ -5,7 +5,6 @@ import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AlertController, ToastController, PickerController, Platform, ActionSheetController } from '@ionic/angular';
 import { HttpService } from 'src/app/shared/services/http.service';
-// import { Course } from '../course';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
 
@@ -16,9 +15,8 @@ import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx'
 })
 export class CreateCoursePage implements OnInit {
 
-  // public course: Course;
   public course_name;
-  public covers = [];
+  public course_cover = "image_null";
   public course_code;
   schoolList = {
     total: 0,
@@ -32,7 +30,7 @@ export class CreateCoursePage implements OnInit {
     total: 0,
     majors: []
   }
-  public flag = 0;
+
   public schoolChoosed = {
     name: "请选择",
     id: -1
@@ -46,19 +44,6 @@ export class CreateCoursePage implements OnInit {
     id: -1
   }
 
-  //----------------------------------------------------------不知道有用无用可能要被删掉的-------------------------------------------//
-  selectedSchool: any;
-  selectedAcademy: string;
-  // courseList: any;
-  // course = [[]];
-  tempCourse: any;
-  term = [[]];
-  termOptions = 12;
-  courseOptions: number;
-  mark: any;
-  temp: any;
-  //-------------------------------------------------------------------------------------------------------------------------------//
-
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,
@@ -71,49 +56,13 @@ export class CreateCoursePage implements OnInit {
     private toastController: ToastController,
     public pickerController: PickerController,
     public platform: Platform
-  ) { 
-    // this.course = this.initCourse();
-  }
+  ) { }
 
   ngOnInit() { }
 
   ionViewWillEnter() {
-    //this.course = this.initCourse();
-    var param = {
-      page: 1
-    };
-    var api = '/school';
-    this.httpService.get(api, param).then(async (response: any) => {
-      //console.log(response);
-      for (let i = 0; i < response.data.data.total; i++) {
-        this.schoolList.schools.push({
-          schoolId: response.data.data.list[i].id,
-          schoolName: response.data.data.list[i].name
-        })
-      }
-      this.schoolList.total = response.data.data.total;
-      //console.log(this.schoolList);
-    })
+    this.setSchoolList();
   }
-
-  // /**
-  //  * 初始化课程
-  //  * @returns {Course}
-  //  */
-  //  initCourse(): Course {
-  //   return {
-  //     covers: [],
-  //     code: '',
-  //     name: '',
-  //     school: '',
-  //     academy: '',
-  //     major: '',
-  //     schoolId: null,
-  //     academyId: null,
-  //     majorId: null,
-  //     teacher: ''
-  //   };
-  // }
 
   //---------------------------------------------------------------------------------------------------------------------------//
   //------------------------------------------------请求学校/学院/专业列表------------------------------------------------------//
@@ -149,11 +98,11 @@ export class CreateCoursePage implements OnInit {
                 if (type == 1) {
                   this.schoolChoosed.name = selected[0].options[value.daoyun108.value].text;
                   this.schoolChoosed.id = selected[0].options[value.daoyun108.value].id;
-                  this.setNextOptions(type, this.schoolChoosed.id);
+                  this.setNextOptions(type);
                 } else if(type == 2) {
                   this.academyChoosed.name = selected[0].options[value.daoyun108.value].text;
                   this.academyChoosed.id = selected[0].options[value.daoyun108.value].id;
-                  this.setNextOptions(type, this.academyChoosed.id);
+                  this.setNextOptions(type);
                 } else {
                   this.majorChoosed.name = selected[0].options[value.daoyun108.value].text;
                   this.majorChoosed.id = selected[0].options[value.daoyun108.value].id;
@@ -202,7 +151,7 @@ export class CreateCoursePage implements OnInit {
     return columns;
   }
 
-  setNextOptions(type, parentid) {
+  setNextOptions(type) {
     if(type == 1) {
       this.academyList.academies = [];
       this.academyList.total = 0;
@@ -210,6 +159,7 @@ export class CreateCoursePage implements OnInit {
         name: "请选择",
         id: -1
       }
+      this.setAcademyList();
     }
     this.majorList.majors = [];
     this.majorList.total = 0;
@@ -217,32 +167,65 @@ export class CreateCoursePage implements OnInit {
       name: "请选择",
       id: -1
     }
+    if(type==2){
+      this.setMajorList();
+    }
+  }
+
+  setSchoolList(){
     var param = {
-      page: 1,
-      parentId: parentid
+      page: 1
     };
     var api = '/school';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
+      //console.log(response);
       for (let i = 0; i < response.data.data.total; i++) {
-        if(type == 1){
-          this.academyList.academies.push({
-            academyId: response.data.data.list[i].id,
-            academyName: response.data.data.list[i].name
-          })
-          this.academyList.total = response.data.data.total;
-        } else {
-          this.majorList.majors.push({
-            majorId: response.data.data.list[i].id,
-            majorName: response.data.data.list[i].name
-          })
-          this.majorList.total = response.data.data.total;
-        }
+        this.schoolList.schools.push({
+          schoolId: response.data.data.list[i].id,
+          schoolName: response.data.data.list[i].name
+        })
       }
-      // console.log(this.academyList);
-      // console.log(this.majorList);
+      this.schoolList.total = response.data.data.total;
+      //console.log(this.schoolList);
     })
   }
+
+  setAcademyList(){
+    var param = {
+      page: 1,
+      parentId: this.schoolChoosed.id
+    };
+    var api = '/school';
+    this.httpService.get(api, param).then(async (response: any) => {
+      //console.log(response);
+      for (let i = 0; i < response.data.data.total; i++) {
+        this.academyList.academies.push({
+          academyId: response.data.data.list[i].id,
+          academyName: response.data.data.list[i].name
+        })
+      }
+      this.academyList.total = response.data.data.total;
+    })
+  }
+
+  setMajorList(){
+    var param = {
+      page: 1,
+      parentId: this.academyChoosed.id
+    };
+    var api = '/school';
+    this.httpService.get(api, param).then(async (response: any) => {
+      //console.log(response);
+      for (let i = 0; i < response.data.data.total; i++) {
+        this.majorList.majors.push({
+          majorId: response.data.data.list[i].id,
+          majorName: response.data.data.list[i].name
+        })
+      }
+      this.majorList.total = response.data.data.total;
+    })
+  }
+
   //---------------------------------------------------------------------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -255,7 +238,6 @@ export class CreateCoursePage implements OnInit {
    * @returns {Promise<void>}
    */
   async onPresentActiveSheet() {
-    this.covers = [];
     const actionSheet = await this.actionSheetCtrl.create({
       header: '选择您的操作',
       buttons: [
@@ -295,12 +277,8 @@ export class CreateCoursePage implements OnInit {
       mediaType: this.camera.MediaType.PICTURE
     };
     this.camera.getPicture(options).then((imageData) => {
-      // imageData is either a base64 encoded string or a file URI
-      // If it's base64 (DATA_URL):
-      const base64Image = 'data:image/jpeg;base64,' + imageData;
-      this.covers.push(base64Image);
+      this.course_cover = 'data:image/jpeg;base64,' + imageData;
     }, (err) => {
-      // Handle error
     });
   }
 
@@ -316,9 +294,8 @@ export class CreateCoursePage implements OnInit {
     console.log('in imagePicker');
     this.imagePicker.getPictures(options).then((results) => {
       for (let i = 0; i < results.length; i++) {
-        console.log('Image URI: ' + results[i]);
-        let base64Image = 'data:image/jpeg;base64,' + results[i];
-        this.covers.push(base64Image);
+        //console.log('Image URI: ' + results[i]);
+        this.course_cover = 'data:image/jpeg;base64,' + results[i];
       }
     }, (err) => {console.log(err); });
   }
@@ -338,10 +315,8 @@ export class CreateCoursePage implements OnInit {
         });
         toast.present();
       } else {
-        let image = this.covers[0];
-        if(image == null) image = "image_null";
         var param = {
-          image: image,
+          image: this.course_cover,
           name: this.course_name,
           schoolId: this.schoolChoosed.id,
           acadeId: this.academyChoosed.id,

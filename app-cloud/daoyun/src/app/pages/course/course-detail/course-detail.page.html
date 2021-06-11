@@ -1,19 +1,19 @@
 <ion-header>
   <ion-toolbar color="primary">
       <ion-buttons slot="start">
-          <ion-button color="light" expand="block" fill="clear" shape="round" [routerLink]="['/tabs/course']">
+          <ion-button color="light" expand="block" fill="clear" shape="round" (click)="gotoCourse()">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
 
       <ion-title style="text-align:center;margin-right: 30px;">课程详情</ion-title>
 
-      <ion-buttons slot="end" *ngIf="isTeacher == '0'">
+      <ion-buttons slot="end" *ngIf="isTeacher == 0">
         <ion-button color="light" expand="block" fill="clear" shape="round" (click)="outLesson()">
             <ion-icon name="log-out-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
-    <ion-buttons slot="end" *ngIf="isTeacher == '1'">
+    <ion-buttons slot="end" *ngIf="isTeacher == 1">
         <ion-button color="light" expand="block" fill="clear" shape="round" (click)="deleteLesson()">
             <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
@@ -26,10 +26,10 @@
         <ion-row style="margin-top:10px;"></ion-row>
 
           <ion-item lines="none">
-              <ion-thumbnail class="thum" *ngIf="course.covers[0] != 'image_null'">
-                <img src={{course.covers[0]}}>
+              <ion-thumbnail class="thum" *ngIf="course.cover != 'image_null'">
+                <img src={{course.cover}}>
               </ion-thumbnail>
-              <ion-thumbnail class="thum" *ngIf="course.covers[0] == 'image_null'">
+              <ion-thumbnail class="thum" *ngIf="course.cover == 'image_null'">
                 <img src="assets/img/course/cover-default.jpg">
               </ion-thumbnail>
               <ion-label>
@@ -62,7 +62,8 @@
         <ion-label slot="start">
             <p>课程二维码</p>
         </ion-label>
-            <ion-icon slot="end" name="qr-code-outline" style="color: gray;"></ion-icon>
+        <ion-icon slot="end" name="qr-code-outline" style="color: gray;"></ion-icon>
+        <ion-icon slot="end" name="chevron-forward-outline" style="color:#7468be;"></ion-icon>
     </ion-item>
 
     <ion-item lines="none">

@@ -11,10 +11,14 @@ export class CreateSuccessPage implements OnInit {
   public code: string;
   constructor(public activeRoute: ActivatedRoute,
     public router: Router) {
-    this.code = this.activeRoute.snapshot.queryParams['code']
+    this.code = this.activeRoute.snapshot.queryParams['code'];
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter(){
+    this.code = this.activeRoute.snapshot.queryParams['code'];
   }
 
   gotoDetail(){

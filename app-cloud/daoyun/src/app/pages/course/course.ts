@@ -1,6 +1,7 @@
 // 课程模型
 export interface Course {
-  covers: string[];
+  id: number;
+  cover: string;
   code: string;
   name: string;
   school: string;

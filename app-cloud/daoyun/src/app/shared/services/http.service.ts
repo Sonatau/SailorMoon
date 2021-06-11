@@ -103,6 +103,7 @@ export class HttpService {
         resolve(response);
       })
         .catch(function (error) {
+          console.log(error);
           reject(error);
         });
     })
@@ -170,13 +171,8 @@ export class HttpService {
   delete(api, params) {
     return new Promise((resolve, reject) => {
       this.setToken();
-      axios({
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'delete',
-        url: this.commonUrl + api,
-        data: params,
+      axios.delete(this.commonUrl + api, {
+        params: params,
         withCredentials: false
       }).then(function (response) {
         resolve(response);
