@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { PickerController, AlertController, NavController } from '@ionic/angular';
+import { EventService } from 'src/app/shared/services/event.service';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { Course } from '../course';
 
@@ -27,7 +28,8 @@ export class CourseDetailPage implements OnInit {
     public pickerController: PickerController,
     private alertController: AlertController,
     //private statusBar: StatusBar,
-    public nav: NavController
+    public nav: NavController,
+    public eventService: EventService
   ) { }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -44,8 +46,12 @@ export class CourseDetailPage implements OnInit {
   ionViewWillEnter(){
     this.code = this.activatedRoute.snapshot.queryParams['code'];
     this.setCourse();
-    //console.log(this.course.cover);
+    console.log('course_detail-ionViewWillEnter');
 	}
+
+  ionViewWillLeave(){
+    this.eventService.eventEmit.emit('detail-change','详情页返回');
+  }
 
   /**
    * 初始化课程信息
@@ -71,14 +77,13 @@ export class CourseDetailPage implements OnInit {
   setCourse() {
     this.course.cover = "image_null";
     this.course.code = this.code;
-    
     var param = {
-      code: this.code,
+      name: this.code,
       page: 1
     };
     var api = '/course';
     this.httpService.get(api, param).then(async (response: any) => {
-      //console.log(response);
+      // console.log(response);
       this.course.id = response.data.data.list[0].id;
       this.course.name = response.data.data.list[0].name;
       this.course.school = response.data.data.list[0].school;
@@ -102,7 +107,7 @@ export class CourseDetailPage implements OnInit {
 //---------------------------------------------------------------------------------------------------------------------------//
 
 gotoQRcode(){
-  this.router.navigate(['/course/create-success'], {queryParams:{code: this.code} });
+  this.router.navigate(['/course/create-success'], {queryParams:{code: this.code, name: this.course.name} });
 }
 
 gotoEdit(){
@@ -110,7 +115,7 @@ gotoEdit(){
 }
 
 gotoCourse(){
-  this.nav.navigateRoot(['/tabs/course']);
+  this.router.navigate(['/tabs/course']);
 }
 
 async deleteLesson() {
@@ -128,10 +133,8 @@ async deleteLesson() {
           var params = {
             id: this.course.id
           }
-          //console.log(params);
           var api = '/course';
           this.httpService.delete(api, params).then(async (response: any) => {
-            //console.log(response);
             const alert = await this.alertController.create({
               message: '删除成功！',
               buttons: [{
@@ -150,47 +153,43 @@ async deleteLesson() {
   await alert.present();
 }
 
-  // async outLesson() {
-  //   const alert = await this.alertController.create({
-  //     header: '提示',
-  //     message: '是否确认退出？',
-  //     buttons: [
-  //       {
-  //         text: '取消',
-  //         role: 'cancel',
-  //         cssClass: 'medium'
-  //       }, {
-  //         text: '确认',
-  //         // handler: async () => {
-  //         //   var params = {
-  //         //     code: localStorage.getItem("lesson_no"),
-  //         //     email: localStorage.getItem("email")
-  //         //   }
-  //         //   var api = '/courses';
-  //         //   this.httpService.delete(api, params).then(async (response: any) => {
-  //         //     if (response.data.respCode == 1) {
-  //         //       const alert = await this.alertController.create({
-  //         //         // header: '提示',
-  //         //         message: '退出成功！',
-  //         //         buttons: [{
-  //         //           text: "确认",
-  //         //           handler: () => {
-  //         //             this.router.navigate(['/tabs/course'], {queryParams: {join: '1'}});
-  //         //           }
-  //         //         }]
-  //         //       });
-  //         //       await alert.present();
-  //         //     }
-  //         //   })
-  //         // }
-  //         handler: () => {
-  //           this.router.navigate(['/tabs/course'], {queryParams: {join: '1'}});
-  //         }
-  //       }
-  //     ]
-  //   });
-  //   await alert.present();
-    
-  // }
+async outLesson() {
+  const alert = await this.alertController.create({
+    header: '提示',
+    message: '是否确认退出？',
+    buttons: [
+      {
+        text: '取消',
+        role: 'cancel',
+        cssClass: 'medium'
+      }, {
+        text: '确认',
+        handler: async () => {
+          var params = {
+            id: this.course.id
+          }
+          var api = '/course-member';
+          this.httpService.delete(api, params).then(async (response: any) => {
+            if (response.data.respCode == 1) {
+              const alert = await this.alertController.create({
+                // header: '提示',
+                message: '退出成功！',
+                buttons: [{
+                  text: "确认",
+                  handler: () => {
+                    this.gotoCourse();
+                  }
+                }]
+              });
+              await alert.present();
+            }
+          })
+        }
+      }
+    ]
+  });
+  await alert.present();
+  
+}
 
 }

@@ -9,9 +9,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 export class CreateSuccessPage implements OnInit {
 
   public code: string;
+  public name: string;
   constructor(public activeRoute: ActivatedRoute,
     public router: Router) {
-    this.code = this.activeRoute.snapshot.queryParams['code'];
+    this.ionViewWillEnter();
   }
 
   ngOnInit() {
@@ -19,6 +20,7 @@ export class CreateSuccessPage implements OnInit {
 
   ionViewWillEnter(){
     this.code = this.activeRoute.snapshot.queryParams['code'];
+    this.name = this.activeRoute.snapshot.queryParams['name'];
   }
 
   gotoDetail(){

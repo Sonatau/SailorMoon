@@ -5,18 +5,20 @@
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title color="medium" style="text-align:center;">加入班课</ion-title>
-      <ion-buttons slot="end">
-          <ion-button color="medium" expand="block" fill="clear" shape="round" (click)="joinLesson()" [routerLink]="['/course/course-detail']">
-              <ion-label>下一步</ion-label>
-          </ion-button>
-      </ion-buttons>
+      <ion-title color="medium" style="text-align:center;">加入课程</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-item lines="none"></ion-item>
-  <ion-item lines="none">
-      <ion-input type="text" style="border-bottom: solid 1px #7468BE" placeholder="请输入班课号" [(ngModel)]="code"></ion-input>
-  </ion-item>
+    <form (ngSubmit)="onSubmit(codeForm)" #codeForm="ngForm" novalidate>
+        <ion-item lines="none"></ion-item>
+        <ion-item lines="none">
+            <ion-input name="code" type="text" style="border-bottom: solid 1px #7468BE" placeholder="请输入课程号"
+            [(ngModel)]="search_code" #code="ngModel" required pattern="^\d{7}$"></ion-input>
+        </ion-item>
+        <ion-row class="row">
+            <ion-button color="primary" type="submit" class="btn"
+            [disabled]="codeForm.invalid">一键加入</ion-button>
+        </ion-row>
+    </form>
 </ion-content>

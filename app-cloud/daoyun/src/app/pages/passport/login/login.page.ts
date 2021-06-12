@@ -199,8 +199,9 @@ export class LoginPage implements OnInit {
           else localStorage.setItem("course-admin", '0');
           if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
           else localStorage.setItem("checkin-admin", '0');
-          this.router.navigateByUrl('/tabs/course');
           localStorage.setItem("isLogin", "1");
+          localStorage.setItem("isQuik",'0');
+          this.router.navigateByUrl('/tabs/course');
           this.setLoginTime();
         } else{
           await loading.dismiss();
@@ -214,6 +215,7 @@ export class LoginPage implements OnInit {
       })
     }
   }
+
   //----------------------------------------------------------------------------------//
   //----------------------------------------------------------------------------------//
 

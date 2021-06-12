@@ -14,7 +14,7 @@
       <ion-list lines="full">
 
         <ion-item-divider color="light">
-          <ion-thumbnail *ngif="course_cover != image_null">
+          <ion-thumbnail *ngIf="course_cover != 'image_null'">
             <img src={{course_cover}}>
           </ion-thumbnail>
           <ion-thumbnail slot="end" (click)="onPresentActiveSheet()">

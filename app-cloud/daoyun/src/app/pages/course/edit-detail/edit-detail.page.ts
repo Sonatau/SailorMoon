@@ -7,6 +7,7 @@ import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { Course } from '../course';
+import { EventService } from 'src/app/shared/services/event.service';
 
 @Component({
   selector: 'app-edit-detail',
@@ -41,32 +42,46 @@ export class EditDetailPage implements OnInit {
     private alertController: AlertController,
     private toastController: ToastController,
     public pickerController: PickerController,
-    public platform: Platform
-  ) { }
+    public platform: Platform) { 
+  }
 
-  ngOnInit() {
+  ngOnInit() {  //初始化页面的时候调一次
     this.course = this.initCourse();
-    this.setCourse();
+    // console.log('edit_detail-ngOnInit');
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
   //------------------------------------------------初始：请求学校+课程信息------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
 
-  ionViewWillEnter() {
+  ionViewWillEnter() {  //每次进来都会调
+    this.initOption();
     this.setCourse();
-    this.setSchoolList();
-    this.setAcademyList();
-    this.setMajorList();
+    this.setOptions();
+    // console.log('edit-detail-ionViewWillEnter');
   }
 
-  setSchoolList(){
+  initOption(){
+    this.schoolList = {
+      total: 0,
+      schools: []
+    }
+    this.academyList = {
+      total: 0,
+      academies: []
+    }
+    this.majorList = {
+      total: 0,
+      majors: []
+    }
+  }
+
+  setOptions(){
     var param = {
       page: 1
     };
     var api = '/school';
     this.httpService.get(api, param).then(async (response: any) => {
-      //console.log(response);
       for (let i = 0; i < response.data.data.total; i++) {
         this.schoolList.schools.push({
           schoolId: response.data.data.list[i].id,
@@ -74,7 +89,7 @@ export class EditDetailPage implements OnInit {
         })
       }
       this.schoolList.total = response.data.data.total;
-      //console.log(this.schoolList);
+      this.setAcademyList();
     })
   }
 
@@ -85,7 +100,6 @@ export class EditDetailPage implements OnInit {
     };
     var api = '/school';
     this.httpService.get(api, param).then(async (response: any) => {
-      //console.log(response);
       for (let i = 0; i < response.data.data.total; i++) {
         this.academyList.academies.push({
           academyId: response.data.data.list[i].id,
@@ -93,6 +107,7 @@ export class EditDetailPage implements OnInit {
         })
       }
       this.academyList.total = response.data.data.total;
+      this.setMajorList();
     })
   }
 
@@ -103,7 +118,6 @@ export class EditDetailPage implements OnInit {
     };
     var api = '/school';
     this.httpService.get(api, param).then(async (response: any) => {
-      //console.log(response);
       for (let i = 0; i < response.data.data.total; i++) {
         this.majorList.majors.push({
           majorId: response.data.data.list[i].id,
@@ -138,12 +152,11 @@ export class EditDetailPage implements OnInit {
   setCourse() {
     this.course.code = this.activatedRoute.snapshot.queryParams['code'];
     var param = {
-      code: this.course.code,
+      name: this.course.code,
       page: 1
     };
     var api = '/course';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
       this.course.id = response.data.data.list[0].id;
       this.course.name = response.data.data.list[0].name;
       this.course.school = response.data.data.list[0].school;
@@ -156,7 +169,6 @@ export class EditDetailPage implements OnInit {
       this.course.majorId = response.data.data.list[0].majorId;
       this.course.teacherId = response.data.data.list[0].teacherId;
     });
-    //console.log(this.course);
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -186,7 +198,6 @@ export class EditDetailPage implements OnInit {
             text: '确认',
             handler: (value) => {
               var selected = this.getColumns(type);
-              //console.log(value);
               if (type == 1) {
                 this.course.school = selected[0].options[value.daoyun108.value].text;
                 this.course.schoolId = selected[0].options[value.daoyun108.value].id;
@@ -239,7 +250,6 @@ export class EditDetailPage implements OnInit {
         name: `daoyun108`,
         options: options
     });
-    //console.log(options);
     return columns;
   }
 
@@ -278,20 +288,17 @@ export class EditDetailPage implements OnInit {
           text: '拍照',
           role: 'destructive',
           handler: () => {
-            // console.log('进入相机');
             this.onCamera();
           }
         }, {
             text: '相册',
               handler: () => {
-              // console.log('进入相册');
               this.onImagePicker();
           }
         }, {
           text: '取消',
           role: 'cancel',
           handler: () => {
-            // console.log('Cancel clicked');
           }
         }
       ]
@@ -324,10 +331,8 @@ export class EditDetailPage implements OnInit {
       quality: 10,
       outputType: 1
     };
-    //console.log('in imagePicker');
     this.imagePicker.getPictures(options).then((results) => {
       for (let i = 0; i < results.length; i++) {
-        //console.log('Image URI: ' + results[i]);
         this.course.cover = 'data:image/jpeg;base64,' + results[i];
       }
     }, (err) => {console.log(err); });
@@ -356,10 +361,8 @@ export class EditDetailPage implements OnInit {
           acadeId: this.course.academyId,
           majorId: this.course.majorId,
         };
-        //console.log(param);
         var api = '/course';
         this.httpService.put(api, param).then(async (response: any) => {
-          //console.log(response);
           const alert = await this.alertController.create({
             message: '信息修改成功！',
             buttons: [

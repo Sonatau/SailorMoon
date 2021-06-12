@@ -13,13 +13,13 @@
   <ion-card style="text-align: center;border: solid 1px var(--ion-color-primary-tint);">
     <ion-card-header>
       <div>
-        <qr-code [value]=code size=200 level='L' mime='png'>
+        <qr-code [value]=code size='200' level='L' mime='png' foreground='#7468be'>
         </qr-code>
       </div>
     </ion-card-header>
     <ion-card-content>
       <ion-item lines="none" style="text-align: center;">
-        <ion-label style="font-size: 20px;">扫一扫，加入班课！</ion-label>
+        <ion-label style="font-size: 20px;">扫一扫，加入"{{name}}"！</ion-label>
       </ion-item>
     </ion-card-content>
   </ion-card>

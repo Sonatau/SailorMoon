@@ -324,7 +324,7 @@ export class CreateCoursePage implements OnInit {
         };
         console.log(param);
         var api = '/course';
-        this.httpService.post(api, param).then(async (response: any) => {
+        this.httpService.post_data(api, param).then(async (response: any) => {
           console.log(response);
           this.course_code = response.data.data.code;
           console.log(this.course_name);
@@ -335,7 +335,7 @@ export class CreateCoursePage implements OnInit {
                 text: '确认',
                 cssClass: 'secondary',
                 handler: (blah) => {
-                  this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code} });
+                  this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code, name: this.course_name });
                 }
               }
             ]

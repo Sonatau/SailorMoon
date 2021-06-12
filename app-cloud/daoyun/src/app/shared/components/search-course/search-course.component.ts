@@ -13,7 +13,6 @@ export class SearchCourseComponent implements OnInit {
 
   public courseType: string;
   public isTeacher: any;
-  public searchType = "";
   public target = "";
 
   public list = [];
@@ -21,8 +20,6 @@ export class SearchCourseComponent implements OnInit {
   public page = 1;
   public total = 0;
   public flag = 0;//标记当前用户的课程是否抓取完全
-
-  public params;
 
   constructor(public navParams: NavParams, public router: Router,
     public httpService: HttpService,
@@ -36,7 +33,10 @@ export class SearchCourseComponent implements OnInit {
       }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.initData();
+    // console.log("search-ngOnInit");
+  }
 
   dissmissSearch() {
     this.navParams.data.modal.dismiss();
@@ -48,34 +48,19 @@ export class SearchCourseComponent implements OnInit {
 
   getData($event) {
     this.initData();
-    if(isNaN($event.detail.value)==true){//存在数字外的字符
-      this.searchType = "name";
-    } else {  //输入的是纯数字
-      this.searchType = "code";
-    }
     this.target = $event.detail.value;
     this.getCourse();
+    // console.log("search-getData");
   }
 
   getCourse() {
-    if(this.searchType == "name"){
-      this.params = {
-        page: this.page,
-        name: this.target
-      }
-    } else if (this.searchType == "code"){
-      this.params = {
-        page: this.page,
-        code: this.target
-      }
-    } else {
-      this.params = {
-        page: this.page
-      }
+    var params = {
+      page: this.page,
+      name: this.target
     }
     var api = '/course';
-    this.httpService.get(api, this.params).then(async (response: any) => {
-      console.log(response);
+    this.httpService.get(api, params).then(async (response: any) => {
+      // console.log(response);
       this.total = response.data.data.total;
       if(response.data.data.list.length < this.page_max){
         this.flag = 1;
@@ -96,9 +81,8 @@ export class SearchCourseComponent implements OnInit {
 
   ionViewWillEnter(){
     this.initData();
-    this.searchType = "";
-    this.target = "";
     this.getCourse();
+    // console.log("search-ionViewWillEnter");
 	}
 
   initData(){
@@ -106,6 +90,7 @@ export class SearchCourseComponent implements OnInit {
     this.page = 1;
     this.total = 0;
     this.flag = 0;
+    this.target = "";
   }
 
   loadData(event) {

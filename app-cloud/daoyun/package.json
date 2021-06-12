@@ -19,15 +19,19 @@
     "@angular/platform-browser": "~11.2.0",
     "@angular/platform-browser-dynamic": "~11.2.0",
     "@angular/router": "~11.2.0",
+    "@ionic-native/barcode-scanner": "^5.33.1",
     "@ionic-native/camera": "^5.33.1",
     "@ionic-native/core": "^5.1.0",
     "@ionic-native/image-picker": "^5.33.1",
     "@ionic-native/in-app-browser": "^5.32.1",
+    "@ionic-native/qr-scanner": "^4.20.0",
     "@ionic/angular": "^5.5.2",
     "angular2-qrcode": "^2.0.3",
     "axios": "^0.21.1",
+    "eventemitter3": "^4.0.7",
     "ionic-native": "^2.9.0",
     "rxjs": "~6.6.0",
+    "rxjs-compat": "^6.6.7",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
@@ -60,6 +64,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "phonegap-plugin-barcodescanner": "^8.1.0",
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
@@ -78,7 +83,10 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-camera": {},
-      "cordova-plugin-telerik-imagepicker": {}
+      "cordova-plugin-telerik-imagepicker": {},
+      "phonegap-plugin-barcodescanner": {
+        "ANDROID_SUPPORT_V4_VERSION": "27.+"
+      }
     },
     "platforms": [
       "android"

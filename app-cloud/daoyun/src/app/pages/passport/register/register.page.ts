@@ -20,6 +20,7 @@ export class RegisterPage implements OnInit {
   public verify_code: string = '';
   public return_code = -1;  //1: 发送成功   -1: 发送失败
   public roleID: any; //1: 教师    2: 学生    0: 非法数据
+  public register_image: string = "image_null";
 
   verifyCode: any = {
     verifyCodeTips: "获取验证码",
@@ -111,6 +112,7 @@ export class RegisterPage implements OnInit {
         }else{
           var api = '/register';//-------------------------后台接口
           var params = {        //-------------------------后台参数
+            Image: this.register_image,
             email: this.register_email,
             password: this.register_password,
             name: this.register_name,
@@ -136,9 +138,9 @@ export class RegisterPage implements OnInit {
                 buttons: [{
                   text: '确认',
                   cssClass: 'primary',
-                        handler: (blah) => {
-                          this.router.navigateByUrl('/login');
-                        }
+                  handler: (blah) => {
+                    this.router.navigateByUrl('/login');
+                  }
                 }]
               });
               alert.present();

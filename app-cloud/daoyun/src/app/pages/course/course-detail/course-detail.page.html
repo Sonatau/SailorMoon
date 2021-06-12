@@ -83,7 +83,7 @@
 
   </ion-list>
 
-<ion-item *ngIf="isTeacher == 1" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
+<ion-item class="lesson-row" lines="none" style="border:solid 1px #7468be;">
     <ion-button class="lesson-btn" fill="clear" style="color:#7468be" [routerLink]="['/member-list']">成员列表</ion-button>
 </ion-item>
 <ion-item *ngIf="checkin_admin == 1" class="lesson-row" lines="none" style="border:solid 1px yellowgreen;">
@@ -93,9 +93,6 @@
     <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin/create-checkin']">发起签到</ion-button>
 </ion-item>
 
-<ion-item *ngIf="isTeacher == '0'" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
-  <ion-button class="lesson-btn" fill="clear" style="color:#7468be" [routerLink]="['/member-list']">成员列表</ion-button>
-</ion-item>
 <ion-item *ngIf="isTeacher == '0'" class="lesson-row" lines="none" style="border:solid 1px green;">
   <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin']">课程签到</ion-button>
 </ion-item>
