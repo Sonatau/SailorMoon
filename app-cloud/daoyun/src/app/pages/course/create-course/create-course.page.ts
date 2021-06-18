@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { isLoweredSymbol } from '@angular/compiler';
+import { isLoweredSymbol, ThrowStmt } from '@angular/compiler';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -7,6 +7,7 @@ import { AlertController, ToastController, PickerController, Platform, ActionShe
 import { HttpService } from 'src/app/shared/services/http.service';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { Course } from '../course';
 
 @Component({
   selector: 'app-create-course',
@@ -18,6 +19,10 @@ export class CreateCoursePage implements OnInit {
   public course_name;
   public course_cover = "image_null";
   public course_code;
+  //为了糊弄的赶工
+  public course_lesson;
+  public course_term = "2020-2021-2";
+
   schoolList = {
     total: 0,
     schools: []
@@ -43,6 +48,10 @@ export class CreateCoursePage implements OnInit {
     name: "请选择",
     id: -1
   }
+  public lessonChoosed = {
+    name: "请选择",
+    id: -1
+  }
 
   constructor(
     private router: Router,
@@ -62,6 +71,17 @@ export class CreateCoursePage implements OnInit {
 
   ionViewWillEnter() {
     this.setSchoolList();
+    //为了糊弄的赶工
+    if(localStorage.getItem("term")==null){
+      localStorage.setItem("term","2020-2021-2");
+      this.course_term = "2020-2021-2";
+    }else if (localStorage.getItem("term")=="2020-2021-2"){
+      localStorage.setItem("term","2021-2022-1");
+      this.course_term = "2021-2022-1";
+    }else{
+      localStorage.setItem("term","2020-2021-2");
+      this.course_term = "2020-2021-2";
+    }
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -231,7 +251,7 @@ export class CreateCoursePage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   //---------------------------------------------------------------------------------------------------------------------------//
-  //-----------------------------------------------------上传课程封面-----------------------------------------------------------//
+  //-----------------------------------------------------上传班课封面-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
   /**
    * 上传图片
@@ -304,11 +324,12 @@ export class CreateCoursePage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   //---------------------------------------------------------------------------------------------------------------------------//
-  //-------------------------------------------------------创建课程------------------------------------------------------------//
+  //-------------------------------------------------------创建班课------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
   async onCreate(form: NgForm) {
     if (form.valid) {
-      if(this.schoolChoosed.id==-1 || this.academyChoosed.id==-1 || this.majorChoosed.id==-1){
+      // if(this.schoolChoosed.id==-1 || this.academyChoosed.id==-1 || this.majorChoosed.id==-1){ 糊弄
+      if(this.schoolChoosed.id==-1 || this.academyChoosed.id==-1){
         let toast = await this.toastController.create({
           message: '请选择学校、学院、专业！',
           duration: 2000
@@ -320,7 +341,9 @@ export class CreateCoursePage implements OnInit {
           name: this.course_name,
           schoolId: this.schoolChoosed.id,
           acadeId: this.academyChoosed.id,
-          majorId: this.majorChoosed.id
+          // majorId: this.majorChoosed.id
+          //为了糊弄的赶工
+          majorId: 23
         };
         console.log(param);
         var api = '/course';
@@ -329,25 +352,72 @@ export class CreateCoursePage implements OnInit {
           this.course_code = response.data.data.code;
           console.log(this.course_name);
           const alert = await this.alertController.create({
-            message: '课程创建成功！',
+            message: '班课创建成功！',
             buttons: [
               {
                 text: '确认',
                 cssClass: 'secondary',
                 handler: (blah) => {
-                  this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code, name: this.course_name });
+                  this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code,
+                    name: this.course_name, lesson: "工程实践" }});
                 }
               }
             ]
           });
           await alert.present();
         });
+        //为了糊弄的赶工
+        if(this.course_lesson!=null){
+          localStorage.setItem("course_lesson", this.course_lesson);
+        }
+        localStorage.setItem("course_join", "1");
+        localStorage.setItem("course_status", "1");
       }
     }
   }
   //---------------------------------------------------------------------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
+
+  async openLessonPicker() {
+      const picker = await this.pickerController.create({
+        columns: this.getLessonColumns(),
+        buttons: [
+            {
+              text: '取消',
+              role: 'cancel'
+            },
+            {
+              text: '确认',
+              handler: (value) => {
+                var selected = this.getLessonColumns();
+                this.lessonChoosed.name = selected[0].options[value.daoyun108.value].text;
+                this.lessonChoosed.id = selected[0].options[value.daoyun108.value].id;
+              }
+            }
+        ]
+      });
+      await picker.present();
+  }
+
+  getLessonColumns() {
+    let options = [];
+    if(localStorage.getItem("course_lesson")!=null){
+      for (let i = 0; i < 1; i++){
+        options.push({
+          text: localStorage.getItem("course_lesson"),
+          value: i
+        })
+      }
+    }
+    let columns = [];
+    columns.push({
+        name: `daoyun108`,
+        options: options
+    });
+    //console.log(options);
+    return columns;
+  }
 
 
 }

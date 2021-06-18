@@ -54,21 +54,35 @@ export class JoinByCodePage implements OnInit {
           });
           alert.present();
         }else if(response.data.respCode == 1){
-          let alert = await this.alertController.create({
-            header: '提示',
-            message: '加入成功！',
-            buttons: [{
-              text: '确认',
-              cssClass: 'primary',
-                    handler: (blah) => {
+          // let alert = await this.alertController.create({
+          //   header: '提示',
+          //   message: '加入成功！',
+          //   buttons: [{
+          //     text: '确认',
+          //     cssClass: 'primary',
+          //           handler: (blah) => {
                       this.router.navigate(['/course/course-detail'], {queryParams:{code: this.search_code} });
-                    }
-            }]
-          });
-          alert.present();
+                      localStorage.setItem("inCourse", "0");
+          //           }
+          //   }]
+          // });
+          // alert.present();
         }
       });
     }
   }
 
 }
+
+// let alert = await this.alertController.create({
+//   header: '提示',
+//   message: '加入成功！',
+//   buttons: [{
+//     text: '确认',
+//     cssClass: 'primary',
+//           handler: (blah) => {
+//             this.router.navigate(['/course/course-detail'], {queryParams:{code: this.search_code} });
+//           }
+//   }]
+// });
+// alert.present();

@@ -112,7 +112,7 @@ export class RegisterPage implements OnInit {
         }else{
           var api = '/register';//-------------------------后台接口
           var params = {        //-------------------------后台参数
-            Image: this.register_image,
+            image: this.register_image,
             email: this.register_email,
             password: this.register_password,
             name: this.register_name,

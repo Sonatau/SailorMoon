@@ -81,7 +81,7 @@ export class MemberListPage implements OnInit {
     var api = '/courses/member';//后台接口
     this.httpService.get(api, params).then(async (response: any) => {
       await loading.dismiss();
-      if (response.data.respCode == "该课程没有学生") {
+      if (response.data.respCode == "该班课没有学生") {
         this.flag = '0';
       } else {
         this.flag = '1';
@@ -116,7 +116,7 @@ export class MemberListPage implements OnInit {
     this.httpService.get(api, params).then(async (response: any) => {
 
       await loading.dismiss();
-      if (response.data.respCode == "该课程没有学生") {
+      if (response.data.respCode == "该班课没有学生") {
         this.flag = '0';
       } else {
         this.flag = '1';

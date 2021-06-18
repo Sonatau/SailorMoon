@@ -25,6 +25,7 @@ export class RegisterPhonePage implements OnInit {
 
   public temp_name = "name_null";
   public temp_sno = -1;
+  public temp_image = "image_null";
 
   constructor(public httpService: HttpService,
     public http: HttpClient,
@@ -106,7 +107,8 @@ export class RegisterPhonePage implements OnInit {
             verificationCode: this.verify_code,
             roleId: this.roleID,
             name: this.temp_name,
-            sno: this.temp_sno
+            sno: this.temp_sno,
+            image: this.temp_image
           }
           console.log(params);
           this.httpService.post_withoutToken(api, params).then(async (response: any) => {
@@ -161,7 +163,6 @@ export class RegisterPhonePage implements OnInit {
           if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
           else localStorage.setItem("checkin-admin", '0');
           localStorage.setItem("isLogin", "1");
-          localStorage.setItem("isQuik",'1');
           this.router.navigateByUrl('/tabs/course');
           this.setLoginTime();
         } else{

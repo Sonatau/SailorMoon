@@ -1,4 +1,4 @@
-// 课程模型
+// 班课模型
 export interface Course {
   id: number;
   cover: string;
@@ -12,4 +12,9 @@ export interface Course {
   academyId: number;
   majorId: number;
   teacherId: number;
+
+  term: string;
+  join: string;
+  status: string;
+  lesson: string;
 }

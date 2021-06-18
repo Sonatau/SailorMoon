@@ -5,7 +5,7 @@
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title style="text-align:center;margin-right: 30px;">创建课程</ion-title>
+      <ion-title style="text-align:center;margin-right: 30px;">创建班课</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -23,7 +23,12 @@
         </ion-item-divider>
 
         <ion-item>
-          <ion-label slot="start">课程名称</ion-label>
+          <ion-label slot="start">班课学期</ion-label>
+          <ion-note class="my_inf" slot="end">{{course_term}}</ion-note>
+        </ion-item>
+
+        <ion-item>
+          <ion-label slot="start">班级名称</ion-label>
           <ion-input name="name" type="text" class="my_inf" slot="end"
             placeholder="未设置" [(ngModel)]="course_name" #name="ngModel" required>
           </ion-input>
@@ -39,14 +44,21 @@
           <ion-note class="my_inf" slot="end">{{academyChoosed.name}}</ion-note>
         </ion-item>
 
-        <ion-item (click)="openPicker(3)">
-          <ion-label slot="start">开设专业</ion-label>
-          <ion-note class="my_inf" slot="end">{{majorChoosed.name}}</ion-note>
+        <ion-item (click)="openLessonPicker()">
+          <ion-label slot="start">已有课程</ion-label>
+          <ion-note class="my_inf" slot="end">{{lessonChoosed.name}}</ion-note>
+        </ion-item>
+
+        <ion-item>
+          <ion-label slot="start">（或）新增课程</ion-label>
+          <ion-input name="lesson" type="text" class="my_inf" slot="end"
+            placeholder="未设置" [(ngModel)]="course_lesson" #lesson="ngModel">
+          </ion-input>
         </ion-item>
 
         <ion-row style="margin: top 30px;" class="row">
           <ion-button color="primary" type="submit" class="btn"
-          [disabled]="createForm.invalid"> 创建课程 </ion-button>
+          [disabled]="createForm.invalid"> 创建班课 </ion-button>
         </ion-row>
       </ion-list>
   </form>

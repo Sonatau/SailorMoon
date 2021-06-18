@@ -1,14 +1,14 @@
 <ion-header>
   <ion-toolbar>
-      <ion-title *ngIf="isTeacher==1" color="primary" style="text-align:left">我创建的课程列表</ion-title>
-      <ion-title *ngIf="isTeacher==0" color="primary" style="text-align:left">我加入的课程列表</ion-title>
+      <ion-title *ngIf="isTeacher==1" color="primary" style="text-align:left">我创建的班课列表</ion-title>
+      <ion-title *ngIf="isTeacher==0" color="primary" style="text-align:left">我加入的班课列表</ion-title>
       <ion-button slot="end" (click)="AddorCreate()" fill="clear">
           <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
   </ion-toolbar>
 
   <ion-toolbar>
-      <ion-searchbar class="searchbar" placeholder="通过课程名/课程号搜索" (click)="search()">
+      <ion-searchbar class="searchbar" placeholder="通过班课名/班课号搜索" (click)="search()">
       </ion-searchbar>
   </ion-toolbar>
 </ion-header>
@@ -38,7 +38,7 @@
 
                         <ion-col size="9">
                             <ion-label>
-                                <ion-text style="color: black;">&nbsp;&nbsp;&nbsp;{{item.name}}</ion-text>
+                                <ion-text style="color: black;">&nbsp;&nbsp;&nbsp;工程实践&nbsp;&nbsp;&nbsp;{{item.name}}</ion-text>
                                 <p>&nbsp;&nbsp;&nbsp;{{item.code}}&nbsp;&nbsp;&nbsp;{{item.teacher}}</p>
                             </ion-label>
                         </ion-col>

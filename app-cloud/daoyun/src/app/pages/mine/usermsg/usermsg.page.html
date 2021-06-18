@@ -5,7 +5,14 @@
             <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
+
       <ion-title style="text-align:center;">我的信息</ion-title>
+
+      <ion-buttons slot="end">
+        <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/mine/edit-usermsg']">
+            <ion-icon slot="end" name="create-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -69,9 +76,4 @@
       <ion-item lines="none">
       </ion-item>
   </ion-list>
-  <ion-row style="margin: top 30px;" class="row">
-    <ion-button class="btn" color="primary"
-    [routerLink]="['/mine/edit-usermsg']">修改个人信息
-    </ion-button>
-    </ion-row>
 </ion-content>

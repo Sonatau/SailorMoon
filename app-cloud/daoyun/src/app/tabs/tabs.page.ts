@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { HttpService } from '../shared/services/http.service';
 
 @Component({
   selector: 'app-tabs',
@@ -12,13 +13,11 @@ export class TabsPage {
   public flag: any;
 
   constructor(private alertController: AlertController,
-    public router: Router) {}
+    public router: Router,
+    public httpService: HttpService) {}
 
   ionViewWillEnter(){
-    this.flag = localStorage.getItem("isQuik");
-    if(this.flag == '1'){
-      this.warning();
-    }
+    this.checkUserInfo();
   }
 
   async warning(){
@@ -35,7 +34,17 @@ export class TabsPage {
       backdropDismiss: false
     });
     alert.present();
+  }
 
+  checkUserInfo(){
+    var api = '/userinfo';//后台接口
+    var params = { };
+    this.httpService.get(api, params).then(async (response: any) => {
+      console.log(response);
+      if(response.data.data.user.name == 'name_null'){
+        this.warning();
+      }
+    })
   }
 
 }

@@ -10,6 +10,7 @@ export class CreateSuccessPage implements OnInit {
 
   public code: string;
   public name: string;
+  public lesson: string;
   constructor(public activeRoute: ActivatedRoute,
     public router: Router) {
     this.ionViewWillEnter();
@@ -21,6 +22,7 @@ export class CreateSuccessPage implements OnInit {
   ionViewWillEnter(){
     this.code = this.activeRoute.snapshot.queryParams['code'];
     this.name = this.activeRoute.snapshot.queryParams['name'];
+    this.lesson = this.activeRoute.snapshot.queryParams['lesson'];
   }
 
   gotoDetail(){

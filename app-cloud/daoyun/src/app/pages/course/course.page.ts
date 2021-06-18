@@ -20,7 +20,8 @@ export class CoursePage implements OnInit {
   public page_max = 10;
   public page = 1;
   public total = 0;
-  public flag = 0;//标记当前用户的课程是否抓取完全
+  public flag = 0;//标记当前用户的班课是否抓取完全
+  public return_flag = 0;
 
   constructor(public httpService: HttpService,
     public http: HttpClient,
@@ -32,14 +33,20 @@ export class CoursePage implements OnInit {
     private alertController: AlertController,
     public eventService: EventService) { 
       this.eventService.eventEmit.on('detail-change',()=>{
-        // console.log('course-eventListener');
+        console.log('course-eventListener');
         this.initData();
+        this.return_flag = 1;
       })
     }
+
+  //糊弄
+  public join;
+  public status;
 
   ngOnInit() {
     this.isTeacher = localStorage.getItem("isTeacher");
     // console.log('course-ngOnInit');
+    // this.initData();
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -47,8 +54,11 @@ export class CoursePage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   ionViewWillEnter(){
-    this.initData();
-    // console.log('course-ionViewWillEnter');
+    // this.initData();
+    if(this.return_flag==0){
+      this.initData();
+    }
+    console.log('course-ionViewWillEnter');
 	}
 
   initData(){
@@ -57,6 +67,9 @@ export class CoursePage implements OnInit {
     this.total = 0;
     this.flag = 0;
     this.getCourse();
+    //糊弄
+    this.join = localStorage.getItem("course_join");
+    this.status = localStorage.getItem("course_status");
   }
 
   async getCourse() {
@@ -70,7 +83,7 @@ export class CoursePage implements OnInit {
     var api = '/course';
     this.httpService.get(api, params).then(async (response: any) => {
       await loading.dismiss();
-      // console.log(response);
+      console.log(response);
       this.total = response.data.data.total;
       if(response.data.data.list.length < this.page_max){
         this.flag = 1;
@@ -133,7 +146,7 @@ export class CoursePage implements OnInit {
         mode: "ios",
         buttons: [
           {
-            text: '创建课程',
+            text: '创建班课',
             handler: () => {
               this.router.navigateByUrl('/course/create-course');
             }
@@ -150,13 +163,13 @@ export class CoursePage implements OnInit {
         mode: "ios",
         buttons: [
           {
-            text: '使用课程号加入课程',
+            text: '使用班课号加入班课',
             handler: () => {
               this.router.navigateByUrl('/course/join-by-code');
             }
           },
           {
-            text: '使用二维码加入课程',
+            text: '使用二维码加入班课',
             handler: () => {
               this.onScan();
             }
@@ -206,18 +219,34 @@ export class CoursePage implements OnInit {
         });
         alert.present();
       }else if(response.data.respCode == 1){
-        let alert = await this.alertController.create({
-          header: '提示',
-          message: '加入成功！',
-          buttons: [{
-            text: '确认',
-            cssClass: 'primary',
-            handler: (blah) => {
-              this.router.navigate(['/course/course-detail'], {queryParams:{code: join_code} });
-            }
-          }]
-        });
-        alert.present();
+        if(this.join=="0"){
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: "该班课不允许加入",
+            buttons: ['确定']
+          });
+          alert.present();
+        } else if (this.status == "0"){
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: "该班课已结束",
+            buttons: ['确定']
+          });
+          alert.present();
+        }else {
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: '加入成功！',
+            buttons: [{
+              text: '确认',
+              cssClass: 'primary',
+              handler: (blah) => {
+                this.router.navigate(['/course/course-detail'], {queryParams:{code: join_code} });
+              }
+            }]
+          });
+          alert.present();
+        }
       }
     })
   }

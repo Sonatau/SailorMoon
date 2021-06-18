@@ -200,7 +200,6 @@ export class LoginPage implements OnInit {
           if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
           else localStorage.setItem("checkin-admin", '0');
           localStorage.setItem("isLogin", "1");
-          localStorage.setItem("isQuik",'0');
           this.router.navigateByUrl('/tabs/course');
           this.setLoginTime();
         } else{

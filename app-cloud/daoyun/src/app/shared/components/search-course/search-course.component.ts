@@ -19,7 +19,7 @@ export class SearchCourseComponent implements OnInit {
   public page_max = 10;
   public page = 1;
   public total = 0;
-  public flag = 0;//标记当前用户的课程是否抓取完全
+  public flag = 0;//标记当前用户的班课是否抓取完全
 
   constructor(public navParams: NavParams, public router: Router,
     public httpService: HttpService,

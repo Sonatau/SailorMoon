@@ -32,6 +32,11 @@ export class CourseDetailPage implements OnInit {
     public eventService: EventService
   ) { }
 
+  //糊弄
+  public toggle_join: boolean;
+  public toggle_status: boolean;
+  public inCourse;
+
   //---------------------------------------------------------------------------------------------------------------------------//
   //-----------------------------------------------------初始信息展示-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -47,6 +52,7 @@ export class CourseDetailPage implements OnInit {
     this.code = this.activatedRoute.snapshot.queryParams['code'];
     this.setCourse();
     console.log('course_detail-ionViewWillEnter');
+    this.inCourse = localStorage.getItem("inCourse");
 	}
 
   ionViewWillLeave(){
@@ -54,7 +60,7 @@ export class CourseDetailPage implements OnInit {
   }
 
   /**
-   * 初始化课程信息
+   * 初始化班课信息
    * @returns {Course}
    */
    initCourse(): Course {
@@ -70,7 +76,12 @@ export class CourseDetailPage implements OnInit {
       schoolId: -1,
       academyId: -1,
       majorId: -1,
-      teacherId: -1
+      teacherId: -1,
+      //为了糊弄的赶工
+      term: "2020-2021-2",
+      join: "1",
+      status: "1",
+      lesson: ""
     };
   }
 
@@ -96,6 +107,21 @@ export class CourseDetailPage implements OnInit {
       this.course.majorId = response.data.data.list[0].majorId;
       this.course.teacherId = response.data.data.list[0].teacherId;
     });
+    //为了赶工的糊弄
+    this.course.lesson = localStorage.getItem("course_lesson");
+    this.course.join = localStorage.getItem("course_join");
+    this.course.status = localStorage.getItem("course_status");
+    this.course.term = "2020-2021-2";
+    if(this.course.join == "1"){
+      this.toggle_join = true;
+    }else{
+      this.toggle_join = false;
+    }
+    if(this.course.status == "1"){
+      this.toggle_status = true;
+    }else{
+      this.toggle_status = false;
+    }
   }
 
 //---------------------------------------------------------------------------------------------------------------------------//
@@ -107,7 +133,8 @@ export class CourseDetailPage implements OnInit {
 //---------------------------------------------------------------------------------------------------------------------------//
 
 gotoQRcode(){
-  this.router.navigate(['/course/create-success'], {queryParams:{code: this.code, name: this.course.name} });
+  this.router.navigate(['/course/create-success'], {queryParams:{code: this.code,
+    name: this.course.name, lesson: "工程实践"} });
 }
 
 gotoEdit(){
@@ -182,6 +209,8 @@ async outLesson() {
                 }]
               });
               await alert.present();
+              //糊弄
+              localStorage.setItem("inCourse", "0");
             }
           })
         }
@@ -189,7 +218,47 @@ async outLesson() {
     ]
   });
   await alert.present();
-  
+}
+
+//糊弄
+updateJoin(){
+  if(this.course.join=='1'){
+    localStorage.setItem("course_join", "0");
+    this.course.join = '0';
+    this.toggle_join = false;
+  }else{
+    localStorage.setItem("course_join", "1");
+    this.course.join = '1';
+    this.toggle_join = true
+  }
+}
+
+updateStatus(){
+  if(this.course.status=='1'){
+    localStorage.setItem("course_status", "0");
+    this.course.status = '0';
+    this.toggle_status = false;
+  }else{
+    localStorage.setItem("course_status", "1");
+    this.course.status = '1';
+    this.toggle_status = true;
+  }
+}
+
+  async joinLesson(){
+  let alert = await this.alertController.create({
+  header: '提示',
+  message: '加入成功！',
+  buttons: [{
+    text: '确认',
+    cssClass: 'primary',
+    handler: (blah) => {
+      this.inCourse = "1";
+      localStorage.setItem("inCourse", "1");
+    }
+  }]
+});
+alert.present();
 }
 
 }
