@@ -49,9 +49,10 @@ export class RegisterPage implements OnInit {
       var params = {
         email: this.register_email,
       };
-      var api = '/sendCode';
+      var api = '/send-code';
+      console.log(params);
       this.httpService.get_withoutToken(api, params).then((response: any) => {
-        //console.log(response);
+        console.log(response);
         this.return_code = response.data.respCode;
         // console.log(this.return_code);
       })
@@ -117,9 +118,10 @@ export class RegisterPage implements OnInit {
             mailVerificationCode: this.verify_code,
             roleId: this.roleID
           }
-          //console.log(params);
-          this.httpService.post(api, params).then(async (response: any) => {
+          console.log(params);
+          this.httpService.post_withoutToken(api, params).then(async (response: any) => {
             await loading.dismiss();
+            console.log(response);
             if(response.data.respCode == -1){
               let alert = await this.alertController.create({
                 header: '提示',

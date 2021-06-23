@@ -7,8 +7,8 @@ import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HttpService } from './shared/services/http.service';
 import { SharedModule } from './shared/shared.module';
+import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
 @NgModule({
   declarations: [AppComponent],
@@ -19,12 +19,11 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     SharedModule,
     HttpClientModule,
-    HttpClientJsonpModule
+    HttpClientJsonpModule,
   ],
   providers: [
+    InAppBrowser,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    HttpService,
-
   ],
   bootstrap: [AppComponent],
 })

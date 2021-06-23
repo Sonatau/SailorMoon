@@ -1,5 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { NavController } from '@ionic/angular';
 import axios from 'axios';
 
 @Injectable({
@@ -7,10 +8,11 @@ import axios from 'axios';
 })
 export class HttpService {
 
-  constructor(public http: HttpClient) { }
+  constructor(public http: HttpClient, public navCtrl: NavController) { }
 
-  //commonUrl = 'http://47.93.231.158:8080';
-  commonUrl = 'http://localhost:8100/';
+  public commonUrl = 'http://47.93.231.158:8080';
+  //public commonUrl = 'http://localhost:8100/';
+  public headers:any;
   
   //获取数据
   get(api, params) {
@@ -20,8 +22,7 @@ export class HttpService {
         params: params,
       }).then(function (response) {
         resolve(response);
-      })
-        .catch(function (error) {
+      }).catch(function (error) {
           reject(error);
         })
     })
@@ -34,7 +35,7 @@ export class HttpService {
           'Content-Type': 'application/json'
         },
         method: 'get',
-        url: this.commonUrl + api
+        url: this.commonUrl + api,
       }).then(function (response) {
         resolve(response);
       })
@@ -46,13 +47,14 @@ export class HttpService {
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params,
+        params: params
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
         reject(error);
       })
     })
+
   }
 
   //新增数据
@@ -90,11 +92,28 @@ export class HttpService {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params,
+        data: params
       }).then(function (response) {
         resolve(response);
       })
         .catch(function (error) {
+          reject(error);
+        });
+    })
+  }
+
+  post_byURL(api, params) {
+    return new Promise((resolve, reject) => {
+      axios({
+        method: 'post',
+        url: api,
+        data: params,
+      }).then(function (response) {
+        console.log(response);
+        resolve(response);
+      })
+        .catch(function (error) {
+          console.log(error);
           reject(error);
         });
     })

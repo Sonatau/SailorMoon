@@ -1,0 +1,51 @@
+<ion-header>
+  <ion-toolbar>
+      <ion-buttons slot="start">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+              <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title style="text-align:center;margin-right: 30px;">课程签到</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  
+  <div class="my-circle" *ngIf="isTeacher == '1'">
+      <h3 style="position: relative;top: 15%;">签到中</h3>
+      <h5 style="margin-top: 30px;">55/95</h5>
+      <!-- <h5 style="margin-top: 30px;">{{checkinNum}}/{{totalNum}}</h5> -->
+  </div>
+  <div class="my-circle" *ngIf="isTeacher == '0'">
+    <h3 style="position: relative;top: 15%;">参与签到</h3>
+    <h5 style="margin-top: 30px;">00:43</h5>
+    <!-- <h5 style="margin-top: 30px;">{{checkinNum}}/{{totalNum}}</h5> -->
+  </div>
+</ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row *ngIf="isTeacher == '1'">
+        <ion-col class="col-btn" (click)="endCheckin()" [routerLink]="['/checkin/checkin-result']">
+            <ion-button fill="clear">结束签到</ion-button>
+        </ion-col>
+        <ion-col>
+            <div></div>
+        </ion-col>
+        <ion-col class="col-btn" (click)="giveup()" [routerLink]="['/course-detail']">
+            <ion-button fill="clear">取消签到</ion-button>
+        </ion-col>
+    </ion-row>
+    <ion-row *ngIf="isTeacher == '0'">
+        <ion-col class="col-btn" (click)="endCheckin()" [routerLink]="['/member-list/member-checkin']">
+            <ion-button fill="clear">签到记录</ion-button>
+        </ion-col>
+        <ion-col>
+            <div></div>
+        </ion-col>
+        <ion-col class="col-btn" [routerLink]="['/member-list']">
+            <ion-button fill="clear">成员列表</ion-button>
+        </ion-col>
+    </ion-row>
+</ion-grid>
+</ion-footer>
