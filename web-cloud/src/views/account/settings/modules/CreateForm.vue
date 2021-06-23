@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="新建数据字典"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -21,13 +21,36 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item v-show="model && model.id > 0" label="上级ID">
-          <a-input v-decorator="['parentId', { initialValue: 0 }]" disabled />
-        </a-form-item>
-        <a-form-item label="单位名称">
+        <a-form-item label="中文标识">
           <a-input
-            v-decorator="['name', { rules: [{ required: true, min: 2, message: '请输入至少两个字符的描述！' }] }]"
+            v-decorator="[
+              'znlabel',
+              {
+                rules: [
+                  {
+                    required: true,
+                    min: 2,
+                    max: 10,
+                    message: '请输入2-10个汉字的描述！',
+                    pattern: '^[\u4e00-\u9fa5]{0,}$'
+                  }
+                ]
+              }
+            ]"
           />
+        </a-form-item>
+        <a-form-item label="英文标识">
+          <a-input
+            v-decorator="[
+              'enlabel',
+              {
+                rules: [{ required: true, min: 3, max: 20, message: '请输入3-20个字母描述！', pattern: '^[A-Za-z]+$' }]
+              }
+            ]"
+          />
+        </a-form-item>
+        <a-form-item label="说明">
+          <a-textarea v-decorator="['description']" :auto-size="{ minRows: 3, maxRows: 5 }" />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -38,7 +61,7 @@
 import pick from 'lodash.pick'
 
 // 表单字段
-const fields = ['name', 'id', 'parentId']
+const fields = ['description', 'id', 'znlabel', 'enlabel']
 
 export default {
   props: {

@@ -124,6 +124,7 @@ export default {
         const requestParameters = Object.assign({}, parameter, this.queryParam)
         // console.log('loadData request parameters:', requestParameters)
         return getPerList(this.curPage, requestParameters.name).then(res => {
+          console.log(res, res.result)
           return res.result
         })
       },

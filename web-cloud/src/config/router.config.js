@@ -21,14 +21,14 @@ export const asyncRouterMap = [
         // name: 'permission',
         redirect: '/permission/PermissionList',
         component: RouteView,
-        meta: { title: 'menu.permission', keepAlive: true, icon: bxAnaalyse, permission: ['permission'] },
+        meta: { title: '权限管理', keepAlive: true, icon: bxAnaalyse, permission: ['permission'] },
         children: [
           {
             // 权限列表
             path: '/permission/PermissionList',
             name: 'PermissionList',
             component: () => import('@/views/permission/PermissionList'),
-            meta: { title: 'menu.permission.list', keepAlive: false, permission: ['permission'] }
+            meta: { title: '权限列表', keepAlive: false, permission: ['permission'] }
           },
           {
             // 新建权限
@@ -36,6 +36,54 @@ export const asyncRouterMap = [
             name: 'AddPermission',
             component: () => import('@/views/permission/AddPermission'),
             meta: { title: '添加权限', keepAlive: false, permission: ['permission'] }
+          }
+        ]
+      },
+      // 角色
+      {
+        path: '/UserRole',
+        // name: 'permission',
+        redirect: '/UserRole/RoleList',
+        component: RouteView,
+        meta: { title: '角色管理', keepAlive: true, icon: 'audit', permission: ['permission'] },
+        children: [
+          {
+            // 权限列表
+            path: '/UserRole/RoleList',
+            name: 'RoleList',
+            component: () => import('@/views/UserRole/RoleList'),
+            meta: { title: '角色列表', keepAlive: false, permission: ['permission'] }
+          },
+          {
+            path: '/UserRole/RolePower',
+            name: 'RolePower',
+            hidden: true,
+            component: () => import('@/views/UserRole/RolePower'),
+            meta: { title: '权限详情', hideHeader: true, permission: ['permission'] }
+          }
+        ]
+      },
+      // 学生/教师列表
+      {
+        path: '/list',
+        // name: 'permission',
+        redirect: '/list/StudentList',
+        component: RouteView,
+        meta: { title: '列表管理', keepAlive: true, icon: 'schedule', permission: ['permission'] },
+        children: [
+          {
+            // 权限列表
+            path: '/list/StudentList',
+            name: 'StudentList',
+            component: () => import('@/views/list/StudentList'),
+            meta: { title: '学生列表', keepAlive: false, permission: ['permission'] }
+          },
+          {
+            // 权限列表
+            path: '/list/TeacherList',
+            name: 'TeacherList',
+            component: () => import('@/views/list/TeacherList'),
+            meta: { title: '教师列表', keepAlive: false, permission: ['permission'] }
           }
         ]
       },
@@ -65,7 +113,7 @@ export const asyncRouterMap = [
             path: '/attendance/Setting',
             name: 'Setting',
             component: () => import('@/views/attendance/Setting'),
-            meta: { title: 'menu.attendance.setting', keepAlive: false, permission: ['attendance'] }
+            meta: { title: '系统参数', keepAlive: false, permission: ['attendance'] }
           },
           {
             // 签到详情查看
@@ -165,6 +213,13 @@ export const asyncRouterMap = [
             name: 'DataDictionary',
             component: () => import('@/views/account/settings/DataDictionary'),
             meta: { title: '数据字典', hideHeader: true, permission: ['setting'] }
+          },
+          {
+            path: '/account/settings/DictDetail',
+            name: 'DictDetail',
+            hidden: true,
+            component: () => import('@/views/account/settings/DictDetail'),
+            meta: { title: '数据项详情', hideHeader: true, permission: ['setting'] }
           }
         ]
       }

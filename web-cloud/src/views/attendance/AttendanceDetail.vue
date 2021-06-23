@@ -120,7 +120,7 @@
 <script>
 import moment from 'moment'
 import { STable, Ellipsis } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
+import { getServiceList } from '@/api/manage'
 
 import StepByStepModal from './modules/StepByStepModal'
 import CreateForm from './modules/CreateForm'
@@ -214,9 +214,7 @@ export default {
       return statusMap[type].status
     }
   },
-  created() {
-    getRoleList({ t: new Date() })
-  },
+  created() {},
   computed: {
     rowSelection() {
       return {

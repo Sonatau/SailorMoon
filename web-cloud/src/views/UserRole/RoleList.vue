@@ -3,17 +3,21 @@
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
-          <a-row :gutter="24">
+          <a-row :gutter="48">
             <a-col :md="8" :sm="24">
-              <a-form-item label="参数名称">
-                <a-input v-model="queryParam.name" placeholder="按名称查找" />
+              <a-form-item label="规则编号">
+                <a-input v-model="queryParam.name" placeholder="" />
               </a-form-item>
             </a-col>
-            <a-col :md="8" :sm="24">
-              <div class="table-operator">
-                <a-button type="default" @click="handleSearchByName">查找</a-button>
-                <a-button type="primary" icon="plus" @click="handleAdd">添加参数</a-button>
-              </div>
+
+            <a-col :md="(!advanced && 8) || 24" :sm="24">
+              <span
+                class="table-page-search-submitButtons"
+                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
+              >
+                <a-button type="primary" @click="$refs.table.refresh(true)" style="margin-right: 10px">查询</a-button>
+                <a-button type="primary" icon="plus" @click="handleAdd">新建</a-button>
+              </span>
             </a-col>
           </a-row>
         </a-form>
@@ -26,30 +30,33 @@
         :columns="columns"
         :data="loadData"
         :rowSelection="rowSelection"
-        :showPagination="pagination"
+        :showPagination="false"
       >
+        <span slot="id" slot-scope="text">
+          <ellipsis :length="10" tooltip>{{ text }}</ellipsis>
+        </span>
+        <span slot="name" slot-scope="text">
+          <ellipsis :length="15" tooltip>{{ text }}</ellipsis>
+        </span>
+        <span slot="state" slot-scope="text">
+          <a-badge :status="text | stateTypeFilter" :text="text | stateFilter" />
+        </span>
+        <span slot="roleDescribe" slot-scope="text">
+          <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
+        </span>
+
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">修改</a>
             <a-divider type="vertical" />
-            <a @click="handleDetail(record)">详情</a>
-            <a-divider type="vertical" />
-            <a-popconfirm title="是否要删除此行？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record.id)">
+            <a-popconfirm title="是否要删除此行？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
               <a>删除</a>
             </a-popconfirm>
+            <a-divider type="vertical" />
+            <a @click="PowerEdit(record)">权限设置</a>
           </template>
         </span>
       </s-table>
-
-      <a-row style="margin-top: 25px">
-        <div style="float: right">
-          第 {{ curPage }} 页
-          <a-button style="default; margin-right: 10px; margin-left: 10px" value="small" @click="lastPage">
-            <a-icon type="left" />上一页
-          </a-button>
-          <a-button style="default" value="small" @click="nextPage">下一页<a-icon type="right"/></a-button>
-        </div>
-      </a-row>
 
       <create-form
         ref="createModal"
@@ -58,86 +65,96 @@
         :model="mdl"
         @cancel="handleCancel"
         @ok="handleOk"
-        @blur="handleLoseBlur"
       />
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
-import { STable } from '@/components'
+import moment from 'moment'
+import { STable, Ellipsis } from '@/components'
+import { addRole, deleteRole, editRole, getListRole } from '@/api/manage'
 import CreateForm from './modules/CreateForm'
-import { addSystemParam, deleteSystemParam, getSystemParam, editSystemParam } from '@/api/manage'
-// import { getAllDict, addDict, editDict, delDict, queryDict } from '@/api/manage'
-// import { mapGetters } from 'vuex'
 
 const columns = [
   {
     title: 'ID',
-    dataIndex: 'id'
+    dataIndex: 'id',
+    scopedSlots: { customRender: 'id' }
   },
   {
-    title: '名称',
-    dataIndex: 'name'
+    title: '角色名称',
+    dataIndex: 'name',
+    scopedSlots: { customRender: 'name' }
   },
   {
-    title: '关键字',
-    dataIndex: 'keyWord'
+    title: '描述',
+    dataIndex: 'roleDescribe',
+    scopedSlots: { customRender: 'roleDescribe' }
   },
   {
-    title: '取值',
-    dataIndex: 'value'
+    title: '使用状态',
+    dataIndex: 'state',
+    scopedSlots: { customRender: 'state' }
   },
   {
     title: '操作',
     dataIndex: 'action',
-    width: '150px',
+    width: '200px',
     scopedSlots: { customRender: 'action' }
   }
 ]
 
-const systemParams = {
-  data: []
+const stateMap = {
+  0: {
+    state: 'default',
+    text: '关闭'
+  },
+  1: {
+    state: 'processing',
+    text: '运行中'
+  }
 }
 
 export default {
-  name: 'DataDictionary',
+  name: 'RoleList',
   components: {
     STable,
+    Ellipsis,
     CreateForm
   },
   data() {
     this.columns = columns
     return {
-      pagination: false,
-      allDict: [],
-      curPage: 1,
-      // 高级搜索 展开/关闭
-      advanced: false,
-      confirmLoading: false,
-      mdl: null,
       // create model
       visible: false,
+      confirmLoading: false,
+      mdl: null,
+      // 高级搜索 展开/关闭
+      advanced: false,
       // 查询参数
-      queryParam: {
-        name: ''
-      },
+      queryParam: {},
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        return getSystemParam({ page: parameter.pageNo }).then(res => {
-          console.log(parameter.pageNo)
-          systemParams.data = res.data.list
-          systemParams.respCode = res.data.respCode
-          return systemParams
+        const requestParameters = Object.assign({}, { page: parameter.pageNo })
+        console.log('loadData request parameters:', requestParameters)
+        return getListRole(requestParameters).then(res => {
+          return { data: res.data.list }
         })
       },
       selectedRowKeys: [],
       selectedRows: []
     }
   },
-  created() {
-    // getRoleList({ t: new Date() })
+  filters: {
+    stateFilter(type) {
+      return stateMap[type].text
+    },
+    stateTypeFilter(type) {
+      return stateMap[type].state
+    }
   },
+  created() {},
   computed: {
     rowSelection() {
       return {
@@ -147,22 +164,23 @@ export default {
     }
   },
   methods: {
-    // 添加
     handleAdd() {
       this.mdl = null
       this.visible = true
     },
-    handleLoseBlur() {
-      console.log('111')
+    handleEdit(record) {
+      this.visible = true
+      this.mdl = { ...record }
     },
     handleOk() {
       const form = this.$refs.createModal.form
       this.confirmLoading = true
       form.validateFields((errors, values) => {
         if (!errors) {
+          console.log('values', values)
           if (values.id > 0) {
-            // 修改系统参数
-            editSystemParam(values)
+            // 修改 e.g.
+            editRole(values)
               .then(res => {
                 if (res.respCode > 0) {
                   this.visible = false
@@ -171,18 +189,19 @@ export default {
                   form.resetFields()
                   // 刷新表格
                   this.$refs.table.refresh()
+
                   this.$message.success(res.msg)
                 } else {
-                  this.$message.error(res.msg)
                   this.confirmLoading = false
+                  this.$message.error(res.msg)
                 }
               })
               .catch(err => {
-                this.$error.err(err.msg)
+                this.$message.error(err.msg)
               })
           } else {
-            // 添加系统参数
-            addSystemParam(values)
+            // 新增
+            addRole(values)
               .then(res => {
                 if (res.respCode > 0) {
                   this.visible = false
@@ -191,14 +210,15 @@ export default {
                   form.resetFields()
                   // 刷新表格
                   this.$refs.table.refresh()
+
                   this.$message.success(res.msg)
                 } else {
-                  this.$message.error(res.msg)
                   this.confirmLoading = false
+                  this.$message.error(res.msg)
                 }
               })
               .catch(err => {
-                this.$error.err(err.msg)
+                this.$message.error(err.msg)
               })
           }
         } else {
@@ -212,29 +232,11 @@ export default {
       const form = this.$refs.createModal.form
       form.resetFields() // 清理表单数据（可不做）
     },
-
-    // 修改
-    handleEdit(record) {
-      this.visible = true
-      this.mdl = { ...record }
-    },
-
-    // 查看详情
-    handleDetail(record) {
-      this.$router.push({
-        path: '/account/settings/DictDetail',
-        query: record
-      })
-    },
-
-    // 删除
-    handleDelete(id) {
-      const form = this.$refs.createModal.form
-      deleteSystemParam({ id: id })
+    handleDelete(record) {
+      deleteRole({ id: record.id })
         .then(res => {
           if (res.respCode > 0) {
-            this.visible = false
-            this.confirmLoading = false
+            const form = this.$refs.createModal.form
             // 重置表单数据
             form.resetFields()
             // 刷新表格
@@ -242,37 +244,26 @@ export default {
             this.$message.success(res.msg)
           } else {
             this.$message.error(res.msg)
-            this.confirmLoading = false
           }
         })
         .catch(err => {
           this.$message.error(err.msg)
         })
     },
-
-    handleSearchByName() {
-      // 查找
-      this.$refs.table.refresh()
-    },
-    // 上一页
-    lastPage() {
-      if (this.curPage !== 1) {
-        this.curPage--
-        this.$refs.table.refresh()
-      }
-    },
-
-    // 下一页
-    nextPage() {
-      this.curPage++
-      this.$refs.table.refresh()
-    },
-
-    // 选择
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-      // console.log(this.selectedRowKeys.length)
+    },
+    toggleAdvanced() {
+      this.advanced = !this.advanced
+    },
+    resetSearchForm() {
+      this.queryParam = {
+        date: moment(new Date())
+      }
+    },
+    PowerEdit(record) {
+      this.$router.push({ path: '/UserRole/RolePower', query: record })
     }
   }
 }

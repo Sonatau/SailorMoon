@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="新建数据项"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -21,13 +21,48 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item v-show="model && model.id > 0" label="上级ID">
-          <a-input v-decorator="['parentId', { initialValue: 0 }]" disabled />
-        </a-form-item>
-        <a-form-item label="单位名称">
+        <a-form-item label="名称">
           <a-input
-            v-decorator="['name', { rules: [{ required: true, min: 2, message: '请输入至少两个字符的描述！' }] }]"
+            v-decorator="[
+              'name',
+              {
+                rules: [
+                  {
+                    required: true,
+                    min: 1,
+                    max: 10,
+                    pattern: '^[\u4e00-\u9fa5]{0,}$',
+                    message: '请输入10字以内的汉字描述！'
+                  }
+                ]
+              }
+            ]"
           />
+        </a-form-item>
+
+        <a-form-item label="取值">
+          <a-input
+            v-decorator="[
+              'value',
+              {
+                rules: [
+                  { required: true, min: 1, max: 3, pattern: '^[0-9]*[1-9][0-9]*$', message: '请输入1-3位有效的取值！' }
+                ]
+              }
+            ]"
+          />
+        </a-form-item>
+
+        <a-form-item
+          label="默认值"
+          :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
+          :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
+          :required="true"
+        >
+          <a-radio-group v-decorator="['isDefault', { initialValue: 0 }]">
+            <a-radio :value="0">非默认</a-radio>
+            <a-radio :value="1">默认</a-radio>
+          </a-radio-group>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -38,7 +73,7 @@
 import pick from 'lodash.pick'
 
 // 表单字段
-const fields = ['name', 'id', 'parentId']
+const fields = ['id', 'name', 'value', 'isDefault']
 
 export default {
   props: {

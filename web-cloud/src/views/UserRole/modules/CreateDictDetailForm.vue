@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    title="新建规则"
+    title="新建数据项"
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
@@ -21,13 +21,18 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item v-show="model && model.id > 0" label="上级ID">
-          <a-input v-decorator="['parentId', { initialValue: 0 }]" disabled />
-        </a-form-item>
-        <a-form-item label="单位名称">
-          <a-input
-            v-decorator="['name', { rules: [{ required: true, min: 2, message: '请输入至少两个字符的描述！' }] }]"
-          />
+        <a-form-item
+          label="权限选择"
+          :labelCol="{ lg: { span: 7 }, sm: { span: 7 } }"
+          :wrapperCol="{ lg: { span: 10 }, sm: { span: 17 } }"
+          :required="true"
+        >
+          <a-checkbox-group
+            v-decorator="['power', { rules: [{ required: true }] }]"
+            :options="options"
+            @change="onChange"
+          >
+          </a-checkbox-group>
         </a-form-item>
       </a-form>
     </a-spin>
@@ -36,9 +41,10 @@
 
 <script>
 import pick from 'lodash.pick'
+import { getPower } from '@/api/manage'
 
 // 表单字段
-const fields = ['name', 'id', 'parentId']
+const fields = ['id', 'permissionName']
 
 export default {
   props: {
@@ -67,10 +73,18 @@ export default {
       }
     }
     return {
+      options: [],
+      checkList: [],
       form: this.$form.createForm(this)
     }
   },
   created() {
+    getPower().then(res => {
+      const temp = res.data.list
+      for (var i in temp) {
+        this.options.push({ label: temp[i].permissionName, value: temp[i].id })
+      }
+    })
     console.log('custom modal created')
 
     // 防止表单未注册
@@ -80,6 +94,9 @@ export default {
     this.$watch('model', () => {
       this.model && this.form.setFieldsValue(pick(this.model, fields))
     })
+  },
+  methods: {
+    onChange() {}
   }
 }
 </script>

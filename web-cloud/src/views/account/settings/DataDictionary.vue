@@ -1,212 +1,217 @@
 <template>
   <page-header-wrapper>
     <a-card :bordered="false">
-      <div class="title">用户字段</div>
-      <s-table style="margin-bottom: 24px" row-key="id" :columns="DataColumns" :data="loadUsersData"> </s-table>
-    </a-card>
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="24">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="字典名称">
+                <a-input v-model="queryParam.name" placeholder="按中/英文名称查找" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <div class="table-operator">
+                <a-button type="default" @click="handleSearchByName">查找</a-button>
+                <a-button type="primary" icon="plus" @click="handleAdd">添加字典</a-button>
+              </div>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
-    <a-card :bordered="false">
-      <div class="title">机构字段</div>
-      <s-table style="margin-bottom: 24px" row-key="id" :columns="DataColumns" :data="loadInstitutionsData"> </s-table>
-    </a-card>
+      <s-table
+        ref="table"
+        size="default"
+        rowKey="id"
+        :columns="columns"
+        :data="loadData"
+        :rowSelection="rowSelection"
+        :showPagination="pagination"
+      >
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <!-- <a @click="handleEdit(record)">修改</a>
+            <a-divider type="vertical" /> -->
+            <a @click="handleDetail(record)">修改</a>
+            <a-divider type="vertical" />
+            <a-popconfirm title="是否要删除此行？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
+          </template>
+        </span>
+      </s-table>
 
-    <a-card :bordered="false">
-      <div class="title">签到字段</div>
-      <s-table style="margin-bottom: 24px" row-key="id" :columns="DataColumns" :data="loadAttendanceData"> </s-table>
+      <a-row style="margin-top: 25px">
+        <div style="float: right">
+          第 {{ curPage }} 页
+          <a-button style="default; margin-right: 10px; margin-left: 10px" value="small" @click="lastPage">
+            <a-icon type="left" />上一页
+          </a-button>
+          <a-button style="default" value="small" @click="nextPage">下一页<a-icon type="right"/></a-button>
+        </div>
+      </a-row>
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
 import { STable } from '@/components'
+import CreateForm from './modules/CreateForm'
+import { getAllDict, delDict, queryDict } from '@/api/manage'
+// import { mapGetters } from 'vuex'
+
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id'
+  },
+  {
+    title: '中文标识',
+    dataIndex: 'znlabel'
+  },
+  {
+    title: '英文标识',
+    dataIndex: 'enlabel'
+  },
+  {
+    title: '说明',
+    dataIndex: 'description'
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
+  }
+]
 
 export default {
+  name: 'DataDictionary',
   components: {
-    STable
+    STable,
+    CreateForm
   },
   data() {
+    this.columns = columns
     return {
-      DataColumns: [
-        {
-          title: '编号',
-          dataIndex: 'id',
-          key: 'id'
-        },
-        {
-          title: '列名',
-          dataIndex: 'name',
-          key: 'name'
-        },
-        {
-          title: '中文名称',
-          dataIndex: 'cname',
-          key: 'cname'
-        },
-        {
-          title: '数据类型',
-          dataIndex: 'dataType',
-          key: 'dataType'
-        },
-        {
-          title: '长度',
-          dataIndex: 'length',
-          key: 'length'
-        },
-        {
-          title: '备注',
-          dataIndex: 'note',
-          key: 'note'
-        }
-      ],
+      pagination: false,
+      allDict: [],
+      curPage: 1,
+      // 高级搜索 展开/关闭
+      advanced: false,
+      confirmLoading: false,
+      mdl: null,
+      // create model
+      visible: false,
+      // 查询参数
+      queryParam: {
+        name: ''
+      },
       // 加载数据方法 必须为 Promise 对象
-      loadUsersData: () => {
-        return new Promise(resolve => {
-          resolve({
-            data: [
-              {
-                id: 1,
-                name: 'id',
-                cname: '用户ID',
-                dataType: 'Int',
-                length: '25',
-                note: '主键'
-              },
-              {
-                id: 2,
-                name: 'name',
-                cname: '姓名',
-                dataType: 'nvarchar',
-                length: '10',
-                note: ''
-              },
-              {
-                id: 3,
-                name: 'sex',
-                cname: '性别',
-                dataType: 'nvarchar',
-                length: '3',
-                note: ''
-              },
-              {
-                id: 4,
-                name: 'email',
-                cname: '邮箱',
-                dataType: 'nvarchar',
-                length: '40',
-                note: ''
+      loadData: parameter => {
+        // requestParameters是所有查询条件
+        const requestParameters = {
+          page: parameter.pageNo,
+          name: this.queryParam.name
+        }
+        if (requestParameters.name === '') {
+          console.log('get all dictionary')
+          // 获取所有字典
+          return getAllDict(requestParameters)
+            .then(res => {
+              this.allDict = {
+                data: res.data.list,
+                respCode: res.respCode
               }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 4
+              return this.allDict
+            })
+            .catch(err => {
+              this.$message.error(err.msg)
+            })
+        } else {
+          console.log('query the dictionary')
+          return queryDict(requestParameters).then(res => {
+            return { data: res.data.list }
           })
-        }).then(res => {
-          return res
-        })
+        }
       },
-
-      loadInstitutionsData: () => {
-        return new Promise(resolve => {
-          resolve({
-            data: [
-              {
-                id: 1,
-                name: 'id',
-                cname: '学校ID',
-                dataType: 'Int',
-                length: '25',
-                note: '主键'
-              },
-              {
-                id: 2,
-                name: 'name',
-                cname: '学校名称',
-                dataType: 'nvarchar',
-                length: '25',
-                note: ''
-              },
-              {
-                id: 3,
-                name: 'college',
-                cname: '学院',
-                dataType: 'nvarchar',
-                length: '25',
-                note: ''
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 3
-          })
-        }).then(res => {
-          return res
-        })
-      },
-
-      loadAttendanceData: () => {
-        return new Promise(resolve => {
-          resolve({
-            data: [
-              {
-                id: 1,
-                name: 'id',
-                cname: '签到ID',
-                dataType: 'Int',
-                length: '25',
-                note: '主键'
-              },
-              {
-                id: 2,
-                name: 'name',
-                cname: '签到名称',
-                dataType: 'nvarchar',
-                length: '40',
-                note: ''
-              },
-              {
-                id: 3,
-                name: 'state',
-                cname: '状态',
-                dataType: 'Int',
-                length: '3',
-                note: ''
-              },
-              {
-                id: 4,
-                name: 'ratio',
-                cname: '出勤率',
-                dataType: 'nvarchar',
-                length: '10',
-                note: ''
-              }
-            ],
-            pageSize: 10,
-            pageNo: 1,
-            totalPage: 1,
-            totalCount: 4
-          })
-        }).then(res => {
-          return res
-        })
+      selectedRowKeys: [],
+      selectedRows: []
+    }
+  },
+  created() {
+    // getRoleList({ t: new Date() })
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange
       }
     }
   },
-  computed: {
-    title() {
-      return this.$route.meta.title
+  methods: {
+    // 添加
+    handleAdd() {
+      this.$router.push({
+        path: '/account/settings/DictDetail'
+      })
+    },
+    // 修改
+    handleEdit(record) {
+      this.visible = true
+      this.mdl = { ...record }
+    },
+
+    // 查看详情
+    handleDetail(record) {
+      this.$router.push({
+        path: '/account/settings/DictDetail',
+        query: record
+      })
+    },
+
+    // 删除
+    handleDelete(record) {
+      console.log('the user is trying to delete the record', record)
+      delDict(record)
+        .then(res => {
+          if (res.respCode > 0) {
+            this.$refs.table.refresh()
+            this.$message.success(res.msg)
+          } else {
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
+    },
+
+    handleSearchByName() {
+      // 查找
+      this.$refs.table.refresh()
+    },
+    // 上一页
+    lastPage() {
+      if (this.curPage !== 1) {
+        this.curPage--
+        this.$refs.table.refresh()
+      }
+    },
+
+    // 下一页
+    nextPage() {
+      this.curPage++
+      this.$refs.table.refresh()
+    },
+
+    // 选择
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+      // console.log(this.selectedRowKeys.length)
     }
-  },
-  methods: {}
+  }
 }
 </script>
-
-<style lang="less" scoped>
-.title {
-  color: rgba(0, 0, 0, 0.85);
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 16px;
-}
-</style>
