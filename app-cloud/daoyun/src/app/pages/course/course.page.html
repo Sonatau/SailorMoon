@@ -1,144 +1,99 @@
 <ion-header>
   <ion-toolbar>
-      <ion-title *ngIf="isTeacher=='1'" color="primary" style="text-align:left">我创建的班课列表</ion-title>
-      <ion-title *ngIf="isTeacher=='0'" color="primary" style="text-align:left">我加入的班课列表</ion-title>
+      <ion-title *ngIf="isTeacher==1" color="primary" style="text-align:left">我创建的班课列表</ion-title>
+      <ion-title *ngIf="isTeacher==0" color="primary" style="text-align:left">我加入的班课列表</ion-title>
       <ion-button slot="end" (click)="AddorCreate()" fill="clear">
           <ion-icon slot="icon-only" name="add"></ion-icon>
       </ion-button>
   </ion-toolbar>
 
   <ion-toolbar>
-      <ion-searchbar class="searchbar" *ngIf="isTeacher=='1'" placeholder="搜索" (click)="search('create')">
-      </ion-searchbar>
-      <ion-searchbar class="searchbar" *ngIf="isTeacher=='0'" placeholder="搜索" (click)="search('join')">
+      <ion-searchbar class="searchbar" placeholder="通过班课名/班课号搜索" (click)="search()">
       </ion-searchbar>
   </ion-toolbar>
-  
 </ion-header>
 
 <ion-content>
-  <ion-refresher *ngIf="flag=='1'" slot="fixed" (ionRefresh)="doRefresh($event)"></ion-refresher>
-  <div *ngIf="isTeacher=='1'">
-     <div *ngIf="flag=='1'">
-        <ion-list id="list" lines="full" *ngFor="let item of list;let i = index">
+    <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+        <ion-refresher-content 
+         pullingIcon="chevron-down">
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <div *ngIf="total!=0">
+        <ion-list id="list" lines="full" *ngFor="let item of list; let i=index">
+
             <ion-item style="width:100%">
                 <ion-grid>
-                    <ion-row>
+                    <ion-row (click)="gotodetail(i)">
+
                         <ion-col size="2">
-                            <ion-thumbnail class="thum" (click)="getCurrentLesson(i)" [routerLink]=" [ '/tabs/member'] " [queryParams]="{isFlash:'1'}">
-                                <ion-icon class="thum-icon" color="light" name="cloud-circle-outline"></ion-icon>
+                            <ion-thumbnail class="thum" *ngIf="item.image != 'image_null'">
+                                <img src={{item.image}}>
+                            </ion-thumbnail>
+                            <ion-thumbnail class="thum" *ngIf="item.image == 'image_null'">
+                                <img src="assets/img/course/cover-default.jpg">
                             </ion-thumbnail>
                         </ion-col>
-                        <ion-col size="6.5">
-                            <ion-label (click)="getCurrentLesson(i)" [routerLink]=" [ '/tabs/member'] " [queryParams]="{isFlash:'1'}">
-                                <h3>&nbsp;&nbsp;&nbsp;{{item.name}}</h3>
-                                <p>&nbsp;&nbsp;&nbsp;{{item.tname}}&nbsp;&nbsp;{{item.class}}</p>
-                                <p>&nbsp;&nbsp;&nbsp;{{item.term}}</p>
+
+                        <ion-col size="9">
+                            <ion-label>
+                                <ion-text style="color: black;">&nbsp;&nbsp;&nbsp;{{item.name}}</ion-text>
+                                <p>&nbsp;&nbsp;&nbsp;{{item.teacher}}&nbsp;&nbsp;&nbsp;{{item.term}}</p>
                             </ion-label>
                         </ion-col>
-                        <ion-col size="3.5">
-                            <ion-label style="margin-top: auto;padding-left:10px">
-                                <p>&nbsp;&nbsp;</p>
-                                <p (click)="getCurrentLesson(i)" [routerLink]=" [ '/tabs/member'] " [queryParams]="{isFlash:'1'}" style="color:#50c8ff">{{item.no}}</p>
-                                <ion-label style="text-align: -webkit-right;float: left;" (click)="gotoCheckin(i)">
-                                    <ion-icon name="shield-checkmark-outline"></ion-icon>
-                                </ion-label>
-                                <ion-label style="text-align: -webkit-left;" (click)="gotoCheckin(i)">
-                                    <p style="font-size: 12px;">发起签到</p>
-                                </ion-label>
-                            </ion-label>
+
+                        <ion-col size="1">
+                            <ion-icon solt="end" name="chevron-forward-outline" color="primary"
+                            style="margin-top: 50%; font-size: large;"></ion-icon>
                         </ion-col>
+
                     </ion-row>
                 </ion-grid>
             </ion-item>
+
         </ion-list>
-        <ion-item *ngIf="endflag=='1'" lines="none">
+
+        <ion-item *ngIf="flag==1" lines="none">
             <ion-label style="text-align: center;">
                  <p>你已经看到我的底线啦~</p>
             </ion-label>
         </ion-item>
+
         <ion-infinite-scroll threshold="10%" id="infinite-scroll" (ionInfinite)="loadData($event)">
-            <ion-infinite-scroll-content loading-spinner="bubbles" loading-text="加载中..."></ion-infinite-scroll-content>
+            <ion-infinite-scroll-content
+                loading-spinner="bubbles" loading-text="加载中...">
+            </ion-infinite-scroll-content>
         </ion-infinite-scroll>
+
     </div>
-    <div *ngIf="flag=='0'">
+
+    <div *ngIf="total==0 && flag==1">
         <ion-grid>
             <ion-item lines="none"></ion-item>
             <ion-item lines="none"></ion-item>
+            
             <ion-row>
                 <ion-col></ion-col>
                 <ion-col><img src="assets/img/components/empty.png"></ion-col>
                 <ion-col></ion-col>
             </ion-row>
+
             <ion-row>
                 <ion-col>
-                    <ion-label style="text-align: center;">
+                    <ion-label style="text-align: center;" *ngIf="isTeacher==1">
                         <p>你还没有创建班课</p>
                         <p>快点击右上方相应图标创建班课吧~</p>
                     </ion-label>
+                    <ion-label style="text-align: center;" *ngIf="isTeacher==0">
+                        <p>你还没有加入班课</p>
+                        <p>快点击右上方相应图标加入班课吧~</p>
+                    </ion-label>
                 </ion-col>
             </ion-row>
+
         </ion-grid>
-      </div>
+
     </div>
-
-    <div *ngIf="isTeacher=='0'">
-        <div *ngIf="flag == '1'">
-            <ion-list lines="full" *ngFor="let item of list1;let i = index">
-                <ion-item style="width:100%">
-                    <ion-grid>
-                        <ion-row>
-                            <ion-col size="2">
-                                <ion-thumbnail class="thum" (click)="getCurrentLesson(i)" [routerLink]=" [ '/tabs/member'] " [queryParams]="{isFlash:'1'}">
-                                    <ion-icon class="thum-icon " color="light " name="cloud-circle-outline"></ion-icon>
-                                </ion-thumbnail>
-                            </ion-col>
-                            <ion-col size="7">
-                                <ion-label (click)="getCurrentLesson(i)" [routerLink]=" [ '/tabs/member'] " [queryParams]="{isFlash:'1'}">
-                                    <h3>&nbsp;&nbsp;&nbsp;{{item.name}}</h3>
-                                    <p>&nbsp;&nbsp;&nbsp;{{item.tname}}&nbsp;&nbsp;{{item.class}}</p>
-                                </ion-label>
-                            </ion-col>
-                            <ion-col size="3">
-                                <ion-label [routerLink]="['/student-checkin']" style="text-align: end;">
-                                    <h3>&nbsp;&nbsp;&nbsp;</h3>
-                                    <p [routerLink]="['/student-checkin']"><ion-icon name="shield-checkmark-outline"></ion-icon>签到</p>
-                                </ion-label>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-item>
-            </ion-list>
-            <ion-item *ngIf="endflag=='1'" lines="none">
-                <ion-label style="text-align: center;">
-                    <p>你已经看到我的底线啦~</p>
-                </ion-label>
-            </ion-item>
-            <ion-infinite-scroll threshold="10% " id="infinite-scroll " (ionInfinite)="loadData($event) ">
-                <ion-infinite-scroll-content loading-spinner="bubbles " loading-text="加载中... ">
-                </ion-infinite-scroll-content>
-            </ion-infinite-scroll>
-        </div>
-        <div *ngIf="flag=='0'">
-            <ion-grid>
-                <ion-item lines="none"></ion-item>
-                <ion-item lines="none"></ion-item>
-                <ion-row>
-                    <ion-col></ion-col>
-                    <ion-col><img src="assets/img/components/empty.png"></ion-col>
-                    <ion-col></ion-col>
-                </ion-row>
-                <ion-row>
-                    <ion-col>
-                        <ion-label style="text-align: center;">
-                            <p>你还没有加入班课</p>
-                            <p>快点击右上方相应图标加入班课吧~</p>
-                        </ion-label>
-                    </ion-col>
-                </ion-row>
-            </ion-grid>
-        </div>
-    </div>
-
-
+    
 </ion-content>

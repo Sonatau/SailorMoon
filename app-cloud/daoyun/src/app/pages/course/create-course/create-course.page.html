@@ -12,53 +12,59 @@
 <ion-content>
   <form (ngSubmit)="onCreate(createForm)" #createForm="ngForm" novalidate>
       <ion-list lines="full">
-          <!-- <ion-item slot="center" class="show_cover" lines="none">
-            <img src="assets/img/course/cover-default.jpg">
-          </ion-item>
-          <ion-item>
-            <ion-label slot="start">课程封面</ion-label>
-            <ion-note slot="end" style="font-size: 14px">点击图片上传封面</ion-note>
-          </ion-item> -->
+ 
+        <ion-item-divider color="stable">
+          <!-- <ion-thumbnail *ngIf="course_cover != 'image_null'" slot="start"> -->
+            <img *ngIf="course_cover != 'image_null'" slot="start" class="cover_img"
+              src={{course_cover}}>
+          <!-- </ion-thumbnail> -->
+          <!-- <ion-thumbnail slot="start" (click)="onPresentActiveSheet()"> -->
+            <img *ngIf="course_cover == 'image_null'" slot="start" class="cover_img"
+            (click)="addPicture()" src="assets/img/course/add.png">
+          <!-- </ion-thumbnail> -->
+        </ion-item-divider>
 
-          <ion-item-divider color="light">
-            <ion-thumbnail *ngFor="let image of course.covers">
-              <img *ngIf="images != null" src="{{image}}">
-            </ion-thumbnail>
-            <ion-note slot="end" style="font-size: 15px">上传图片请小于1M</ion-note>
-          </ion-item-divider>
-
-          <ion-item>
-              <ion-label slot="start">课程名称</ion-label>
-              <ion-input name="name" type="text" class="my_inf" slot="end"
-                placeholder="未设置" [(ngModel)]="course_name" #name="ngModel">
-              </ion-input>
-          </ion-item>
-
-          <ion-item>
-            <ion-label slot="start">开设学校</ion-label>
-            <ion-input name="school" type="text" class="my_inf" slot="end"
-              placeholder="未设置" [(ngModel)]="course_school" #school="ngModel">
-            </ion-input>
-        </ion-item>
-        
-        <ion-item>
-            <ion-label slot="start">开设学院</ion-label>
-            <ion-input name="academy" type="text" class="my_inf" slot="end"
-              placeholder="未设置" [(ngModel)]="course_academy" #academy="ngModel">
-            </ion-input>
+        <ion-item (click)="openPicker(0,'term')">
+          <ion-label slot="start">班课学期</ion-label>
+          <ion-note class="my_inf" slot="end">{{termChoosed.name}}</ion-note>
         </ion-item>
 
+        <ion-item (click)="openPicker(0, 'lesson')">
+          <ion-label slot="start">选择已有课程</ion-label>
+          <ion-note class="my_inf" slot="end">{{lessonChoosed.name}}</ion-note>
+        </ion-item>
         <ion-item>
-          <ion-label slot="start">开设专业</ion-label>
-          <ion-input name="subject" type="text" class="my_inf" slot="end"
-            placeholder="未设置" [(ngModel)]="course_subject" #academy="ngModel">
+          <ion-label slot="start">(或)自定义课程</ion-label>
+          <ion-input name="lesson" type="text" class="my_inf" slot="end"
+            placeholder="未设置" [(ngModel)]="course_lesson" #lesson="ngModel">
+          </ion-input>
+        </ion-item>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="(lesson.touched) && (course_lesson==null && lessonChoosed.name=='请选择')">
+            <p class="warn" padding-start>请选择课程或自定义课程！</p>
+          </ion-text>
+        </div>
+
+        <ion-item>
+          <ion-label slot="start">班级名称</ion-label>
+          <ion-input name="name" type="text" class="my_inf" slot="end"
+            placeholder="未设置" [(ngModel)]="course_name" #name="ngModel" required>
           </ion-input>
         </ion-item>
 
+        <ion-item (click)="openPicker(0, 'school')">
+          <ion-label slot="start">开设学校</ion-label>
+          <ion-note class="my_inf" slot="end">{{schoolChoosed.name}}</ion-note>
+        </ion-item>
+
+        <ion-item (click)="openPicker(1, 'academy')">
+          <ion-label slot="start">开设学院</ion-label>
+          <ion-note class="my_inf" slot="end">{{academyChoosed.name}}</ion-note>
+        </ion-item>
+
         <ion-row style="margin: top 30px;" class="row">
-          <ion-button class="btn" type="submit" color="primary" [disabled]="createForm.invalid"
-          [routerLink]="['/course/create-success']">创建班课
-          </ion-button>
+          <ion-button color="primary" type="submit" class="btn"
+          [disabled]="createForm.invalid"> 创建班课 </ion-button>
         </ion-row>
       </ion-list>
   </form>

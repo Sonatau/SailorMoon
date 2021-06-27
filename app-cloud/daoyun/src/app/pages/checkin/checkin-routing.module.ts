@@ -20,6 +20,7 @@ const routes: Routes = [
     path: 'course-checkin',
     loadChildren: () => import('./course-checkin/course-checkin.module').then( m => m.CourseCheckinPageModule)
   }
+
 ];
 
 @NgModule({

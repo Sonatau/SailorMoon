@@ -20,34 +20,33 @@ export class HttpService {
       this.setToken(); 
       axios.get(this.commonUrl + api, {
         params: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
-          reject(error);
-        })
+        reject(error);
+      })
     })
   }
-  getAll(api) {
+  
+  get_withoutParams(api) {
     return new Promise((resolve, reject) => {
-      this.setToken();
-      axios({
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'get',
-        url: this.commonUrl + api,
+      this.setToken(); 
+      axios.get(this.commonUrl + api, {
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
+      }).catch(function (error) {
+        reject(error);
       })
-        .catch(function (error) {
-          reject(error);
-        })
     })
   }
+
   get_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios.get(this.commonUrl + api, {
-        params: params
+        params: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       }).catch(function (error) {
@@ -58,45 +57,53 @@ export class HttpService {
   }
 
   //新增数据
-  post(api, params) {
+  post_params(api, params) {
     return new Promise((resolve, reject) => {
       this.setToken();
-      axios({
-        method: 'post',
-        url: this.commonUrl + api,
-        data: params,
-      }).then(function (response) {
-        resolve(response);
-      })
-        .catch(function (error) {
-          reject(error);
-        });
+        axios({
+          method: 'post',
+          url: this.commonUrl + api,
+          params: params,
+          data: params,
+          withCredentials: false
+        }).then(function (response) {
+          resolve(response);
+        })
+          .catch(function (error) {
+            reject(error);
+          }); 
     })
   }
-  postAll(api) {
+
+  post_data(api, params) {
     return new Promise((resolve, reject) => {
       this.setToken();
-      axios({
-        method: 'post',
-        url: this.commonUrl + api
-      }).then(function (response) {
-        resolve(response);
-      })
-        .catch(function (error) {
-          reject(error);
-        });
+        axios({
+          method: 'post',
+          url: this.commonUrl + api,
+          data: params,
+          withCredentials: false
+        }).then(function (response) {
+          resolve(response);
+        })
+          .catch(function (error) {
+            reject(error);
+          }); 
     })
   }
+
   post_withoutToken(api, params) {
     return new Promise((resolve, reject) => {
       axios({
         method: 'post',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
         .catch(function (error) {
+          console.log(error);
           reject(error);
         });
     })
@@ -108,6 +115,7 @@ export class HttpService {
         method: 'post',
         url: api,
         data: params,
+        withCredentials: false
       }).then(function (response) {
         console.log(response);
         resolve(response);
@@ -127,6 +135,7 @@ export class HttpService {
         method: 'put',
         url: this.commonUrl + api,
         data: params,
+        withCredentials: false
       }).then(function (response) {
         // console.log(response);
         resolve(response);
@@ -147,7 +156,8 @@ export class HttpService {
         },
         method: 'patch',
         url: this.commonUrl + api,
-        data: params
+        data: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })
@@ -161,13 +171,9 @@ export class HttpService {
   delete(api, params) {
     return new Promise((resolve, reject) => {
       this.setToken();
-      axios({
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'delete',
-        url: this.commonUrl + api,
-        data: params
+      axios.delete(this.commonUrl + api, {
+        params: params,
+        withCredentials: false
       }).then(function (response) {
         resolve(response);
       })

@@ -17,10 +17,6 @@ const routes: Routes = [
     loadChildren: () => import('./join-by-code/join-by-code.module').then( m => m.JoinByCodePageModule)
   },
   {
-    path: 'join-by-qr',
-    loadChildren: () => import('./join-by-qr/join-by-qr.module').then( m => m.JoinByQrPageModule)
-  },
-  {
     path: 'create-success',
     loadChildren: () => import('./create-success/create-success.module').then( m => m.CreateSuccessPageModule)
   },
@@ -29,8 +25,8 @@ const routes: Routes = [
     loadChildren: () => import('./course-detail/course-detail.module').then( m => m.CourseDetailPageModule)
   },
   {
-    path: 'edit-deatil',
-    loadChildren: () => import('./edit-deatil/edit-deatil.module').then( m => m.EditDeatilPageModule)
+    path: 'edit-detail',
+    loadChildren: () => import('./edit-detail/edit-detail.module').then( m => m.EditDetailPageModule)
   },
 
 

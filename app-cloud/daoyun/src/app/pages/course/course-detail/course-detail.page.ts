@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { PickerController, AlertController } from '@ionic/angular';
+import { PickerController, AlertController, NavController, LoadingController, ActionSheetController } from '@ionic/angular';
+import { EventService } from 'src/app/shared/services/event.service';
 import { HttpService } from 'src/app/shared/services/http.service';
+import { Course } from '../course';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-course-detail',
@@ -11,38 +14,12 @@ import { HttpService } from 'src/app/shared/services/http.service';
 })
 export class CourseDetailPage implements OnInit {
 
-  public lesson = {
-    no: '88888888',
-    name: '工程训练',
-    checked: true,
-    tname: '池老师',
-    class: '计算机专硕1班',
-    term: '2019-2020 1',
-    type: "",
-    school: '',
-    require: '未设置',
-    process: '未设置',
-    test: '未设置'
+  public code: string;
+  public course: Course;
 
-  };
-  public checked = 1;
-
-  school = [[]]
-  academy = [[]]
-  subject = [[]]
-  schoolList = {}
-  academyList = {}
-  public flag = 0;
-  public schoolChoosed = "未设置"
-  public academyChoosed = "未设置"
-  public subjectChoosed = "未设置"
-  public academyId;
-  public schoolOptions = 0;
-  public academyOptions = 0;
-  public subjectOptions = 0;
-  selectedSchool: any;
-  selectedAcademy: string;
   public isTeacher: any;
+  public course_admin: any;
+  public checkin_admin: any;
 
   constructor(
     private router: Router,
@@ -51,358 +28,387 @@ export class CourseDetailPage implements OnInit {
     private activatedRoute: ActivatedRoute,
     public pickerController: PickerController,
     private alertController: AlertController,
-    //private statusBar: StatusBar,
-  ) {}
+    private loadingController: LoadingController,
+    public nav: NavController,
+    public eventService: EventService,
+    private actionSheetController: ActionSheetController,
+    private geolocation: Geolocation
+  ) { }
 
-  ionViewWillEnter(){
-		console.log("当将要进入页面时触发");
-    this.isTeacher = localStorage.getItem("isTeacher");
-	}
+  public inCourse;
+
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //-----------------------------------------------------初始信息展示-----------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
 
   ngOnInit() {
-    // this.statusBar.backgroundColorByHexString('#3dc2ff;'); //状态栏的样式设置
-    this.activatedRoute.queryParams.subscribe(queryParams => {
-      // this.property = queryParams.property;
-      // this.pageNum = queryParams.pageNum;
-      if (queryParams.pageNum == '1') {
-        this.lesson.require = queryParams.property;
-      } else if (queryParams.pageNum == '2') {
-        this.lesson.process = queryParams.property;
-      } else if (queryParams.pageNum == '3') {
-        this.lesson.test = queryParams.property;
-      } else {
-        if (JSON.stringify(queryParams) != "{}") {
-          this.lesson.name = queryParams.name;
-          this.lesson.tname = queryParams.tname;
-          this.lesson.term = queryParams.term;
-          this.lesson.class = queryParams.class;
-          // this.lesson.type = queryParams.type;
-          if (queryParams.type == "true") {
-            this.lesson.type = "学校课表班课";
-          } else {
-            this.lesson.type = "非学校课表班课";
-          }
-        }
+    this.course = this.initCourse();
+    this.isTeacher = localStorage.getItem("isTeacher");
+    this.course_admin = localStorage.getItem("course-admin");
+    this.checkin_admin = localStorage.getItem("checkin-admin");
+  }
 
+  ionViewWillEnter(){
+    this.code = this.activatedRoute.snapshot.queryParams['code'];
+    this.inCourse = true;
+    this.isTeacher = localStorage.getItem("isTeacher");
+    this.course_admin = localStorage.getItem("course-admin");
+    this.checkin_admin = localStorage.getItem("checkin-admin");
+    this.setCourse();
+    console.log('course_detail-ionViewWillEnter');
+	}
+
+  ionViewWillLeave(){
+    this.eventService.eventEmit.emit('detail-change','详情页返回');
+  }
+
+  /**
+   * 初始化班课信息
+   * @returns {Course}
+   */
+   initCourse(): Course {
+    return {
+      id: -1,
+      cover: "",
+      code: "",
+      name: "",
+      school: "",
+      academy: "",
+      teacher: "",
+      schoolId: -1,
+      academyId: -1,
+      teacherId: -1,
+      term: "",
+      termId: -1,
+      join: true,
+      status: true,
+      lesson: "",
+      lessonId: -1,
+    };
+  }
+
+  setCourse() {
+    //先判断是自己的班课吗
+    this.course.cover = "image_null";
+    this.course.code = this.code;
+    var param_in = {
+      name: this.code,
+      page: 1,
+      isSelf: this.inCourse
+    };
+    var api = '/course';
+    this.httpService.get(api, param_in).then(async (response: any) => {
+      console.log(response);
+      if(response.data.data.total==0){
+        this.inCourse = false;
+        this.setCourse();
+      } else if(response.data.data.total!=0){
+        this.course.id = response.data.data.list[0].id;
+        this.course.name = response.data.data.list[0].name;
+        this.course.lesson = response.data.data.list[0].lesson;
+        this.course.school = response.data.data.list[0].school;
+        this.course.academy = response.data.data.list[0].academy;
+        this.course.teacher = response.data.data.list[0].teacher;
+        this.course.term = response.data.data.list[0].term;
+        this.course.cover = response.data.data.list[0].image;
+        this.course.join = response.data.data.list[0].okJoin;
+        this.course.status = response.data.data.list[0].state;
+        this.saveData();
+      }else{
+        const alert = await this.alertController.create({
+          message: '班课号错误！',
+          buttons: [{
+            text: "确认",
+            handler: () => {
+              this.gotoCourse();
+            }
+          }]
+        })
+        await alert.present();
       }
     });
-    // this.lesson.name = localStorage.getItem("lesson_name");
-    // this.lesson.no = localStorage.getItem("lesson_no");
-    this.isTeacher = localStorage.getItem("isTeacher");
-    this.getLesson();
   }
 
-  // ionViewDidLeave(){
-  //   this.statusBar.backgroundColorByHexString('#ffffff'); //状态栏的样式设置
-  // }
-  async openPicker(numColumns = 1, numOptions, multiColumnOptions, isSchool) {
-    if (isSchool != 1 && this.lesson.school.length == 0) {
-      const alert = await this.alertController.create({
-        header: '警告',
-        message: '请先选择学校！',
-        buttons: ['确认']
-      });
-      await alert.present();
-    } else {
-      const picker = await this.pickerController.create({
-        columns: this.getColumns(numColumns, numOptions, multiColumnOptions, isSchool),
-        buttons: [
-          {
-            text: '取消',
-            role: 'cancel'
-          },
-          {
-            text: '确认',
-            handler: (value) => {
-              var selected = this.getColumns(numColumns, numOptions, multiColumnOptions, isSchool);
-              if (isSchool == 1) {
-                this.flag = 1;
-                this.academyId = selected[0].options[value.col.value].id;
-                this.schoolChoosed = value.col.text;
-                this.lesson.school = "";
-                this.selectedSchool = selected[0].options[value.col.value].code;
-                this.lesson.school += this.selectedSchool;
-                //获取学院列表
-                this.academy[0].length = 0;
-                var param = {
-                  academy: this.academyId,
-                }
-                this.academyChoosed = '未设置';
-                var api = '/schools';//后台接口
-                this.httpService.get(api, param).then(async (response: any) => {
-                  for (var i = 0; i < response.data.length; i++) {
-                    this.academy[0].push(response.data[i].name);
-                  }
-                  this.academyList = response.data;
-                  this.academyOptions = this.academy[0].length;
-                })
-              } else {
-                this.flag++;//2
-                if (this.flag > 2) {
-                  this.flag--;
-                  this.lesson.school = this.selectedSchool;
-                }
-                if (this.lesson.school.length == 0) {
-                  console.log("请先选择学校");
-                } else if (this.lesson.school.indexOf("/") == -1) {//不含"/""
-                  this.academyChoosed = value.col.text;
-                  this.selectedAcademy = selected[0].options[value.col.value].code;
-                  this.lesson.school += "/" + this.selectedAcademy;
-                } else {
-                  // console.log(selected[0].options[value.col.value].code);
-                  //更新后面的学院
-                  var index = this.lesson.school.indexOf("/");
-                  this.lesson.school = this.lesson.school.substr(0, index);
-                  this.academyChoosed = value.col.text;
-                  this.selectedAcademy = selected[0].options[value.col.value].code;
-                  this.lesson.school += "/" + this.selectedAcademy;
+//---------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------一些跳转&删除----------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
 
-                }
+gotoQRcode(){
+  this.router.navigate(['/course/create-success']);
+}
 
-              }
-              // console.log(this.lesson.school);
-              //更新
-              var params_update = {
-                code: localStorage.getItem("lesson_no"),
-                school: this.lesson.school
-              }
-              var api_update = '/courses';
-              this.httpService.patch(api_update, params_update).then(async (response: any) => {
-                // console.log(response);
-              })
-            }
+gotoEdit(){
+  this.router.navigate(['/course/edit-detail']);
+}
+
+gotoCourse(){
+  this.router.navigate(['/tabs/course']);
+}
+
+gotoMemberList(){
+  this.router.navigate(['/member-list']);
+}
+
+gotoCheckinList(){
+  this.router.navigate(['/checkin/course-checkin']);
+}
+
+async deleteLesson() {
+  const alert = await this.alertController.create({
+    header: '提示',
+    message: '是否确认删除？',
+    buttons: [
+      {
+        text: '取消',
+        role: 'cancel',
+        cssClass: 'medium'
+      }, {
+        text: '确认',
+        handler: async () => {
+          var params = {
+            id: this.course.id
           }
-        ]
-      });
-      await picker.present();
-    }
-  }
-
-  getColumns(numColumns, numOptions, columnOptions, isSchool) {
-    let columns = [];
-    for (let i = 0; i < numColumns; i++) {
-      columns.push({
-        name: `col`,
-        options: this.getColumnOptions(i, numOptions, columnOptions, isSchool)
-      });
-    }
-    return columns;
-  }
-
-  getColumnOptions(columnIndex, numOptions, columnOptions, isSchool) {
-    let options = [];
-    for (let i = 0; i < numOptions; i++) {
-      if (isSchool == 1) {
-        for (let j = 0; j < this.schoolOptions; j++) {
-          if (this.schoolList[j].name == columnOptions[columnIndex][i % numOptions]) {
-            options.push({
-              text: columnOptions[columnIndex][i % numOptions],
-              value: i,
-              code: this.schoolList[j].code,
-              id: this.schoolList[j].id
-            })
-          }
-        }
-      } else {
-        for (let j = 0; j < this.academyOptions; j++) {
-          if (this.academyList[j].name == columnOptions[columnIndex][i % numOptions]) {
-            options.push({
-              text: columnOptions[columnIndex][i % numOptions],
-              value: i,
-              code: this.academyList[j].code,
-              id: this.academyList[j].id
-            })
-          }
-        }
-      }
-    }
-    return options;
-  }
-
-  updateJoin() {
-    var params = {
-      code: localStorage.getItem("lesson_no"),
-      isjoin: this.lesson.checked
-    }
-    // console.log(params)
-    var api = '/courses';
-    this.httpService.patch(api, params).then(async (response: any) => {
-      // console.log(response);
-      // this.getLesson();
-      // this.lesson = response.data;
-    })
-  }
-
-  getLesson() {
-    var params = {
-      code: localStorage.getItem("lesson_no")
-    }
-    var api = '/courses';
-    this.httpService.get(api, params).then(async (response: any) => {
-      this.lesson = response.data;
-      // console.log(response.data);
-      // console.log(this.lesson);
-      if (this.lesson.school == null || this.lesson.school == "") {
-        this.schoolChoosed = "未设置";
-      } else {
-        //获取学校名称
-        var str = this.lesson.school.split("/");
-        var api = '/schools/getCode';//后台接口
-        this.httpService.get(api, { code: str[0] }).then(async (response: any) => {
-          this.schoolChoosed = response.data;
-        })
-        this.httpService.get(api, { code: str[1] }).then(async (response: any) => {
-          this.academyChoosed = response.data;
-        })
-
-        //获取学院列表
-        this.academy[0].length = 0;
-        var param1 = {
-          schoolCode: str[0],//父级id
-        }
-        this.academyChoosed = '未设置';
-        var api = '/schools';//后台接口
-        this.httpService.get(api, param1).then(async (response: any) => {
-          for (var i = 0; i < response.data.length; i++) {
-            this.academy[0].push(response.data[i].name);
-          }
-          this.academyList = response.data;
-          this.academyOptions = this.academy[0].length;
-          // console.log(this.academyList);
-        })
-      }
-      if (this.lesson.require == null) {
-        if (this.isTeacher == '1') {
-          this.lesson.require = "未设置";
-        } else {
-          this.lesson.require = "暂无内容";
-        }
-
-      }
-      if (this.lesson.process == null) {
-        if (this.isTeacher == '1') {
-          this.lesson.process = "未设置";
-        } else {
-          this.lesson.process = "暂无内容";
-        }
-
-      }
-      if (this.lesson.test == null) {
-        if (this.isTeacher == '1') {
-          this.lesson.test = "未设置";
-        } else {
-          this.lesson.test = "暂无内容";
-        }
-
-      }
-      if (response.data.type.toString() == "true") {
-        this.lesson.type = "学校课表班课";
-      } else {
-        this.lesson.type = "非学校课表班课";
-      }
-    })
-    //请求后台数据
-    if (this.isTeacher == '1') {
-      this.school[0].length = 0;
-      var param = {
-        school: 1,
-      }
-      var api = '/schools';//后台接口
-      this.httpService.get(api, param).then(async (response: any) => {
-        this.schoolList = response.data;
-        for (var i = 0; i < response.data.length; i++) {
-          this.school[0].push(response.data[i].name);
-        }
-        this.schoolOptions = this.school[0].length;
-      })
-    }
-  }
-
-  async deleteLesson() {
-    const alert = await this.alertController.create({
-      header: '提示',
-      message: '是否确认删除？',
-      buttons: [
-        {
-          text: '取消',
-          role: 'cancel',
-          cssClass: 'medium'
-        }, {
-          text: '确认',
-          handler: async () => {
+          var api = '/course';
+          this.httpService.delete(api, params).then(async (response: any) => {
+            // console.log(response);
             const alert = await this.alertController.create({
-              // header: '提示',
               message: '删除成功！',
               buttons: [{
                 text: "确认",
-                // handler: () => {
-                //   var params = {
-                //     code: localStorage.getItem("lesson_no")
-                //   }
-                //   var api = '/courses';
-                //   this.httpService.delete(api, params).then(async (response: any) => {
-                //     if (response.data.respCode == 1) {
-                //       this.router.navigate(['/lesson-tabs/mylesson'], {queryParams: {delete: '1'}});
-                //   // location.replace('/lesson-tabs');
-                //     }
-                //   })
-                // }
                 handler: () => {
-                  this.router.navigate(['/tabs/course'], {queryParams: {join: '1'}});
+                  this.gotoCourse();
                 }
               }]
             });
             await alert.present();
-          }
+          })
         }
-      ]
+      }
+    ]
+  });
+  await alert.present();
+}
+
+async outLesson() {
+  const alert = await this.alertController.create({
+    header: '提示',
+    message: '是否确认退出？',
+    buttons: [
+      {
+        text: '取消',
+        role: 'cancel',
+        cssClass: 'medium'
+      }, {
+        text: '确认',
+        handler: async () => {
+          var params = {
+            id: this.course.id
+          }
+          var api = '/course-member';
+          this.httpService.delete(api, params).then(async (response: any) => {
+            if (response.data.respCode == 1) {
+              const alert = await this.alertController.create({
+                header: '提示',
+                message: '退出成功！',
+                buttons: [{
+                  text: "确认",
+                  handler: () => {
+                    this.gotoCourse();
+                  }
+                }]
+              });
+              await alert.present();
+            }
+          })
+        }
+      }
+    ]
+  });
+  await alert.present();
+}
+
+//---------------------------------------------------------------------------------------------------------------------------//
+//----------------------------------------------------加入&状态更新----------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+
+updateCourse(){
+  var params = {
+    id: this.course.id,
+    name: this.course.name,
+    okJoin: this.course.join,
+    state: this.course.status
+  }
+  var api = '/course'
+  this.httpService.put(api, params).then(async (response: any) => {
+    // console.log(response);
+  });
+}
+
+  async joinLesson(){
+    const loading = await this.loadingController.create({
+      message: '请稍等...',
     });
-    await alert.present();
-    
-    
+    await loading.present();
+    if(this.course.join==false){
+      await loading.dismiss();
+      let alert = await this.alertController.create({
+        header: '提示',
+        message: "该班课不允许加入",
+        buttons: ['确定']
+      });
+      alert.present();
+    } else if (this.course.status == false){
+      await loading.dismiss();
+      let alert = await this.alertController.create({
+        header: '提示',
+        message: "该班课已结束",
+        buttons: ['确定']
+      });
+      alert.present();
+    }else {
+      var api = '/course-member';//-------------------------后台接口
+      var params = {        //-------------------------后台参数
+        code: this.course.code
+      }
+      this.httpService.post_params(api, params).then(async (response: any) => {
+        await loading.dismiss();
+        // console.log(response);
+        if(response.data.respCode == -1){
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: response.data.msg,
+            buttons: ['确定']
+          });
+          alert.present();
+        }else if(response.data.respCode == 1){
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: '加入成功！',
+            buttons: [{
+              text: '确认',
+              cssClass: 'primary',
+              handler: (blah) => {
+                this.inCourse = true;
+              }
+            }]
+          });
+          alert.present();
+        }
+      });
+    }
   }
 
-  async outLesson() {
-    const alert = await this.alertController.create({
-      header: '提示',
-      message: '是否确认退出？',
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //------------------------------------------------------签到相关部分----------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+
+  async createCheckin() {
+    const actionSheet = await this.actionSheetController.create({
+      mode: "ios",
       buttons: [
+        // {
+        //   text: '口令签到',   //type2
+        //   handler: () => {
+        //     this.router.navigate(['/checkin/create-checkin'], {queryParams:{type: 2, code: this.code, id: this.course.id} });
+        //   }
+        // },
+        {
+          text: '定位签到',   //type0
+          handler: () => {
+            this.geolocation.getCurrentPosition().then((resp) => {
+              var local = resp.coords.latitude+'-'+resp.coords.longitude;
+              var beginStr = this.getTimeStr( Date.now()/1000 );
+              var param_0 = {
+                type: 0,
+                courseId: this.course.id,
+                startTimeStr: beginStr,
+                local: local
+              }
+              this.post(param_0);
+            }).catch((error) => {
+              alert('Error getting location' + error);
+            });
+          }
+        },
+        {
+          text: '限时签到',   //type1
+          handler: () => {
+            this.router.navigate(['/checkin/create-checkin']);
+          }
+        },
         {
           text: '取消',
-          role: 'cancel',
-          cssClass: 'medium'
-        }, {
-          text: '确认',
-          // handler: async () => {
-          //   var params = {
-          //     code: localStorage.getItem("lesson_no"),
-          //     email: localStorage.getItem("email")
-          //   }
-          //   var api = '/courses';
-          //   this.httpService.delete(api, params).then(async (response: any) => {
-          //     if (response.data.respCode == 1) {
-          //       const alert = await this.alertController.create({
-          //         // header: '提示',
-          //         message: '退出成功！',
-          //         buttons: [{
-          //           text: "确认",
-          //           handler: () => {
-          //             this.router.navigate(['/tabs/course'], {queryParams: {join: '1'}});
-          //           }
-          //         }]
-          //       });
-          //       await alert.present();
-          //     }
-          //   })
-          // }
-          handler: () => {
-            this.router.navigate(['/tabs/course'], {queryParams: {join: '1'}});
-          }
+          role: 'destructive'
         }
       ]
     });
-    await alert.present();
-    
+    await actionSheet.present();
   }
 
+  post(param: any){
+    var api = '/attendance';
+    console.log(param);
+    this.httpService.post_data(api, param).then(async (response: any) => {
+      console.log(response);
+      if(response.data.respCode==1){
+        let alert = await this.alertController.create({
+          header: '提示',
+          message: '签到发起成功！',
+          buttons: [{
+            text: '确认',
+            cssClass: 'primary',
+            handler: (blah) => {
+              this.router.navigate(['/checkin']);
+            }
+          }]
+        });
+        alert.present();
+      }else{
+        let alert = await this.alertController.create({
+          header: '提示',
+          message: "签到发起失败！",
+          buttons: ['确定']
+        });
+        alert.present();
+      }
+    })
+  }
+
+  gotoCheckin(){
+    this.router.navigate(['/checkin']);
+  }
+
+  //----------------------------------------------------------------------------------//
+  //------------------------------------JS时间转换-------------------------------------//
+  //----------------------------------------------------------------------------------//
+
+  getTimeStr(timestamp){
+    var time = new Date(timestamp*1000);
+    var date = ((time.getFullYear())  + "-" +
+                (time.getMonth()+1).toString().padStart(2,'0') + "-" +
+                (time.getDate()).toString().padStart(2,'0') + " " +
+                (time.getHours()).toString().padStart(2,'0') + ":" +
+                (time.getMinutes()).toString().padStart(2,'0') + ":" +
+                (time.getSeconds()).toString().padStart(2,'0')
+               );
+    return date;
+  }
+
+  //----------------------------------------------------------------------------------//
+  //-----------------------------------预存班课数据------------------------------------//
+  //----------------------------------------------------------------------------------//
+  saveData() {
+    localStorage.setItem('courseCode', this.course.code);
+    localStorage.setItem('courseId', this.course.id.toString());
+    localStorage.setItem('courseName', this.course.name);
+    //获取成员数
+    var param = {
+      courseId: this.course.id
+    };
+    var api = '/course-member';
+    this.httpService.get(api, param).then(async (response: any) => {
+      console.log(response);
+      localStorage.setItem('memberNum', response.data.data.total); 
+    });
+  }
 }

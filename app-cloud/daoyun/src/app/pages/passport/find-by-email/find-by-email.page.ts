@@ -46,7 +46,7 @@ export class FindByEmailPage implements OnInit {
       var params = {
         email: this.find_email,
       };
-      var api = '/sendCode';
+      var api = '/send-code';
       this.httpService.get_withoutToken(api, params).then((response: any) => {
         //console.log(response);
         this.return_code = response.data.respCode;

@@ -46,7 +46,6 @@ export class LoginPage implements OnInit {
     this.github_code = this.activatedRoute.snapshot.queryParams.code;
     console.log(this.github_code)
     if(this.github_code != null){
-      // var api = '/login-github';//后台接口
       var api = 'http://192.168.43.225:8080/login-github';
       var params = {//后台所需参数
           code: this.github_code
@@ -149,7 +148,7 @@ export class LoginPage implements OnInit {
     // var minutes=Math.floor(leave2/(60*1000))
     // //计算相差秒数
     // var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
-    // var seconds=Math.round(leave3/1000)
+    // var seconds=Math.round(leave3/1000)  //对应的秒数
     // alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
     if (hours > 2) return true;
     else return false;
@@ -200,8 +199,8 @@ export class LoginPage implements OnInit {
           else localStorage.setItem("course-admin", '0');
           if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
           else localStorage.setItem("checkin-admin", '0');
-          this.router.navigateByUrl('/tabs/course');
           localStorage.setItem("isLogin", "1");
+          this.router.navigateByUrl('/tabs/course');
           this.setLoginTime();
         } else{
           await loading.dismiss();
@@ -215,6 +214,7 @@ export class LoginPage implements OnInit {
       })
     }
   }
+
   //----------------------------------------------------------------------------------//
   //----------------------------------------------------------------------------------//
 

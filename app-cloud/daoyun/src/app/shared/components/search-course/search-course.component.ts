@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { NavParams } from '@ionic/angular';
+import { LoadingController, NavParams } from '@ionic/angular';
 import { HttpService } from '../../services/http.service';
 
 @Component({
@@ -11,71 +11,118 @@ import { HttpService } from '../../services/http.service';
 })
 export class SearchCourseComponent implements OnInit {
 
-  // lesson-type='我创建的';
-  lessonType: string = '我创建的';
-  public isTeacher = '1';
-  public content = '';
-  public lessonList = [];
-  public flag='0';
+  public isTeacher: any;
+  public target = "";
+
+  public list = [];
+  public page_max = 10;
+  public page = 1;
+  public total = 0;
+  public flag = 0;//标记当前用户的班课是否抓取完全
 
   constructor(public navParams: NavParams, public router: Router,
     public httpService: HttpService,
-    public http: HttpClient, ) {
-    if (navParams.data.type == 'join') {
-      this.isTeacher = '0';
-      this.lessonType = "我加入的";
-    }
+    public http: HttpClient, 
+    public loadingController: LoadingController) {
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.initData();
+    // console.log("search-ngOnInit");
+  }
 
   dissmissSearch() {
     this.navParams.data.modal.dismiss();
   }
-  getData($event) {
-    //传给后台搜索的内容
-    var api = '/courses';//后台接口
-    var params = {}
-    if (this.isTeacher == '1') {
-      params = {
-        search: $event.detail.value,
-        teacher_email: localStorage.getItem("email")
-      }
-    } else {
-      params = {
-        search: $event.detail.value,
-        student_email: localStorage.getItem("email")
-      }
-    }
 
-    this.httpService.get(api, params).then((response: any) => {
-      if(response.data.length==0){
-        this.flag = '0';
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //---------------------------------------------------根据用户输入搜索---------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+
+  getData($event) {
+    this.initData();
+    this.target = $event.detail.value;
+    this.getCourse();
+    // console.log("search-getData");
+  }
+
+  getCourse() {
+    var params = {
+      page: this.page,
+      name: this.target,
+      isSelf: false
+    }
+    var api = '/course';
+    this.httpService.get(api, params).then(async (response: any) => {
+      console.log(response);
+      if(response.data.respCode==-1){
+        this.total = 0;
+        this.flag = 1;
       }else{
-        this.flag = '1';
+        this.total = response.data.data.total;
+        if(response.data.data.list.length < this.page_max){
+          this.flag = 1;
+        }
+        for(let i=0; i<response.data.data.list.length; i++){
+          this.list.push(response.data.data.list[i]);
+        }
       }
-      this.lessonList = response.data;
     })
   }
 
-  getCurrentLesson(index) {
-    this.dissmissSearch();
-    console.log(this.lessonList[index])
-    localStorage.setItem("lesson_name", this.lessonList[index].name);
-    localStorage.setItem("lesson_no", this.lessonList[index].no);
-    if (this.isTeacher == "1") {
-      localStorage.setItem("isTeacher", '1');
-    } else {
-      localStorage.setItem("isTeacher", '0');
-    }
-    this.router.navigateByUrl("/tabs/member")
+//---------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //-----------------------------------------------------列表信息展示-----------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+
+  ionViewWillEnter(){
+    this.initData();
+    this.getCourse();
+    // console.log("search-ionViewWillEnter");
+	}
+
+  initData(){
+    this.list = [];
+    this.page = 1;
+    this.total = 0;
+    this.flag = 0;
+    this.target = "";
   }
 
-  gotoCheckin(index){
+  loadData(event) {
+    setTimeout(() => {
+      if (this.flag==1) {
+        event.target.disabled = true;
+      } else {
+        this.page = this.page + 1;
+        this.getCourse();
+      }
+      event.target.complete();
+    }, 500);
+  }
+
+  doRefresh(event) {
+    this.initData();
+    this.getCourse();
+    setTimeout(() => {
+      event.target.complete();
+    }, 500);
+  }
+
+//---------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------------------------------------------------------//
+//---------------------------------------------------------跳转--------------------------------------------------------------//
+//---------------------------------------------------------------------------------------------------------------------------//
+
+  gotodetail(index: number){
     this.dissmissSearch();
-    localStorage.setItem("lesson_name", this.lessonList[index].name);
-    localStorage.setItem("lesson_no", this.lessonList[index].no);
-    this.router.navigateByUrl('/choose');
+    this.router.navigate(['/course/course-detail'], {queryParams:{code: this.list[index].code} });
   }
 
 }

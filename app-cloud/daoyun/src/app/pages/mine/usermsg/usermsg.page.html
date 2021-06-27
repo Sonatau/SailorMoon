@@ -5,73 +5,66 @@
             <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
+
       <ion-title style="text-align:center;">我的信息</ion-title>
+
+      <ion-buttons slot="end">
+        <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/mine/edit-usermsg']">
+            <ion-icon slot="end" name="create-outline"></ion-icon>
+        </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <!-- <ion-list> -->
-  <!-- <ion-item-divider style="padding: 0px;"> -->
-  <!-- <ion-item lines="none" style="padding: 0px 0px;"> -->
-  <!-- <ion-item lines="none"></ion-item> -->
-  
-  <!-- </ion-item> -->
-  <!-- </ion-list> -->
 
   <ion-list lines="full">
-      <!-- <ion-item-divider>
-      </ion-item-divider> -->
-      <ion-item slot="end">
-          <ion-label>姓名</ion-label>
-          <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.name"></ion-input>
-      </ion-item>
-      <ion-item slot="end">
-          <ion-label>昵称</ion-label>
-          <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.nickname"></ion-input>
-      </ion-item>
+    <ion-grid>
+        <ion-card mode="ios">
+            <ion-item lines="none" style="margin-top: 10px;">
+                <ion-avatar class="my-thum" *ngIf="user.image!='image_null'">
+                    <img class="my-thum" src={{user.image}}>
+                </ion-avatar>
+                <ion-avatar class="my-thum" *ngIf="user.image=='image_null'">
+                    <img class="my-thum-image" src="../../../../assets/icon/head.png">
+                </ion-avatar>
+            </ion-item>
+            <ion-item lines="none">
+                <ion-label style="text-align: center; margin-top: 8px; color: #7468be;">
+                    用户身份：{{role}}</ion-label>
+            </ion-item>
+            <ion-item lines="none" *ngIf="role=='学生'">
+                <ion-label style="text-align: center; margin-top: 8px; color: black;">
+                    总经验值：{{user.exp}}</ion-label>
+            </ion-item>
+        </ion-card>
+    
+        <ion-item>
+            <ion-label>邮箱</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.email}}</ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-label>手机号</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.telephone}}</ion-note>
+        </ion-item>
+    
+        <ion-item>
+            <ion-label>姓名</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.name}}</ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-label>学号</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.sno}}</ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-label>性别</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.sex}}</ion-note>
+        </ion-item>
+        <ion-item>
+            <ion-label>学校</ion-label>
+            <ion-note class="my_inf" slot="end" type="text" style="color: #808080">{{user.school}}</ion-note>
+        </ion-item>
 
-      <ion-item>
-          <ion-label>工号</ion-label>
-          <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.sno"></ion-input>
-      </ion-item>
-
-      <ion-item>
-          <ion-label>手机号</ion-label>
-          <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.telphone"></ion-input>
-      </ion-item>
-      <ion-item>
-          <!-- <ion-item> -->
-          <ion-label>出生年月</ion-label>
-          <ion-datetime slot="end" value="1990-02-19" placeholder="未设置" [(ngModel)]="user.birth"
-              displayFormat="YYYY-MM-DD" cancelText="取消" doneText="确认"></ion-datetime>
-          <!-- </ion-item> -->
-          <!-- <ion-label>出生年月</ion-label>
-    <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.birth"></ion-input> -->
-      </ion-item>
-      <ion-radio-group [(ngModel)]="user.sex" mode="md">
-          <ion-item>
-              <ion-label>性别</ion-label>
-              <ion-radio color="success" value="0" style="margin-left: 100px;"></ion-radio>
-              <ion-label style="margin-left: 15px;">男</ion-label>
-              <ion-radio color="tertiary" value="1"></ion-radio>
-              <ion-label style="margin-left: 15px;">女</ion-label>
-              <!-- <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.sex"></ion-input> -->
-          </ion-item>
-      </ion-radio-group>
-      <ion-item style="border-top: solid 0.5px #afb2bd;" (click)="openPicker(1,schoolOptions,school,1)">
-          <ion-label>学校</ion-label>
-          <ion-label class="my_inf" slot="end">{{schoolChoosed}}</ion-label>
-      </ion-item>
-      <ion-item (click)="openPicker(1,academyOptions,academy,0)">
-          <ion-label>学院</ion-label>
-          <ion-label class="my_inf" slot="end">{{academyChoosed}}</ion-label>
-      </ion-item>
-      <ion-item lines="none">
-      </ion-item>
+    </ion-grid>
   </ion-list>
-  <ion-row style="margin: top 30px;" class="row">
-    <ion-button class="btn" color="primary"
-    [routerLink]="['/mine/edit-usermsg']">修改个人信息
-    </ion-button>
-    </ion-row>
 </ion-content>

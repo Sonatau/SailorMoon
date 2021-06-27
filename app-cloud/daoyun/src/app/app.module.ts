@@ -10,6 +10,12 @@ import { AppComponent } from './app.component';
 import { SharedModule } from './shared/shared.module';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 
+import { Camera } from '@ionic-native/camera/ngx';
+import { ImagePicker } from '@ionic-native/image-picker/ngx';
+import { QRCodeModule } from 'angular2-qrcode';
+import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+
 @NgModule({
   declarations: [AppComponent],
   entryComponents: [],
@@ -20,9 +26,14 @@ import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
     SharedModule,
     HttpClientModule,
     HttpClientJsonpModule,
+    QRCodeModule,
   ],
   providers: [
     InAppBrowser,
+    Camera,
+    ImagePicker,
+    BarcodeScanner,
+    Geolocation,
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   ],
   bootstrap: [AppComponent],

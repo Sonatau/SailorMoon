@@ -11,17 +11,19 @@ import { HttpService } from 'src/app/shared/services/http.service';
 })
 export class MemberListPage implements OnInit {
 
-  public lesson = {
-    no: '888888',
-    name: '工程训练'
+  public course = {
+    id: -1,
+    name: '',
+    code: '',
   };
   public isNo = '1';
-  public member = [];
   public isTeacher: any;
-  public memberNo: any = 0;
-  public rank: any;
-  public my_exp: any;
-  public flag: any = '0';
+  public memberList = [];
+  public memberNum: any = 0;
+
+  public stu_rank: any;
+  public stu_exp: any;
+
   constructor(public modalController: ModalController,
     private router: Router,
     public httpService: HttpService,
@@ -29,121 +31,100 @@ export class MemberListPage implements OnInit {
     private alertController: AlertController,
     private loadingController: LoadingController,
     public toastController: ToastController,
-    private activatedRoute: ActivatedRoute) {
-    this.activatedRoute.queryParams.subscribe(queryParams => {
-      if (queryParams.isFlash == '1') {
-        this.getdata();
-      }
-    })
-  }
+    private activatedRoute: ActivatedRoute) { }
   ngOnInit() {
-    this.getdata();
-  }
-  ionViewWillEnter() {
-    this.getdata();
-  }
-  async getdata() {
-    // this.lesson.name = localStorage.getItem("lesson_name");
-    // this.lesson.no = localStorage.getItem("lesson_no");
     this.isTeacher = localStorage.getItem("isTeacher");
-
-    if (this.isTeacher == '1') {
-      this.orderByNo();
-    } else {
-      this.orderByExp();
-    }
-
-    //个人排名与经验值
-    var params = {
-      code: localStorage.getItem("lesson_no"),
-      order: "0",//按经验值顺序显示
-      email: localStorage.getItem("email")
-    }
-    var api = '/courses/member';//后台接口
-    this.httpService.get(api, params).then(async (response: any) => {
-      this.rank = response.data.rank;
-      this.my_exp = response.data.exp;
-    })
   }
+
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //-----------------------------------------------------列表信息展示-----------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+
+  ionViewWillEnter(){
+    this.course.code = localStorage.getItem('courseCode');
+    this.course.id = Number(localStorage.getItem('courseId'));
+    this.course.name = localStorage.getItem('courseName');
+    this.initList();
+    if(this.isTeacher=='0'){
+      this.initSelf();
+    }
+    console.log('member-ionViewWillEnter');
+	}
+
+  initList(){
+    this.memberList = [];
+    this.memberNum = 0;
+    this.getmember();
+  }
+
+  initSelf(){
+
+  }
+  
+  async getmember() {
+    //获取
+    var param = {
+      courseId: this.course.id
+    };
+    var api = '/course-member';
+    this.httpService.get(api, param).then(async (response: any) => {
+      console.log(response);
+      this.memberNum = response.data.data.total;
+      if(response.data.data.total!=0){
+        for(let i=0; i<this.memberNum; i++){
+          this.memberList.push({
+            id: response.data.data.list[i].id,
+            name: response.data.data.list[i].name,
+            sno: response.data.data.list[i].sno,
+            sex: response.data.data.list[i].sex,
+            rank: -1,
+            image: response.data.data.list[i].image,
+            courseExp: response.data.data.list[i].courseExp
+          })
+        }
+      }
+      //显示顺序
+      if (this.isTeacher == '1') {
+        this.orderByNo();
+      } else {
+        this.orderByExp();
+      }
+    });
+  }
+
   async orderByNo() {
-    this.isNo = '0';
-    localStorage.setItem("isNo", "1");
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
-    });
-    await loading.present();
-
-    //按学号排序List
-    var params = {
-      code: localStorage.getItem("lesson_no"),
-      order: "1"//按学号顺序显示
-    }
-    var api = '/courses/member';//后台接口
-    this.httpService.get(api, params).then(async (response: any) => {
-      await loading.dismiss();
-      if (response.data.respCode == "该课程没有学生") {
-        this.flag = '0';
-      } else {
-        this.flag = '1';
-        this.member = response.data;
-        this.memberNo = this.member.length;
-      }
-
-    }).catch(async function (error) {
-      await loading.dismiss();
-      const alert = await this.alertController.create({
-        header: '警告',
-        message: '请求失败！',
-        buttons: ['确认']
-      });
-      await alert.present();
-    })
-  }
-  async orderByExp() {
     this.isNo = '1';
-    localStorage.setItem("isNo", "0");
-    //按经验值排序list
-    const loading = await this.loadingController.create({
-      message: 'Please wait...',
+    this.memberList.sort(function(a,b){
+      return a.sno-b.sno;//	学号升序
     });
-    await loading.present();//加载
-
-    var params = {
-      code: localStorage.getItem("lesson_no"),
-      order: "0"//按经验值顺序显示
+    for(let i=0; i<this.memberNum; i++){
+      this.memberList[i].rank = i+1;
     }
-    var api = '/courses/member';//后台接口
-    this.httpService.get(api, params).then(async (response: any) => {
-
-      await loading.dismiss();
-      if (response.data.respCode == "该课程没有学生") {
-        this.flag = '0';
-      } else {
-        this.flag = '1';
-        this.member = response.data;
-        this.memberNo = this.member.length;
-      }
-    }).catch(async function (error) {
-      await loading.dismiss();
-      const alert = await this.alertController.create({
-        header: '警告',
-        message: '请求失败！',
-        buttons: ['确认']
-      });
-      await alert.present();
-    })
   }
-  // async searchMember() {
-  //   //弹出搜索模态框
-  //   const modal = await this.modalController.create({
-  //     component: SearchMemberComponent,
-  //     componentProps: {
-  //       type: '按照姓名、学号检索'
-  //     }
-  //   });
-  //   await modal.present();
-  // }
-  gotoCheck() {
-    this.router.navigateByUrl('student-checkin');
+
+  async orderByExp() {
+    this.isNo = '0';
+    this.memberList.sort(function(a,b){
+      return b.courseExp-a.courseExp;//	经验值降序
+    });
+    for(let i=0; i<this.memberNum; i++){
+      this.memberList[i].rank = i+1;
+      if(this.memberList[i].id==localStorage.getItem('UserId')){
+        this.stu_rank = this.memberList[i].rank;
+        this.stu_exp = this.memberList[i].courseExp;
+      }
+    }
+  }
+
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //------------------------------------------------------一些跳转啊------------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+
+  gotoMemCheck(index: number){
+    this.router.navigate(['/member-list/member-checkin'], {queryParams:{stuId: this.memberList[index].id} });
+  }
+
+  gotodetail(){
+    this.router.navigate(['/course/course-detail'], {queryParams:{code: this.course.code} });
   }
 }
