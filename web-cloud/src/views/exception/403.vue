@@ -1,18 +1,21 @@
 <template>
-  <a-result status="403" title="403" sub-title="Sorry, you don't have access to this page.">
-    <template #extra>
-      <a-button type="primary" @click="toHome">
-        Back Home
-      </a-button>
-    </template>
-  </a-result>
+  <page-header-wrapper title="403">
+    <a-row type="flex" justify="center">
+      <a-col>
+        <img src="~@/assets/403.png" style="height: 500px;" />
+      </a-col>
+    </a-row>
+    <a-row type="flex" justify="center" style="margin-top: 25px">
+      <a-button type="primary">返回首页</a-button>
+    </a-row>
+  </page-header-wrapper>
 </template>
 
 <script>
 export default {
   name: 'Exception403',
   methods: {
-    toHome () {
+    toHome() {
       this.$router.push({ path: '/' })
     }
   }

@@ -4,8 +4,16 @@
     :width="640"
     :visible="visible"
     :confirmLoading="loading"
-    @ok="() => { $emit('ok') }"
-    @cancel="() => { $emit('cancel') }"
+    @ok="
+      () => {
+        $emit('ok')
+      }
+    "
+    @cancel="
+      () => {
+        $emit('cancel')
+      }
+    "
   >
     <a-spin :spinning="loading">
       <a-form :form="form" v-bind="formLayout">
@@ -13,8 +21,13 @@
         <a-form-item v-show="model && model.id > 0" label="主键ID">
           <a-input v-decorator="['id', { initialValue: 0 }]" disabled />
         </a-form-item>
-        <a-form-item label="描述">
-          <a-input v-decorator="['description', {rules: [{required: true, min: 5, message: '请输入至少五个字符的规则描述！'}]}]" />
+        <a-form-item v-show="model && model.id > 0" label="上级ID">
+          <a-input v-decorator="['parentId', { initialValue: 0 }]" disabled />
+        </a-form-item>
+        <a-form-item label="单位名称">
+          <a-input
+            v-decorator="['name', { rules: [{ required: true, min: 2, message: '请输入至少两个字符的描述！' }] }]"
+          />
         </a-form-item>
       </a-form>
     </a-spin>
@@ -25,7 +38,7 @@
 import pick from 'lodash.pick'
 
 // 表单字段
-const fields = ['description', 'id']
+const fields = ['name', 'id', 'parentId']
 
 export default {
   props: {
@@ -42,7 +55,7 @@ export default {
       default: () => null
     }
   },
-  data () {
+  data() {
     this.formLayout = {
       labelCol: {
         xs: { span: 24 },
@@ -57,7 +70,7 @@ export default {
       form: this.$form.createForm(this)
     }
   },
-  created () {
+  created() {
     console.log('custom modal created')
 
     // 防止表单未注册

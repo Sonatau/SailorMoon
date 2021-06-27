@@ -3,70 +3,58 @@
     <a-card :bordered="false">
       <div class="table-page-search-wrapper">
         <a-form layout="inline">
-          <a-row :gutter="48">
+          <a-row :gutter="24">
             <a-col :md="8" :sm="24">
-              <a-form-item label="机构名称">
-                <a-input v-model="queryParam.id" placeholder="" />
+              <a-form-item label="查找">
+                <a-input v-model="queryParam.name" placeholder="按学校/学院/专业名称查找" />
               </a-form-item>
             </a-col>
-            <a-col :md="(!advanced && 8) || 24" :sm="24">
-              <span
-                class="table-page-search-submitButtons"
-                :style="(advanced && { float: 'right', overflow: 'hidden' }) || {}"
-              >
-                <a-button type="primary" @click="$refs.table.refresh(true)">查询</a-button>
-                <a-button style="margin-left: 8px" @click="() => (this.queryParam = {})">重置</a-button>
-                <a @click="toggleAdvanced" style="margin-left: 8px">
-                  {{ advanced ? '收起' : '展开' }}
-                  <a-icon :type="advanced ? 'up' : 'down'" />
-                </a>
-              </span>
+            <a-col :md="8" :sm="24">
+              <div class="table-operator">
+                <a-button type="default" @click="handleSearchByName">查找</a-button>
+                <a-button type="primary" icon="plus" @click="handleAdd">添加机构</a-button>
+              </div>
             </a-col>
           </a-row>
         </a-form>
       </div>
 
-      <div class="table-operator">
-        <a-button type="primary" icon="plus" @click="handleAdd">添加机构</a-button>
-        <a-button type="Danger" icon="minus" @click="handleAdd">批量删除</a-button>
-        <a-dropdown v-action:edit v-if="this.selectedRowKeys.length > 0">
-          <a-menu slot="overlay">
-            <a-menu-item key="1"><a-icon type="delete" />删除</a-menu-item>
-            <!-- lock | unlock -->
-            <a-menu-item key="2"><a-icon type="lock" />锁定</a-menu-item>
-          </a-menu>
-          <a-button style="margin-left: 8px"> 批量操作 <a-icon type="down" /> </a-button>
-        </a-dropdown>
-      </div>
-
       <s-table
         ref="table"
         size="default"
-        rowKey="key"
+        rowKey="id"
         :columns="columns"
         :data="loadData"
-        :alert="true"
         :rowSelection="rowSelection"
-        showPagination="auto"
+        :showPagination="pagination"
       >
-        <span slot="serial" slot-scope="text, record, index">
-          {{ index + 1 }}
+        <span slot="id" slot-scope="text">
+          <ellipsis :length="7" tooltip>{{ text }}</ellipsis>
         </span>
-        <span slot="status" slot-scope="text">
-          <a-badge :status="text | statusTypeFilter" :text="text | statusFilter" />
-        </span>
-        <span slot="description" slot-scope="text">
-          <ellipsis :length="4" tooltip>{{ text }}</ellipsis>
+        <span slot="name" slot-scope="text">
+          <ellipsis :length="20" tooltip>{{ text }}</ellipsis>
         </span>
 
         <span slot="action" slot-scope="text, record">
           <template>
             <a @click="handleEdit(record)">编辑</a>
             <a-divider type="vertical" />
-            <a @click="handleSub(record)">删除</a>
+            <a-popconfirm title="是否要删除此行？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record)">
+              <a>删除</a>
+            </a-popconfirm>
           </template>
         </span>
       </s-table>
+
+      <a-row style="margin-top: 25px">
+        <div style="float: right">
+          第 {{ curPage }} 页
+          <a-button style="default; margin-right: 10px; margin-left: 10px" value="small" @click="lastPage">
+            <a-icon type="left" />上一页
+          </a-button>
+          <a-button style="default" value="small" @click="nextPage">下一页<a-icon type="right"/></a-button>
+        </div>
+      </a-row>
 
       <create-form
         ref="createModal"
@@ -76,35 +64,23 @@
         @cancel="handleCancel"
         @ok="handleOk"
       />
-      <step-by-step-modal ref="modal" @ok="handleOk" />
     </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
-import moment from 'moment'
-import { STable, Ellipsis } from '@/components'
-import { getRoleList, getServiceList } from '@/api/manage'
-
-import StepByStepModal from './modules/StepByStepModal'
+import { STable } from '@/components'
+import { deleteSchoolList, editSchool, getSchoolList } from '@/api/manage'
 import CreateForm from './modules/CreateForm'
 
 const columns = [
   {
-    title: '#',
-    scopedSlots: { customRender: 'serial' }
+    title: 'ID',
+    dataIndex: 'id'
   },
   {
-    title: '机构名称',
-    dataIndex: 'no'
-  },
-  {
-    title: '学院',
-    dataIndex: 'college'
-  },
-  {
-    title: '专业',
-    dataIndex: 'Department'
+    title: '单位名称',
+    dataIndex: 'name'
   },
   {
     title: '操作',
@@ -114,66 +90,57 @@ const columns = [
   }
 ]
 
-// const statusMap = {
-//   0: {
-//     status: 'processing',
-//     text: '已停止'
-//   },
-//   1: {
-//     status: 'success',
-//     text: '进行中'
-//   }
-//   // 2: {
-//   //   status: 'success',
-//   //   text: '使用中'
-//   // }
-//   // 3: {
-//   //   status: 'error',
-//   //   text: '异常'
-//   // }
-// }
-
 export default {
   name: 'InstitutionList',
   components: {
     STable,
-    Ellipsis,
-    CreateForm,
-    StepByStepModal
+    CreateForm
   },
   data() {
     this.columns = columns
     return {
-      // create model
+      pagination: false,
       visible: false,
       confirmLoading: false,
       mdl: null,
+      curPage: 1,
       // 高级搜索 展开/关闭
       advanced: false,
       // 查询参数
-      queryParam: {},
+      queryParam: {
+        name: ''
+      },
+      schoolList: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        const requestParameters = Object.assign({}, parameter, this.queryParam)
-        console.log('loadData request parameters:', requestParameters)
-        return getServiceList(requestParameters).then(res => {
-          return res.result
+        // requestParameters是所有查询条件
+        // console.log('loadData request parameters:', requestParameters)
+        return getSchoolList({ page: parameter.pageNo, parentId: 0 }).then(res => {
+          this.schoolList = res.data.list
+          for (var i in this.schoolList) {
+            var item1 = this.schoolList[i] // 学校
+            item1['parentId'] = 0
+            var id1 = item1.id // 福州大学的id
+            for (var j in item1.children) {
+              var item2 = item1.children[j] // 学院
+              item2['parentId'] = id1
+              var id2 = item2.id
+              for (var k in item2.children) {
+                var item3 = item2.children[k]
+                item3['parentId'] = id2
+              }
+            }
+          }
+          console.log(this.schoolList)
+          return { data: res.data.list }
         })
       },
       selectedRowKeys: [],
       selectedRows: []
     }
   },
-  // filters: {
-  //   statusFilter(type) {
-  //     return statusMap[type].text
-  //   },
-  //   statusTypeFilter(type) {
-  //     return statusMap[type].status
-  //   }
-  // },
   created() {
-    getRoleList({ t: new Date() })
+    // getRoleList({ t: new Date() })
   },
   computed: {
     rowSelection() {
@@ -184,9 +151,9 @@ export default {
     }
   },
   methods: {
+    // 添加
     handleAdd() {
-      this.mdl = null
-      this.visible = true
+      this.$router.push({ path: '/institution/AddInstitution', query: this.schoolList })
     },
     handleEdit(record) {
       this.visible = true
@@ -198,41 +165,23 @@ export default {
       form.validateFields((errors, values) => {
         if (!errors) {
           console.log('values', values)
-          if (values.id > 0) {
-            // 修改 e.g.
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
+          editSchool(values)
+            .then(res => {
+              if (res.respCode > 0) {
+                this.visible = false
+                this.confirmLoading = false
+                // 刷新表格
+                this.$refs.table.refresh()
 
-              this.$message.info('修改成功')
+                this.$message.success(res.msg)
+              } else {
+                this.confirmLoading = false
+                this.$message.error(res.msg)
+              }
             })
-          } else {
-            // 新增
-            new Promise((resolve, reject) => {
-              setTimeout(() => {
-                resolve()
-              }, 1000)
-            }).then(res => {
-              this.visible = false
-              this.confirmLoading = false
-              // 重置表单数据
-              form.resetFields()
-              // 刷新表格
-              this.$refs.table.refresh()
-
-              this.$message.info('新增成功')
+            .catch(err => {
+              this.$message.error(err.msg)
             })
-          }
-        } else {
-          this.confirmLoading = false
         }
       })
     },
@@ -242,25 +191,50 @@ export default {
       const form = this.$refs.createModal.form
       form.resetFields() // 清理表单数据（可不做）
     },
-    handleSub(record) {
-      if (record.status !== 0) {
-        this.$message.info(`${record.no} 订阅成功`)
-      } else {
-        this.$message.error(`${record.no} 订阅失败，规则已关闭`)
+    // 删除
+    handleDelete(record) {
+      this.confirmLoading = true
+      deleteSchoolList({ ids: record.id })
+        .then(res => {
+          if (res.respCode > 0) {
+            this.confirmLoading = false
+            // 刷新表格
+            this.$refs.table.refresh()
+
+            this.$message.success(res.msg)
+          } else {
+            this.confirmLoading = false
+            this.$message.error(res.msg)
+          }
+        })
+        .catch(err => {
+          this.$message.error(err.msg)
+        })
+    },
+
+    handleSearchByName() {
+      // 查找
+      this.$refs.table.refresh()
+    },
+    // 上一页
+    lastPage() {
+      if (this.curPage !== 1) {
+        this.curPage--
+        this.$refs.table.refresh()
       }
     },
+
+    // 下一页
+    nextPage() {
+      this.curPage++
+      this.$refs.table.refresh()
+    },
+
+    // 选择
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
-      console.log(this.selectedRowKeys.length)
-    },
-    toggleAdvanced() {
-      this.advanced = !this.advanced
-    },
-    resetSearchForm() {
-      this.queryParam = {
-        date: moment(new Date())
-      }
+      // console.log(this.selectedRowKeys.length)
     }
   }
 }

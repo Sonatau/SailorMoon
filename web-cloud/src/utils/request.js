@@ -49,6 +49,7 @@ request.interceptors.request.use(config => {
   if (token) {
     config.headers['Access-Token'] = token
   }
+  // config.headers['Authorization'] = 'APPCODE b56e5839f6cc4e09b9b878d203af3ce0'
   return config
 }, errorHandler)
 

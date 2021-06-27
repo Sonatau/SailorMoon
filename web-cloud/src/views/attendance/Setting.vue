@@ -1,306 +1,279 @@
 <template>
   <page-header-wrapper>
-    <a-card class="card" title="基本信息" :bordered="false">
-      <repository-form ref="repository" :showSubmit="false" />
-    </a-card>
+    <a-card :bordered="false">
+      <div class="table-page-search-wrapper">
+        <a-form layout="inline">
+          <a-row :gutter="24">
+            <a-col :md="8" :sm="24">
+              <a-form-item label="参数名称">
+                <a-input v-model="queryParam.name" placeholder="按名称查找" />
+              </a-form-item>
+            </a-col>
+            <a-col :md="8" :sm="24">
+              <div class="table-operator">
+                <a-button type="default" @click="handleSearchByName">查找</a-button>
+                <a-button type="primary" icon="plus" @click="handleAdd">添加参数</a-button>
+              </div>
+            </a-col>
+          </a-row>
+        </a-form>
+      </div>
 
-    <!-- table -->
-    <a-card>
-      <a-table :columns="columns" :dataSource="data" :pagination="false" :loading="memberLoading">
-        <template v-for="(col, i) in ['level', 'ratio']" :slot="col" slot-scope="text, record">
-          <a-input
-            :key="col"
-            v-if="record.editable"
-            style="margin: -5px 0"
-            :value="text"
-            :placeholder="columns[i].title"
-            @change="e => handleChange(e.target.value, record.key, col)"
-          />
-          <template v-else>{{ text }}</template>
-        </template>
-        <template slot="operation" slot-scope="text, record">
-          <template v-if="record.editable">
-            <span v-if="record.isNew">
-              <a @click="saveRow(record)">添加</a>
-              <a-divider type="vertical" />
-              <a-popconfirm title="是否要删除此行？" @confirm="remove(record.key)">
-                <a>删除</a>
-              </a-popconfirm>
-            </span>
-            <span v-else>
-              <a @click="saveRow(record)">保存</a>
-              <a-divider type="vertical" />
-              <a @click="cancel(record.key)">取消</a>
-            </span>
-          </template>
-          <span v-else>
-            <a @click="toggle(record.key)">编辑</a>
+      <s-table
+        ref="table"
+        size="default"
+        rowKey="id"
+        :columns="columns"
+        :data="loadData"
+        :rowSelection="rowSelection"
+        :showPagination="pagination"
+      >
+        <span slot="action" slot-scope="text, record">
+          <template>
+            <a @click="handleEdit(record)">修改</a>
             <a-divider type="vertical" />
-            <a-popconfirm title="是否要删除此行？" @confirm="remove(record.key)">
+            <a @click="handleDetail(record)">详情</a>
+            <a-divider type="vertical" />
+            <a-popconfirm title="是否要删除此行？" ok-text="确定" cancel-text="取消" @confirm="handleDelete(record.id)">
               <a>删除</a>
             </a-popconfirm>
-          </span>
-        </template>
-      </a-table>
-      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newMember">
-        新增等级
-      </a-button>
-    </a-card>
-
-    <!-- fixed footer toolbar -->
-    <footer-tool-bar :is-mobile="isMobile" :collapsed="sideCollapsed">
-      <span class="popover-wrapper">
-        <a-popover
-          title="表单校验信息"
-          overlayClassName="antd-pro-pages-forms-style-errorPopover"
-          trigger="click"
-          :getPopupContainer="trigger => trigger.parentNode"
-        >
-          <template slot="content">
-            <li
-              v-for="item in errors"
-              :key="item.key"
-              @click="scrollToField(item.key)"
-              class="antd-pro-pages-forms-style-errorListItem"
-            >
-              <a-icon type="cross-circle-o" class="antd-pro-pages-forms-style-errorIcon" />
-              <div class="">{{ item.message }}</div>
-              <div class="antd-pro-pages-forms-style-errorField">{{ item.fieldLabel }}</div>
-            </li>
           </template>
-          <span class="antd-pro-pages-forms-style-errorIcon" v-if="errors.length > 0">
-            <a-icon type="exclamation-circle" />{{ errors.length }}
-          </span>
-        </a-popover>
-      </span>
-      <a-button type="primary" @click="validate" :loading="loading">提交</a-button>
-    </footer-tool-bar>
+        </span>
+      </s-table>
+
+      <a-row style="margin-top: 25px">
+        <div style="float: right">
+          第 {{ curPage }} 页
+          <a-button style="default; margin-right: 10px; margin-left: 10px" value="small" @click="lastPage">
+            <a-icon type="left" />上一页
+          </a-button>
+          <a-button style="default" value="small" @click="nextPage">下一页<a-icon type="right"/></a-button>
+        </div>
+      </a-row>
+
+      <create-form
+        ref="createModal"
+        :visible="visible"
+        :loading="confirmLoading"
+        :model="mdl"
+        @cancel="handleCancel"
+        @ok="handleOk"
+        @blur="handleLoseBlur"
+      />
+    </a-card>
   </page-header-wrapper>
 </template>
 
 <script>
-import RepositoryForm from './RepositoryForm'
-import FooterToolBar from '@/components/FooterToolbar'
-import { baseMixin } from '@/store/app-mixin'
+import { STable } from '@/components'
+import CreateForm from './modules/CreateForm'
+import { addSystemParam, deleteSystemParam, getSystemParam, editSystemParam } from '@/api/manage'
+// import { getAllDict, addDict, editDict, delDict, queryDict } from '@/api/manage'
+// import { mapGetters } from 'vuex'
 
-const fieldLabels = {
-  experience: '签到经验',
-  activity: '活动经验'
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id'
+  },
+  {
+    title: '名称',
+    dataIndex: 'name'
+  },
+  {
+    title: '关键字',
+    dataIndex: 'keyWord'
+  },
+  {
+    title: '取值',
+    dataIndex: 'value'
+  },
+  {
+    title: '操作',
+    dataIndex: 'action',
+    width: '150px',
+    scopedSlots: { customRender: 'action' }
+  }
+]
+
+const systemParams = {
+  data: []
 }
 
 export default {
-  name: 'Setting',
-  mixins: [baseMixin],
+  name: 'DataDictionary',
   components: {
-    FooterToolBar,
-    RepositoryForm
+    STable,
+    CreateForm
   },
   data() {
+    this.columns = columns
     return {
-      loading: false,
-      memberLoading: false,
-
-      // table
-      columns: [
-        {
-          title: '出勤等级',
-          dataIndex: 'level',
-          key: 'level',
-          width: '30%',
-          scopedSlots: { customRender: 'level' }
-        },
-        {
-          title: '出勤率',
-          dataIndex: 'ratio',
-          key: 'ratio',
-          width: '20%',
-          scopedSlots: { customRender: 'ratio' }
-        },
-        {
-          title: '操作',
-          key: 'action',
-          scopedSlots: { customRender: 'operation' }
-        }
-      ],
-      data: [
-        {
-          key: '1',
-          level: 'LV1',
-          ratio: '20'
-        },
-        {
-          key: '2',
-          level: 'LV2',
-          ratio: '40'
-        },
-        {
-          key: '3',
-          level: 'LV3',
-          ratio: '60'
-        }
-      ],
-
-      errors: []
+      pagination: false,
+      allDict: [],
+      curPage: 1,
+      // 高级搜索 展开/关闭
+      advanced: false,
+      confirmLoading: false,
+      mdl: null,
+      // create model
+      visible: false,
+      // 查询参数
+      queryParam: {
+        name: ''
+      },
+      // 加载数据方法 必须为 Promise 对象
+      loadData: parameter => {
+        return getSystemParam({ page: parameter.pageNo }).then(res => {
+          console.log(parameter.pageNo)
+          systemParams.data = res.data.list
+          systemParams.respCode = res.data.respCode
+          return systemParams
+        })
+      },
+      selectedRowKeys: [],
+      selectedRows: []
+    }
+  },
+  created() {
+    // getRoleList({ t: new Date() })
+  },
+  computed: {
+    rowSelection() {
+      return {
+        selectedRowKeys: this.selectedRowKeys,
+        onChange: this.onSelectChange
+      }
     }
   },
   methods: {
-    handleSubmit(e) {
-      e.preventDefault()
+    // 添加
+    handleAdd() {
+      this.mdl = null
+      this.visible = true
     },
-    newMember() {
-      const length = this.data.length
-      this.data.push({
-        key: length === 0 ? '1' : (parseInt(this.data[length - 1].key) + 1).toString(),
-        level: '',
-        ratio: '',
-        editable: true,
-        isNew: true
-      })
+    handleLoseBlur() {
+      console.log('111')
     },
-    remove(key) {
-      const newData = this.data.filter(item => item.key !== key)
-      this.data = newData
-    },
-    saveRow(record) {
-      this.memberLoading = true
-      const { key, level, ratio } = record
-      if (!level || !ratio) {
-        this.memberLoading = false
-        this.$message.error('请填写完整等级信息。')
-        return
-      }
-      // 模拟网络请求、卡顿 800ms
-      new Promise(resolve => {
-        setTimeout(() => {
-          resolve({ loop: false })
-        }, 800)
-      }).then(() => {
-        const target = this.data.find(item => item.key === key)
-        target.editable = false
-        target.isNew = false
-        this.memberLoading = false
-      })
-    },
-    toggle(key) {
-      const target = this.data.find(item => item.key === key)
-      target._originalData = { ...target }
-      target.editable = !target.editable
-    },
-    getRowByKey(key, newData) {
-      const data = this.data
-      return (newData || data).find(item => item.key === key)
-    },
-    cancel(key) {
-      const target = this.data.find(item => item.key === key)
-      Object.keys(target).forEach(key => {
-        target[key] = target._originalData[key]
-      })
-      target._originalData = undefined
-    },
-    handleChange(value, key, column) {
-      const newData = [...this.data]
-      const target = newData.find(item => key === item.key)
-      if (target) {
-        target[column] = value
-        this.data = newData
-      }
-    },
-
-    // 最终全页面提交
-    validate() {
-      const {
-        $refs: { repository },
-        $notification
-      } = this
-      const repositoryForm = new Promise((resolve, reject) => {
-        repository.form.validateFields((err, values) => {
-          if (err) {
-            reject(err)
-            return
+    handleOk() {
+      const form = this.$refs.createModal.form
+      this.confirmLoading = true
+      form.validateFields((errors, values) => {
+        if (!errors) {
+          if (values.id > 0) {
+            // 修改系统参数
+            editSystemParam(values)
+              .then(res => {
+                if (res.respCode > 0) {
+                  this.visible = false
+                  this.confirmLoading = false
+                  // 重置表单数据
+                  form.resetFields()
+                  // 刷新表格
+                  this.$refs.table.refresh()
+                  this.$message.success(res.msg)
+                } else {
+                  this.$message.error(res.msg)
+                  this.confirmLoading = false
+                }
+              })
+              .catch(err => {
+                this.$error.err(err.msg)
+              })
+          } else {
+            // 添加系统参数
+            addSystemParam(values)
+              .then(res => {
+                if (res.respCode > 0) {
+                  this.visible = false
+                  this.confirmLoading = false
+                  // 重置表单数据
+                  form.resetFields()
+                  // 刷新表格
+                  this.$refs.table.refresh()
+                  this.$message.success(res.msg)
+                } else {
+                  this.$message.error(res.msg)
+                  this.confirmLoading = false
+                }
+              })
+              .catch(err => {
+                this.$error.err(err.msg)
+              })
           }
-          resolve(values)
-        })
+        } else {
+          this.confirmLoading = false
+        }
       })
+    },
+    handleCancel() {
+      this.visible = false
 
-      // clean this.errors
-      this.errors = []
-      Promise.all([repositoryForm])
-        .then(values => {
-          $notification['error']({
-            message: 'Received values of form:',
-            description: JSON.stringify(values)
-          })
+      const form = this.$refs.createModal.form
+      form.resetFields() // 清理表单数据（可不做）
+    },
+
+    // 修改
+    handleEdit(record) {
+      this.visible = true
+      this.mdl = { ...record }
+    },
+
+    // 查看详情
+    handleDetail(record) {
+      this.$router.push({
+        path: '/account/settings/DictDetail',
+        query: record
+      })
+    },
+
+    // 删除
+    handleDelete(id) {
+      const form = this.$refs.createModal.form
+      deleteSystemParam({ id: id })
+        .then(res => {
+          if (res.respCode > 0) {
+            this.visible = false
+            this.confirmLoading = false
+            // 重置表单数据
+            form.resetFields()
+            // 刷新表格
+            this.$refs.table.refresh()
+            this.$message.success(res.msg)
+          } else {
+            this.$message.error(res.msg)
+            this.confirmLoading = false
+          }
         })
-        .catch(() => {
-          const errors = Object.assign({}, repository.form.getFieldsError())
-          const tmp = { ...errors }
-          this.errorList(tmp)
+        .catch(err => {
+          this.$message.error(err.msg)
         })
     },
-    errorList(errors) {
-      if (!errors || errors.length === 0) {
-        return
-      }
-      this.errors = Object.keys(errors)
-        .filter(key => errors[key])
-        .map(key => ({
-          key: key,
-          message: errors[key][0],
-          fieldLabel: fieldLabels[key]
-        }))
+
+    handleSearchByName() {
+      // 查找
+      this.$refs.table.refresh()
     },
-    scrollToField(fieldKey) {
-      const labelNode = document.querySelector(`label[for="${fieldKey}"]`)
-      if (labelNode) {
-        labelNode.scrollIntoView(true)
+    // 上一页
+    lastPage() {
+      if (this.curPage !== 1) {
+        this.curPage--
+        this.$refs.table.refresh()
       }
+    },
+
+    // 下一页
+    nextPage() {
+      this.curPage++
+      this.$refs.table.refresh()
+    },
+
+    // 选择
+    onSelectChange(selectedRowKeys, selectedRows) {
+      this.selectedRowKeys = selectedRowKeys
+      this.selectedRows = selectedRows
+      // console.log(this.selectedRowKeys.length)
     }
   }
 }
 </script>
-
-<style lang="less" scoped>
-.card {
-  margin-bottom: 24px;
-}
-.popover-wrapper {
-  /deep/ .antd-pro-pages-forms-style-errorPopover .ant-popover-inner-content {
-    min-width: 256px;
-    max-height: 290px;
-    padding: 0;
-    overflow: auto;
-  }
-}
-.antd-pro-pages-forms-style-errorIcon {
-  user-select: none;
-  margin-right: 24px;
-  color: #f5222d;
-  cursor: pointer;
-  i {
-    margin-right: 4px;
-  }
-}
-.antd-pro-pages-forms-style-errorListItem {
-  padding: 8px 16px;
-  list-style: none;
-  border-bottom: 1px solid #e8e8e8;
-  cursor: pointer;
-  transition: all 0.3s;
-
-  &:hover {
-    background: #e6f7ff;
-  }
-  .antd-pro-pages-forms-style-errorIcon {
-    float: left;
-    margin-top: 4px;
-    margin-right: 12px;
-    padding-bottom: 22px;
-    color: #f5222d;
-  }
-  .antd-pro-pages-forms-style-errorField {
-    margin-top: 2px;
-    color: rgba(0, 0, 0, 0.45);
-    font-size: 12px;
-  }
-}
-</style>

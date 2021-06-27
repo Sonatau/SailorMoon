@@ -1,6 +1,6 @@
 import storage from 'store'
-import { login, getInfo, logout } from '@/api/login'
-import { ACCESS_TOKEN } from '@/store/mutation-types'
+import { login, getInfo, logout, loginCode } from '@/api/login'
+import { ACCESS_TOKEN, USER_INFO } from '@/store/mutation-types'
 import { welcome } from '@/utils/util'
 
 const user = {
@@ -10,7 +10,8 @@ const user = {
     welcome: '',
     avatar: '',
     roles: [],
-    info: {}
+    info: {},
+    temp: ''
   },
 
   mutations: {
@@ -29,22 +30,46 @@ const user = {
     },
     SET_INFO: (state, info) => {
       state.info = info
+    },
+    SET_TEMP: (state, temp) => {
+      state.temp = temp
     }
   },
 
   actions: {
     // 登录
     Login ({ commit }, userInfo) {
-      return new Promise((resolve, reject) => {
-        login(userInfo).then(response => {
-          const result = response.result
-          storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
-          commit('SET_TOKEN', result.token)
-          resolve()
-        }).catch(error => {
-          reject(error)
+      if (userInfo.email) {
+        return new Promise((resolve, reject) => {
+          login(userInfo).then(response => {
+            const result = response.data
+            storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+            const user = Object.assign({}, userInfo, response.data)
+            user['role'] = response.data.permissions
+            commit('SET_TEMP', user) // 提前设置用户信息 和 角色权限
+            storage.set(USER_INFO, user)
+            commit('SET_TOKEN', result.token)
+            resolve()
+          }).catch(error => {
+            reject(error)
+          })
         })
-      })
+      } else {
+        return new Promise((resolve, reject) => {
+          loginCode(userInfo).then(response => {
+            const result = response.data
+            storage.set(ACCESS_TOKEN, result.token, 7 * 24 * 60 * 60 * 1000)
+            const user = Object.assign({}, userInfo, response.data)
+            user['role'] = response.data.permissions
+            commit('SET_TOKEN', result.token)
+            storage.set(USER_INFO, user)
+            commit('SET_TEMP', user) // 提前设置用户信息 和 角色权限
+            resolve()
+          }).catch(error => {
+            reject(error)
+          })
+        })
+      }
     },
 
     // 获取用户信息
@@ -86,6 +111,7 @@ const user = {
           commit('SET_TOKEN', '')
           commit('SET_ROLES', [])
           storage.remove(ACCESS_TOKEN)
+          storage.remove(USER_INFO) // 移除
           resolve()
         }).catch(() => {
           resolve()
