@@ -15,7 +15,7 @@
     <form (ngSubmit)="onSubmit(msgForm)" #msgForm="ngForm" novalidate>
     <ion-grid>
     <ion-card mode="ios">
-        <ion-item lines="none" (click)="changeImage()">
+        <ion-item lines="none" (click)="onPresentActiveSheet()" style="margin-top: 10px;">
             <ion-avatar class="my-thum" *ngIf="user.image != 'image_null'">
                 <img class="my-thum" src={{user.image}}>
             </ion-avatar>

@@ -55,6 +55,10 @@ export class UsermsgPage implements OnInit {
     }
   }
 
+  ionViewWillLeave(){
+    this.eventService.eventEmit.emit('msg-change','用户信息页返回');
+  }
+
   initUserInfo(){
     //getUserInfo
     var api = '/userinfo';//后台接口

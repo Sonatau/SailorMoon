@@ -78,7 +78,7 @@ export class CheckinResultPage implements OnInit {
             var param = {
               studentId: this.failList[index].id,
               attendanceId: this.checkinId,
-              state: 1,
+              state: 0,
               attendanceTimeStr: this.timeNow
             }
             var api = '/attendance-result';
@@ -121,7 +121,7 @@ export class CheckinResultPage implements OnInit {
               id: this.successList[index].attendanceResultId,
               studentId: this.successList[index].id,
               attendanceId: this.checkinId,
-              state: 4
+              state: 1
             }
             var api = '/attendance-result';
             this.httpService.put(api, param).then(async (response: any) => {

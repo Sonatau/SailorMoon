@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, PickerController, ToastController } from '@ionic/angular';
+import { ActionSheetController, AlertController, ToastController } from '@ionic/angular';
 import { EventService } from 'src/app/shared/services/event.service';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { PickerService } from 'src/app/shared/services/picker.service';
+import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-edit-usermsg',
@@ -37,13 +39,17 @@ export class EditUsermsgPage implements OnInit {
   }
   public over = false;
   public role;
+  public originSno;
 
   constructor(public httpService: HttpService,
     private alertController: AlertController,
     public pickerService: PickerService,
     private toastController: ToastController,
     private router: Router,
-    public eventService: EventService
+    public eventService: EventService,
+    private actionSheetCtrl: ActionSheetController,
+    private camera: Camera,
+    private imagePicker: ImagePicker
     ) { }
 
   ngOnInit() {
@@ -76,6 +82,7 @@ export class EditUsermsgPage implements OnInit {
       }
       if(response.data.data.user.sno != "-1"){
         this.user.sno = response.data.data.user.sno;
+        this.originSno = response.data.data.user.sno;
       }
       this.user.sex = response.data.data.user.sex;
       if(response.data.data.user.schoolId != null){
@@ -175,7 +182,88 @@ async onSubmit(form: NgForm) {
           ]
         });
         await alert.present();
+      }else{
+        const alert = await this.alertController.create({
+          message: response.data.msg,
+          buttons: [
+            {
+              text: '确认',
+              cssClass: 'secondary',
+            }
+          ]
+        });
+        await alert.present();
       }
     });
+  }
+
+  //---------------------------------------------------------------------------------------------------------------------------//
+  //-----------------------------------------------------上传班课封面-----------------------------------------------------------//
+  //---------------------------------------------------------------------------------------------------------------------------//
+  /**
+   * 上传图片
+   * @returns {Promise<void>}
+   */
+   async onPresentActiveSheet() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: '选择您的操作',
+      buttons: [
+        {
+          text: '拍照',
+          // role: 'destructive',
+          handler: () => {
+            console.log('进入相机');
+            this.onCamera();
+          }
+        }, {
+          text: '相册',
+          handler: () => {
+            console.log('进入相册');
+            this.onImagePicker();
+          }
+        }, {
+          text: '取消',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  /**
+   * 拍照
+   */
+   onCamera() {
+    const options: CameraOptions = {
+      quality: 10,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    };
+    this.camera.getPicture(options).then((imageData) => {
+      this.user.image = 'data:image/jpeg;base64,' + imageData;
+    }, (err) => {
+    });
+  }
+
+  /**
+   * 相册
+   */
+  onImagePicker() {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 1,
+      quality: 10,
+      outputType: 1
+    };
+    console.log('in imagePicker');
+    this.imagePicker.getPictures(options).then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        //console.log('Image URI: ' + results[i]);
+        this.user.image = 'data:image/jpeg;base64,' + results[i];
+      }
+    }, (err) => {console.log(err); });
   }
 }

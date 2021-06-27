@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import { EventService } from 'src/app/shared/services/event.service';
 import { HttpService } from 'src/app/shared/services/http.service';
 
 @Component({
@@ -26,10 +27,18 @@ export class MinePage implements OnInit {
   };
   
   public role;
+  public return_flag = 0;
 
   constructor(private router: Router,
     public httpService: HttpService,
-    private alertController: AlertController) { }
+    private alertController: AlertController,
+    public eventService: EventService) {
+      this.eventService.eventEmit.on('msg-change',()=>{
+        console.log('mine-msg-eventListener');
+        this.initUserInfo();
+        this.return_flag = 1;
+      })
+    }
 
   ngOnInit() {
   }
@@ -38,7 +47,9 @@ export class MinePage implements OnInit {
   //------------------------------------------------------页面信息展示----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
   ionViewWillEnter(){
-    this.initUserInfo();
+    if(this.return_flag==0){
+      this.initUserInfo();
+    }
   }
 
   initUserInfo(){

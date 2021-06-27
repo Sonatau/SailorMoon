@@ -2,11 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AlertController, ToastController, PickerController, Platform } from '@ionic/angular';
+import { AlertController, ToastController, PickerController, Platform, ActionSheetController } from '@ionic/angular';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { Course } from '../course';
 import { PickerService } from 'src/app/shared/services/picker.service';
-import { PictureService } from 'src/app/shared/services/picture.service';
+import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 
 @Component({
   selector: 'app-edit-detail',
@@ -53,7 +54,6 @@ export class EditDetailPage implements OnInit {
 
   constructor(
     private router: Router,
-    private activatedRoute: ActivatedRoute,
     public httpService: HttpService,
     public http: HttpClient,
     private alertController: AlertController,
@@ -61,7 +61,9 @@ export class EditDetailPage implements OnInit {
     public pickerController: PickerController,
     public platform: Platform,
     public pickerService: PickerService,
-    public pictureService: PictureService) { 
+    private actionSheetCtrl: ActionSheetController,
+    private camera: Camera,
+    private imagePicker: ImagePicker) { 
   }
 
   ngOnInit() {  //初始化页面的时候调一次
@@ -138,6 +140,8 @@ export class EditDetailPage implements OnInit {
       this.course.name = response.data.data.list[0].name;
       this.course.teacher = response.data.data.list[0].teacher;
       this.course.cover = response.data.data.list[0].image;
+      this.course.join = response.data.data.list[0].okJoin;
+      this.course.status = response.data.data.list[0].state;
 
       this.lessonChoosed.name = response.data.data.list[0].lesson;
       this.schoolChoosed.name = response.data.data.list[0].school;
@@ -296,11 +300,71 @@ export class EditDetailPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
   //-----------------------------------------------------上传班课封面-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
-  addPicture(){
-    var img = this.pictureService.getPicture();
-    if(img!=null){
-      this.course.cover = img;
-    }
+  /**
+   * 上传图片
+   * @returns {Promise<void>}
+   */
+   async onPresentActiveSheet() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: '选择您的操作',
+      buttons: [
+        {
+          text: '拍照',
+          // role: 'destructive',
+          handler: () => {
+            console.log('进入相机');
+            this.onCamera();
+          }
+        }, {
+          text: '相册',
+          handler: () => {
+            console.log('进入相册');
+            this.onImagePicker();
+          }
+        }, {
+          text: '取消',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  /**
+   * 拍照
+   */
+   onCamera() {
+    const options: CameraOptions = {
+      quality: 10,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    };
+    this.camera.getPicture(options).then((imageData) => {
+      this.course.cover = 'data:image/jpeg;base64,' + imageData;
+    }, (err) => {
+    });
+  }
+
+  /**
+   * 相册
+   */
+  onImagePicker() {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 1,
+      quality: 10,
+      outputType: 1
+    };
+    console.log('in imagePicker');
+    this.imagePicker.getPictures(options).then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        //console.log('Image URI: ' + results[i]);
+        this.course.cover = 'data:image/jpeg;base64,' + results[i];
+      }
+    }, (err) => {console.log(err); });
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -322,23 +386,38 @@ export class EditDetailPage implements OnInit {
           schoolId: this.schoolChoosed.id,
           acadeId: this.academyChoosed.id,
           termId: this.termChoosed.id,
-          lessonId: this.lessonChoosed.id
+          lessonId: this.lessonChoosed.id,
+          okJoin: this.course.join,
+          state: this.course.status
         };
         var api = '/course';
         this.httpService.put(api, param).then(async (response: any) => {
-          const alert = await this.alertController.create({
-            message: '信息修改成功！',
-            buttons: [
-              {
-                text: '确认',
-                cssClass: 'secondary',
-                handler: (blah) => {
-                  this.gotodetail();
+          if(response.data.respCode!=-1){
+            const alert = await this.alertController.create({
+              message: '信息修改成功！',
+              buttons: [
+                {
+                  text: '确认',
+                  cssClass: 'secondary',
+                  handler: (blah) => {
+                    this.gotodetail();
+                  }
                 }
-              }
-            ]
-          });
-          await alert.present();
+              ]
+            });
+            await alert.present();
+          }else{
+            const alert = await this.alertController.create({
+              message: '信息修改失败！',
+              buttons: [
+                {
+                  text: '确认',
+                  cssClass: 'secondary',
+                }
+              ]
+            });
+            await alert.present();
+          }
         });
       }
     }

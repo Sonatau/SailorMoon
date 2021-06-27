@@ -98,7 +98,7 @@ export class CourseDetailPage implements OnInit {
     };
     var api = '/course';
     this.httpService.get(api, param_in).then(async (response: any) => {
-      // console.log(response);
+      console.log(response);
       if(response.data.data.total==0){
         this.inCourse = false;
         this.setCourse();

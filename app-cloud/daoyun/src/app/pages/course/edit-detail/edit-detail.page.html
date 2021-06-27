@@ -13,14 +13,14 @@
   <form (ngSubmit)="onSubmit(submitForm)" #submitForm="ngForm" novalidate>
       <ion-list lines="full">
 
-        <ion-item-divider color="stable">
+        <ion-item-divider color="stable" (click)="onPresentActiveSheet()">
           <!-- <ion-thumbnail *ngIf="course_cover != 'image_null'" slot="start"> -->
             <img *ngIf="course.cover != 'image_null'" slot="start" class="cover_img"
               src={{course.cover}}>
           <!-- </ion-thumbnail> -->
           <!-- <ion-thumbnail slot="start" (click)="onPresentActiveSheet()"> -->
             <img *ngIf="course.cover == 'image_null'" slot="start" class="cover_img"
-            (click)="addPicture()" src="assets/img/course/add.png">
+              src="assets/img/course/add.png">
           <!-- </ion-thumbnail> -->
         </ion-item-divider>
 

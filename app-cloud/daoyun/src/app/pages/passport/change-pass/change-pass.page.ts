@@ -41,13 +41,13 @@ export class ChangePassPage implements OnInit {
     }else{
       //两次新密码是否相同
       if (this.changeinf.password1 == this.changeinf.password2) {
-        var api = '/updated-password';
+        var api = '/reset-password';
         var params = {
           newPassword1:this.changeinf.password1,
           newPassword2:this.changeinf.password2,
           oldPassword: this.changeinf.oldpassword,
         };
-        this.httpService.put(api, params).then(async (response: any) => {
+        this.httpService.post_data(api, params).then(async (response: any) => {
           //console.log(response);
           await loading.dismiss();
           if(response.data.respCode == 1){
@@ -60,6 +60,7 @@ export class ChangePassPage implements OnInit {
                 cssClass: 'primary',
                 handler: (blah) => {
                   //修改密码成功，跳转到登录页
+                  localStorage.clear();
                   this.router.navigateByUrl('/login');
                 }
               }]
@@ -68,7 +69,7 @@ export class ChangePassPage implements OnInit {
           }else{
             let alert = await this.alertController.create({
               header: '提示',
-              message: '密码修改失败！请输入正确的旧密码',
+              message: '密码修改失败！',
               buttons: ['确定']
             });
             alert.present();
