@@ -25,35 +25,41 @@
         </ion-item>
         <ion-item lines="none">
             <ion-label style="text-align: center; margin-top: 8px; color: #7468be;">
-                用户身份：xx</ion-label>
+                用户身份：{{role}}</ion-label>
         </ion-item>
     </ion-card>
 
-      <ion-item slot="end">
+    <ion-item *ngIf="over==false">
+        <ion-label>设置初始密码</ion-label>
+        <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.password"
+        name="pass" #pass="ngModel" style="color: #808080"></ion-input>
+    </ion-item>
+
+      <ion-item>
           <ion-label>姓名</ion-label>
           <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.name"
-          required style="color: #808080"></ion-input>
+          name="name" #name="ngModel" required style="color: #808080"></ion-input>
       </ion-item>
 
       <ion-item>
           <ion-label>学/工号</ion-label>
           <ion-input class="my_inf" slot="end" type="text" placeholder="未设置" [(ngModel)]="user.sno"
-          required pattern="^[0-9]*$" style="color: #808080"></ion-input>
+          name="no" #no="ngModel" required pattern="^[0-9]*$" style="color: #808080"></ion-input>
       </ion-item>
 
-      <ion-radio-group [(ngModel)]="user.sex" mode="md">
+      <ion-radio-group name="sex" #sex="ngModel" [(ngModel)]="user.sex" mode="md">
           <ion-item>
-              <ion-label>性别</ion-label>
-              <ion-radio color="success" value=0 style="margin-left: 100px;"></ion-radio>
+              <ion-label style="margin-left: 5px;">性别</ion-label>
+              <ion-radio color="success" value=0 style="margin-left: 120px;"></ion-radio>
               <ion-label style="margin-left: 15px;">男</ion-label>
               <ion-radio color="tertiary" value=1></ion-radio>
               <ion-label style="margin-left: 15px;">女</ion-label>
           </ion-item>
       </ion-radio-group>
 
-      <ion-item slot="end" (click)="openPicker(1)">
+      <ion-item (click)="openPicker()">
         <ion-label>学校</ion-label>
-        <ion-text class="my_inf" slot="end" style="color: #808080">{{schoolShow}}</ion-text>
+        <ion-text class="my_inf" slot="end" style="color: #808080">{{schoolChoosed.name}}</ion-text>
       </ion-item>
 
       <ion-item lines="none">
@@ -62,14 +68,8 @@
         <ion-button color="primary" type="submit" class="btn"
           [disabled]="msgForm.invalid">保存修改</ion-button>
       </ion-row>
-      </ion-grid>>
+      </ion-grid>
   </form>
   </ion-list>
-
-  <!-- <ion-list lines="none">
-      <ion-item class="save-row" lines="none">
-          <ion-button class="save-btn btn" style="width:90%" fill="clear" (click)="updateInf()">保存修改</ion-button>
-      </ion-item>
-  </ion-list> -->
   
 </ion-content>

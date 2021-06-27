@@ -8,13 +8,13 @@
 
       <ion-title style="text-align:center;margin-right: 30px;">班课详情</ion-title>
 
-      <ion-buttons slot="end" *ngIf="isTeacher==0 && inCourse=='1'">
+      <ion-buttons slot="end" *ngIf="isTeacher=='0' && inCourse==true">
         <ion-button color="light" expand="block" fill="clear" shape="round" (click)="outLesson()">
             <ion-icon name="log-out-outline"></ion-icon>
         </ion-button>
     </ion-buttons>
 
-    <ion-buttons slot="end" *ngIf="isTeacher == 1">
+    <ion-buttons slot="end" *ngIf="isTeacher == '1'">
         <ion-button color="light" expand="block" fill="clear" shape="round" (click)="deleteLesson()">
             <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
@@ -34,7 +34,7 @@
                 <img src="assets/img/course/cover-default.jpg">
               </ion-thumbnail>
               <ion-label>
-                  <h5>&nbsp;&nbsp;&nbsp;{{course.lesson}}&nbsp;&nbsp;&nbsp;{{course.name}}</h5>
+                  <h5>&nbsp;&nbsp;&nbsp;{{course.name}}</h5>
                   <h5>&nbsp;&nbsp;&nbsp;{{course.teacher}}</h5>
                   <h5>&nbsp;&nbsp;&nbsp;{{course.term}}</h5>
               </ion-label>
@@ -77,7 +77,7 @@
     <ion-item lines="none" *ngIf="isTeacher=='1'">
         <ion-label slot="start">允许加入</ion-label>
         <ion-label slot="end">
-            <ion-toggle color="primary" (click)="updateJoin()" [(ngModel)]="toggle_join"></ion-toggle>
+            <ion-toggle color="primary" (ionChange)="updateCourse()" [(ngModel)]="course.join"></ion-toggle>
         </ion-label>
     </ion-item>
 
@@ -90,8 +90,13 @@
     <ion-item lines="none" *ngIf="isTeacher=='1'">
         <ion-label slot="start">班课状态</ion-label>
         <ion-label slot="end">
-            <ion-toggle color="primary" (click)="updateStatus()" [(ngModel)]="toggle_status"></ion-toggle>
+            <ion-toggle color="primary" (ionChange)="updateCourse()" [(ngModel)]="course.status"></ion-toggle>
         </ion-label>
+    </ion-item>
+
+    <ion-item lines="none">
+        <ion-label slot="start">对应课程</ion-label>
+        <ion-note class="my_inf" slot="end" color="medium">{{course.lesson}}</ion-note>
     </ion-item>
 
     <ion-item lines="none">
@@ -103,30 +108,25 @@
         <ion-label slot="start">开设学院</ion-label>
         <ion-note class="my_inf" slot="end" color="medium">{{course.academy}}</ion-note>
     </ion-item>
-
-    <!-- <ion-item lines="none">
-        <ion-label slot="start">开设专业</ion-label>
-        <ion-note class="my_inf" slot="end" color="medium">{{course.major}}</ion-note>
-    </ion-item> -->
-
   </ion-list>
 
-<ion-item class="lesson-row" lines="none" style="border:solid 1px #7468be;" *ngIf="inCourse=='1' || isTeacher==1">
-    <ion-button class="lesson-btn" fill="clear" style="color:#7468be" [routerLink]="['/member-list']">成员列表</ion-button>
-</ion-item>
-<ion-item *ngIf="checkin_admin == 1" class="lesson-row" lines="none" style="border:solid 1px yellowgreen;">
-    <ion-button class="lesson-btn" fill="clear" style="color:yellowgreen" [routerLink]="['/checkin/course-checkin']">签到历史</ion-button>
-</ion-item>
-<ion-item *ngIf="isTeacher == 1" class="lesson-row" lines="none" style="border:solid 1px green;">
-    <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin/create-checkin']">发起签到</ion-button>
-</ion-item>
-
-<ion-item *ngIf="isTeacher=='0' && inCourse=='1'" class="lesson-row" lines="none" style="border:solid 1px green;">
-  <ion-button class="lesson-btn" fill="clear" style="color:green" [routerLink]="['/checkin']">课程签到</ion-button>
-</ion-item>
-
-<ion-item *ngIf="isTeacher=='0' && inCourse=='0'" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
+  <ion-item *ngIf="isTeacher=='0' && inCourse==false" class="lesson-row" lines="none" style="border:solid 1px #7468be;">
     <ion-button class="lesson-btn" fill="clear" style="color: #7468be" (click)="joinLesson()">加入班课</ion-button>
   </ion-item>
+<ion-item class="lesson-row" lines="none" style="border:solid 1px #7468be;" *ngIf="inCourse==true">
+    <ion-button class="lesson-btn" fill="clear" style="color:#7468be" (click)="gotoMemberList()">成员列表</ion-button>
+</ion-item>
+
+<ion-item *ngIf="checkin_admin=='1' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px yellowgreen;">
+    <ion-button class="lesson-btn" fill="clear" style="color:yellowgreen" (click)="gotoCheckinList()">签到历史</ion-button>
+</ion-item>
+
+<ion-item *ngIf="isTeacher=='1' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px green;">
+    <ion-button class="lesson-btn" fill="clear" style="color:green" (click)="createCheckin()">发起签到</ion-button>
+</ion-item>
+<ion-item *ngIf="isTeacher=='0' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px green;">
+  <ion-button class="lesson-btn" fill="clear" style="color:green" (click)="gotoCheckin()">参与签到</ion-button>
+</ion-item>
+
 
 </ion-content>

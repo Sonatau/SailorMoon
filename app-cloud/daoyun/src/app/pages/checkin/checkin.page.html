@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
       <ion-buttons slot="start">
-          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" (click)="gotodetail()">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
@@ -12,38 +12,36 @@
 <ion-content>
   
   <div class="my-circle" *ngIf="isTeacher == '1'">
-      <h3 style="position: relative;top: 15%;">签到中</h3>
-      <h5 style="margin-top: 30px;">55/95</h5>
-      <!-- <h5 style="margin-top: 30px;">{{checkinNum}}/{{totalNum}}</h5> -->
+      <h3 style="position: relative;top: 20%;">{{checkinState}}</h3>
+      <h3 style="margin-top: 60px;" *ngIf="checkinState=='签到中'">{{successTotal}}/{{memberTotal}}</h3>
   </div>
-  <div class="my-circle" *ngIf="isTeacher == '0'">
-    <h3 style="position: relative;top: 15%;">参与签到</h3>
-    <h5 style="margin-top: 30px;">00:43</h5>
-    <!-- <h5 style="margin-top: 30px;">{{checkinNum}}/{{totalNum}}</h5> -->
+  <div class="my-circle" *ngIf="isTeacher == '0'" (click)="joinCheckin()">
+    <h3 style="position: relative;top: 15%;">{{checkinState}}</h3>
+    <h3 style="margin-top: 60px;">{{showTime}}</h3>
   </div>
 </ion-content>
 
 <ion-footer>
   <ion-grid>
     <ion-row *ngIf="isTeacher == '1'">
-        <ion-col class="col-btn" (click)="endCheckin()" [routerLink]="['/checkin/checkin-result']">
+        <ion-col class="col-btn" (click)="endCheckin(2)">
             <ion-button fill="clear">结束签到</ion-button>
         </ion-col>
         <ion-col>
             <div></div>
         </ion-col>
-        <ion-col class="col-btn" (click)="giveup()" [routerLink]="['/course-detail']">
+        <ion-col class="col-btn" (click)="endCheckin(3)">
             <ion-button fill="clear">取消签到</ion-button>
         </ion-col>
     </ion-row>
     <ion-row *ngIf="isTeacher == '0'">
-        <ion-col class="col-btn" (click)="endCheckin()" [routerLink]="['/member-list/member-checkin']">
-            <ion-button fill="clear">签到记录</ion-button>
+        <ion-col class="col-btn" (click)="gotoMemCheck()">
+            <ion-button fill="clear">我的签到</ion-button>
         </ion-col>
         <ion-col>
             <div></div>
         </ion-col>
-        <ion-col class="col-btn" [routerLink]="['/member-list']">
+        <ion-col class="col-btn" (click)="gotoMemberList()">
             <ion-button fill="clear">成员列表</ion-button>
         </ion-col>
     </ion-row>

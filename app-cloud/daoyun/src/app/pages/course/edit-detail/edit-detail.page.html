@@ -13,14 +13,26 @@
   <form (ngSubmit)="onSubmit(submitForm)" #submitForm="ngForm" novalidate>
       <ion-list lines="full">
 
-        <ion-item-divider color="light">
-          <ion-thumbnail *ngIf="course.cover != 'image_null'">
-            <img src={{course.cover}}>
-          </ion-thumbnail>
-          <ion-thumbnail slot="end" (click)="onPresentActiveSheet()">
-            <img src="assets/img/course/add.png">
-          </ion-thumbnail>
+        <ion-item-divider color="stable">
+          <!-- <ion-thumbnail *ngIf="course_cover != 'image_null'" slot="start"> -->
+            <img *ngIf="course.cover != 'image_null'" slot="start" class="cover_img"
+              src={{course.cover}}>
+          <!-- </ion-thumbnail> -->
+          <!-- <ion-thumbnail slot="start" (click)="onPresentActiveSheet()"> -->
+            <img *ngIf="course.cover == 'image_null'" slot="start" class="cover_img"
+            (click)="addPicture()" src="assets/img/course/add.png">
+          <!-- </ion-thumbnail> -->
         </ion-item-divider>
+
+        <ion-item (click)="openPicker(0,'term')">
+          <ion-label slot="start">授课学期</ion-label>
+          <ion-note class="my_inf" slot="end">{{termChoosed.name}}</ion-note>
+        </ion-item>
+
+        <ion-item (click)="openPicker(0,'lesson')">
+          <ion-label slot="start">对应课程</ion-label>
+          <ion-note class="my_inf" slot="end">{{lessonChoosed.name}}</ion-note>
+        </ion-item>
 
         <ion-item>
           <ion-label slot="start">班课名称</ion-label>
@@ -29,19 +41,14 @@
           </ion-input>
         </ion-item>
 
-        <ion-item (click)="openPicker(1)">
+        <ion-item (click)="openPicker(0,'school')">
           <ion-label slot="start">开设学校</ion-label>
-          <ion-note class="my_inf" slot="end">{{course.school}}</ion-note>
+          <ion-note class="my_inf" slot="end">{{schoolChoosed.name}}</ion-note>
         </ion-item>
 
-        <ion-item (click)="openPicker(2)">
+        <ion-item (click)="openPicker(1,'academy')">
           <ion-label slot="start">开设学院</ion-label>
-          <ion-note class="my_inf" slot="end">{{course.academy}}</ion-note>
-        </ion-item>
-
-        <ion-item (click)="openPicker(3)">
-          <ion-label slot="start">开设专业</ion-label>
-          <ion-note class="my_inf" slot="end">{{course.major}}</ion-note>
+          <ion-note class="my_inf" slot="end">{{academyChoosed.name}}</ion-note>
         </ion-item>
 
         <ion-row style="margin: top 30px;" class="row">

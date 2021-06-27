@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar style="margin-top:10px;">
-    <ion-searchbar class="searchbar" (ionChange)="getData($event)" placeholder="搜索 {{courseType}}"></ion-searchbar>
+    <ion-searchbar class="searchbar" (ionChange)="getData($event)" placeholder="输入班课名/班课号进行搜索"></ion-searchbar>
     <ion-button slot="end" fill="outline" color="primary" size="small" (click)="dissmissSearch()">取消</ion-button>
   </ion-toolbar>
 </ion-header>
@@ -74,7 +74,7 @@
         <ion-col></ion-col>
         <ion-col>
           <ion-label style="text-align: center;">
-            <p>您没有相关班课哦~</p>
+            <p>没有您需要的课程哦~</p>
           </ion-label>
         </ion-col>
         <ion-col></ion-col>

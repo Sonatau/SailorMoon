@@ -6,15 +6,15 @@ export interface Course {
   name: string;
   school: string;
   academy: string;
-  major: string;
   teacher: string;
   schoolId: number;
   academyId: number;
-  majorId: number;
   teacherId: number;
 
   term: string;
-  join: string;
-  status: string;
+  termId: number;
+  join: boolean;
+  status: boolean;
   lesson: string;
+  lessonId: number;
 }

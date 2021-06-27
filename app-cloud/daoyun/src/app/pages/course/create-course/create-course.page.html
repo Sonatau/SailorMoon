@@ -12,20 +12,38 @@
 <ion-content>
   <form (ngSubmit)="onCreate(createForm)" #createForm="ngForm" novalidate>
       <ion-list lines="full">
-
-        <ion-item-divider color="light">
-          <ion-thumbnail *ngIf="course_cover != 'image_null'">
-            <img src={{course_cover}}>
-          </ion-thumbnail>
-          <ion-thumbnail slot="end" (click)="onPresentActiveSheet()">
-            <img src="assets/img/course/add.png">
-          </ion-thumbnail>
+ 
+        <ion-item-divider color="stable">
+          <!-- <ion-thumbnail *ngIf="course_cover != 'image_null'" slot="start"> -->
+            <img *ngIf="course_cover != 'image_null'" slot="start" class="cover_img"
+              src={{course_cover}}>
+          <!-- </ion-thumbnail> -->
+          <!-- <ion-thumbnail slot="start" (click)="onPresentActiveSheet()"> -->
+            <img *ngIf="course_cover == 'image_null'" slot="start" class="cover_img"
+            (click)="addPicture()" src="assets/img/course/add.png">
+          <!-- </ion-thumbnail> -->
         </ion-item-divider>
 
-        <ion-item>
+        <ion-item (click)="openPicker(0,'term')">
           <ion-label slot="start">班课学期</ion-label>
-          <ion-note class="my_inf" slot="end">{{course_term}}</ion-note>
+          <ion-note class="my_inf" slot="end">{{termChoosed.name}}</ion-note>
         </ion-item>
+
+        <ion-item (click)="openPicker(0, 'lesson')">
+          <ion-label slot="start">选择已有课程</ion-label>
+          <ion-note class="my_inf" slot="end">{{lessonChoosed.name}}</ion-note>
+        </ion-item>
+        <ion-item>
+          <ion-label slot="start">(或)自定义课程</ion-label>
+          <ion-input name="lesson" type="text" class="my_inf" slot="end"
+            placeholder="未设置" [(ngModel)]="course_lesson" #lesson="ngModel">
+          </ion-input>
+        </ion-item>
+        <div class="signup_warn">
+          <ion-text text-left color="danger" *ngIf="(lesson.touched) && (course_lesson==null && lessonChoosed.name=='请选择')">
+            <p class="warn" padding-start>请选择课程或自定义课程！</p>
+          </ion-text>
+        </div>
 
         <ion-item>
           <ion-label slot="start">班级名称</ion-label>
@@ -34,26 +52,14 @@
           </ion-input>
         </ion-item>
 
-        <ion-item (click)="openPicker(1)">
+        <ion-item (click)="openPicker(0, 'school')">
           <ion-label slot="start">开设学校</ion-label>
           <ion-note class="my_inf" slot="end">{{schoolChoosed.name}}</ion-note>
         </ion-item>
 
-        <ion-item (click)="openPicker(2)">
+        <ion-item (click)="openPicker(1, 'academy')">
           <ion-label slot="start">开设学院</ion-label>
           <ion-note class="my_inf" slot="end">{{academyChoosed.name}}</ion-note>
-        </ion-item>
-
-        <ion-item (click)="openLessonPicker()">
-          <ion-label slot="start">已有课程</ion-label>
-          <ion-note class="my_inf" slot="end">{{lessonChoosed.name}}</ion-note>
-        </ion-item>
-
-        <ion-item>
-          <ion-label slot="start">（或）新增课程</ion-label>
-          <ion-input name="lesson" type="text" class="my_inf" slot="end"
-            placeholder="未设置" [(ngModel)]="course_lesson" #lesson="ngModel">
-          </ion-input>
         </ion-item>
 
         <ion-row style="margin: top 30px;" class="row">

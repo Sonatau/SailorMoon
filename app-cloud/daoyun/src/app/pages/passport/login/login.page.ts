@@ -148,7 +148,7 @@ export class LoginPage implements OnInit {
     // var minutes=Math.floor(leave2/(60*1000))
     // //计算相差秒数
     // var leave3=leave2%(60*1000)      //计算分钟数后剩余的毫秒数
-    // var seconds=Math.round(leave3/1000)
+    // var seconds=Math.round(leave3/1000)  //对应的秒数
     // alert(" 相差 "+days+"天 "+hours+"小时 "+minutes+" 分钟"+seconds+" 秒")
     if (hours > 2) return true;
     else return false;

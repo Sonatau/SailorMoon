@@ -11,8 +11,8 @@
 }
 
 .my-circle {
-    min-width: 120px;
-    height: 120px;
+    min-width: 180px;
+    height: 180px;
     text-align: center;
     line-height: 20px;
     color: #fff;
@@ -20,11 +20,11 @@
     display: block;
     position: absolute;
     font-style: initial;
-    left: 35%;
-    top: 40%;
+    left: 26%;
+    top: 30%;
     border-radius: 120px; //让边框变成圆形
     padding: 0 3px;
     z-index: 1000;
     font-size: 11px;
-    box-shadow: rgba(131, 118, 216, 0.644) 2px 3px 14px; //让边框带有阴影
+    box-shadow: rgba(131, 118, 216, 0.644) 0px 0px 100px; //让边框带有阴影
 }

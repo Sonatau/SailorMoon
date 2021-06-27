@@ -1,14 +1,46 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+      <ion-button color="medium" expand="block" fill="clear" shape="round" (click)="gotodetail()">
           <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
       </ion-button>
       </ion-buttons>
-    <ion-title>create-checkin</ion-title>
+    <ion-title>时限设置</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <form (ngSubmit)="onSubmit(checkinForm)" #checkinForm="ngForm" novalidate>
+      <ion-item lines="none"></ion-item>
 
+      <!-- <ion-item lines="none" *ngIf="type==2">
+          <ion-input name="str" type="text" style="border-bottom: solid 1px #7468BE" placeholder="请输入口令"
+          [(ngModel)]="pass" #str="ngModel"></ion-input>
+      </ion-item> -->
+
+      <ion-item lines="none">
+        <ion-note>请选择限定时间：</ion-note>
+      </ion-item>
+      <ion-radio-group name="time" #time="ngModel" [(ngModel)]="timeLimit">
+        <ion-item>
+          <ion-label>1分钟</ion-label>
+          <ion-radio value=60 slot="end"></ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-label>3分钟</ion-label>
+          <ion-radio value=180 slot="end"></ion-radio>
+        </ion-item>
+        <ion-item>
+          <ion-label>5分钟</ion-label>
+          <ion-radio value=300 slot="end"></ion-radio>
+        </ion-item>
+    </ion-radio-group>
+
+    <ion-item lines="none"></ion-item>
+      <ion-row class="row">
+          <ion-button color="primary" type="submit" class="btn"
+          [disabled]="checkinForm.invalid">发起签到</ion-button>
+      </ion-row>
+
+  </form>
 </ion-content>

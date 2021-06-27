@@ -20,9 +20,8 @@ export class CreateSuccessPage implements OnInit {
   }
 
   ionViewWillEnter(){
-    this.code = this.activeRoute.snapshot.queryParams['code'];
-    this.name = this.activeRoute.snapshot.queryParams['name'];
-    this.lesson = this.activeRoute.snapshot.queryParams['lesson'];
+    this.code = localStorage.getItem('courseCode');
+    this.name = localStorage.getItem('courseName');
   }
 
   gotoDetail(){

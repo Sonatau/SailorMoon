@@ -1,20 +1,20 @@
 <ion-header>
   <ion-toolbar *ngIf="isTeacher == '1'">
       <ion-buttons slot="start">
-          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" (click)="gotodetail()">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title color="medium" style="text-align:center;margin-right: 30px;">{{lesson.name}}</ion-title>
+      <ion-title color="medium" style="text-align:center;margin-right: 30px;">{{course.name}}</ion-title>
   </ion-toolbar>
 
   <ion-toolbar color="primary" *ngIf="isTeacher == '0'">
       <ion-buttons slot="start">
-          <ion-button color="light" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+          <ion-button color="light" expand="block" fill="clear" shape="round" (click)="gotodetail()">
               <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
           </ion-button>
       </ion-buttons>
-      <ion-title style="text-align:center;margin-right: 30px;">{{lesson.name}}</ion-title>
+      <ion-title style="text-align:center;margin-right: 30px;">{{course.name}}</ion-title>
   </ion-toolbar>
 
 </ion-header>
@@ -22,20 +22,18 @@
 <ion-content>
     <ion-toolbar *ngIf="isTeacher=='0'"
       style="--background:linear-gradient(#7468be 0%,#7468be 60%,white 60%,white 100%);--border-width: 0 0 0px;">
-      <!-- <div style="width:100%；height：100px;color:blue"></div> -->
       <div style="width: 100%;height: 20px;opacity: 0;"></div>
       <ion-grid>
           <ion-row class="text1">
-              <ion-label>第{{rank}}名</ion-label>
+              <ion-label>第{{stu_rank}}名</ion-label>
           </ion-row>
           <ion-row class="text2">
-              <ion-label>当前获得{{my_exp}}经验值</ion-label>
+              <ion-label>当前获得&nbsp;{{stu_exp}}&nbsp;经验值</ion-label>
           </ion-row>
       </ion-grid>
-      <ion-card mode="ios" (click)="gotoCheck()">
+      <ion-card mode="ios" (click)="gotoMemCheck(stu_rank-1)">
           <ion-item lines="none">
               <ion-avatar class="my-thum">
-                  <!-- <ion-avatar class="my-thum" [routerLink]="['/student-checkin']"> -->
                   <ion-icon class="my-thum-icon" color="light" name="calendar-outline"></ion-icon>
               </ion-avatar>
           </ion-item>
@@ -49,43 +47,51 @@
 
   <ion-toolbar *ngIf="isTeacher=='1'">
       <ion-item lines="none" style="--background: #80808024;color:#7468be">
-          <p slot="start" *ngIf="isNo=='1'" (click)="orderByNo()">切换为按学号升序显示</p>
-          <p slot="start" *ngIf="isNo=='0'" (click)="orderByExp()">切换为按经验值降序显示</p>
+          <p slot="start" *ngIf="isNo=='0'" (click)="orderByNo()">切换为按学号升序显示</p>
+          <p slot="start" *ngIf="isNo=='1'" (click)="orderByExp()">切换为按经验值降序显示</p>
       </ion-item>
   </ion-toolbar>
 
-  <div *ngIf="flag == '1'">
+  <div *ngIf="memberNum!=0">
       <ion-list>
           <ion-item lines="full">
               <ion-label>
                   <p>成员总数</p>
               </ion-label>
               <ion-label style="text-align: -webkit-right;">
-                  <p>{{memberNo}}人</p>
+                  <p>{{memberNum}}人</p>
               </ion-label>
           </ion-item>
-          <ion-item *ngFor="let item of member;let i = index" style="margin:5px 0px;"
-          routerLink="/student-checkin" [queryParams]="{historyFlag:'1',studentEmail:item.email}">
-              <h3 style="color: #7468be;">{{item.index+1}}&nbsp;&nbsp;</h3>
-              <ion-thumbnail>
+          <ion-item *ngFor="let item of memberList; let i = index" style="margin:5px 0px;">
+          <!-- <ion-item *ngFor="let item of memberList; let i = index" style="margin:5px 0px;" (click)="gotoMemCheck(i)"> -->
+              <h3 style="color: #7468be;">{{item.rank}}&nbsp;&nbsp;</h3>
+              <!-- <ion-thumbnail>
                   <img src="assets/icon/head.png">
-              </ion-thumbnail>
+              </ion-thumbnail> -->
+
+              <ion-avatar class="my-thum" *ngIf="item.image!='image_null'">
+                <img class="my-thum" src={{item.image}}>
+              </ion-avatar>
+              <ion-avatar class="my-thum" *ngIf="item.image=='image_null'">
+                <img class="my-thum-image" src="assets/icon/head.png">
+              </ion-avatar>
+
               <ion-label>
                   <h3>
-                      &nbsp;&nbsp;{{item.name}}&nbsp;&nbsp;
+                      &nbsp;&nbsp;&nbsp;&nbsp;{{item.name}}&nbsp;&nbsp;
                       <ion-icon *ngIf="item.sex=='1'" name="female-outline" style="color:#ed576b"></ion-icon>
                       <ion-icon *ngIf="item.sex=='0'" name="male-outline" style="color:#3dc2ff"></ion-icon>
                   </h3>
-                  <p>&nbsp;&nbsp;{{item.sno}}</p>
+                  <p>&nbsp;&nbsp;&nbsp;&nbsp;{{item.sno}}</p>
               </ion-label>
               <ion-label style="text-align: -webkit-right;color:#ed9c57;">
-                  <h2>{{item.exp}}&nbsp;经验值</h2>
+                  <h2>{{item.courseExp}}&nbsp;经验值</h2>
               </ion-label>
           </ion-item>
       </ion-list>
   </div>
 
-  <div *ngIf="flag == '0'">
+  <div *ngIf="memberNum==0">
       <ion-grid>
           <ion-item lines="none"></ion-item>
           <ion-row>

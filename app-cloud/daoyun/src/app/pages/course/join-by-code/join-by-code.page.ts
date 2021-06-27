@@ -39,50 +39,28 @@ export class JoinByCodePage implements OnInit {
       });
       toast.present();
     }else{
-      var api = '/course-member';//-------------------------后台接口
+      //待定需要修改
+      var api = '/course';//-------------------------后台接口
       var params = {        //-------------------------后台参数
-        code: this.search_code
+        name: this.search_code,
+        page: 1,
+        isSelf: false
       }
-      this.httpService.post_params(api, params).then(async (response: any) => {
+      this.httpService.get(api, params).then(async (response: any) => {
         await loading.dismiss();
         // console.log(response);
-        if(response.data.respCode == -1){
+        if(response.data.data.total == 0){
           let alert = await this.alertController.create({
             header: '提示',
-            message: response.data.msg,
+            message: '班课不存在！',
             buttons: ['确定']
           });
           alert.present();
-        }else if(response.data.respCode == 1){
-          // let alert = await this.alertController.create({
-          //   header: '提示',
-          //   message: '加入成功！',
-          //   buttons: [{
-          //     text: '确认',
-          //     cssClass: 'primary',
-          //           handler: (blah) => {
-                      this.router.navigate(['/course/course-detail'], {queryParams:{code: this.search_code} });
-                      localStorage.setItem("inCourse", "0");
-          //           }
-          //   }]
-          // });
-          // alert.present();
+        }else{
+          this.router.navigate(['/course/course-detail'], {queryParams:{code: this.search_code} });
         }
       });
     }
   }
 
 }
-
-// let alert = await this.alertController.create({
-//   header: '提示',
-//   message: '加入成功！',
-//   buttons: [{
-//     text: '确认',
-//     cssClass: 'primary',
-//           handler: (blah) => {
-//             this.router.navigate(['/course/course-detail'], {queryParams:{code: this.search_code} });
-//           }
-//   }]
-// });
-// alert.present();

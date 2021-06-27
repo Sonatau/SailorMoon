@@ -18,6 +18,7 @@ export class TabsPage {
 
   ionViewWillEnter(){
     this.checkUserInfo();
+    console.log('inTabs_willEnter');
   }
 
   async warning(){
@@ -41,7 +42,8 @@ export class TabsPage {
     var params = { };
     this.httpService.get(api, params).then(async (response: any) => {
       console.log(response);
-      if(response.data.data.user.name == 'name_null'){
+      localStorage.setItem('UserId', response.data.data.user.id);
+      if(response.data.data.user.name=='name_null' || response.data.data.respCode==-1){
         this.warning();
       }
     })

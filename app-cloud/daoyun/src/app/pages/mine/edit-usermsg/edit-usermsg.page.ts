@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { PickerController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { AlertController, PickerController, ToastController } from '@ionic/angular';
+import { EventService } from 'src/app/shared/services/event.service';
 import { HttpService } from 'src/app/shared/services/http.service';
+import { PickerService } from 'src/app/shared/services/picker.service';
 
 @Component({
   selector: 'app-edit-usermsg',
@@ -18,20 +21,29 @@ export class EditUsermsgPage implements OnInit {
     loginType: -1,
     name: "",
     school: "",
-    schoolId: "",
-    sex: 1,   //0-男，1-女
+    schoolId: -1,
+    sex: 1,   //0男，1女
     sno: "",
-    telephone: ""
+    telephone: "",
+    password: null
   };
-  public schoolShow = "请选择";
-
   schoolList = {
     total: 0,
-    schools: []
+    options: []
   }
+  public schoolChoosed = {
+    name: '请选择',
+    id: -1
+  }
+  public over = false;
+  public role;
 
   constructor(public httpService: HttpService,
-    public pickerController: PickerController,
+    private alertController: AlertController,
+    public pickerService: PickerService,
+    private toastController: ToastController,
+    private router: Router,
+    public eventService: EventService
     ) { }
 
   ngOnInit() {
@@ -44,6 +56,11 @@ export class EditUsermsgPage implements OnInit {
     this.initUserInfo();
   }
 
+  ionViewWillLeave(){
+    this.eventService.eventEmit.emit('user-detail-change','用户详情页返回');
+
+  }
+
   initUserInfo(){
     //getUserInfo
     var api = '/userinfo';//后台接口
@@ -53,19 +70,27 @@ export class EditUsermsgPage implements OnInit {
       this.user.image = response.data.data.user.image;
       if(response.data.data.user.name != "name_null"){
         this.user.name = response.data.data.user.name;
+        this.over = true;
+      }else{
+        this.over = false;
       }
       if(response.data.data.user.sno != "-1"){
         this.user.sno = response.data.data.user.sno;
       }
       this.user.sex = response.data.data.user.sex;
-      if(response.data.data.user.school != null){
-        this.schoolShow = response.data.data.user.school;
-        this.user.school = response.data.data.user.school;
-        this.user.schoolId = response.data.data.user.schoolId;
+      if(response.data.data.user.schoolId != null){
+        this.schoolChoosed.name = response.data.data.user.school;
+        this.schoolChoosed.id = response.data.data.user.schoolId;
       }
-      //getSchoolList
-      this.getSchoolList();
     })
+    //getSchoolList
+    this.getSchoolList();
+    this.user.password = null;
+    if(localStorage.getItem('isTeacher')=='1'){
+      this.role = '老师';
+    }else{
+      this.role = '学生'
+    }
   }
 
   getSchoolList(){
@@ -75,9 +100,9 @@ export class EditUsermsgPage implements OnInit {
     var api = '/school';
     this.httpService.get(api, param).then(async (response: any) => {
       for (let i = 0; i < response.data.data.total; i++) {
-        this.schoolList.schools.push({
-          schoolId: response.data.data.list[i].id,
-          schoolName: response.data.data.list[i].name
+        this.schoolList.options.push({
+          id: response.data.data.list[i].id,
+          name: response.data.data.list[i].name
         })
       }
       this.schoolList.total = response.data.data.total;
@@ -87,84 +112,70 @@ export class EditUsermsgPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
   //-----------------------------------------------------请求学校列表-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
-  async openPicker(type) {
-    const picker = await this.pickerController.create({
-      columns: this.getColumns(type),
-      buttons: [
-        {
-          text: '取消',
-          role: 'cancel'
-        },
-        {
-          text: '确认',
-          handler: (value) => {
-            var selected = this.getColumns(type);
-            if (type == 1) {
-              this.schoolShow = selected[0].options[value.daoyun108.value].text;
-              this.user.school = selected[0].options[value.daoyun108.value].text;
-              this.user.schoolId = selected[0].options[value.daoyun108.value].id;
-            } 
-          }
-        }]
-    });
-    await picker.present();
+  async openPicker() {
+    this.schoolChoosed = await this.pickerService.createPicker(this.schoolList);
+    console.log(this.schoolChoosed);
   }
-
-  getColumns(type) {
-    let options = [];
-    if(type == 1) {
-      for (let i = 0; i < this.schoolList.total; i++){
-        options.push({
-          text: this.schoolList.schools[i].schoolName,
-          id: this.schoolList.schools[i].schoolId,
-          value: i
-        })
-      }
-    }
-    let columns = [];
-    columns.push({
-        name: `daoyun108`,
-        options: options
-    });
-    return columns;
-  }
-
 
 async onSubmit(form: NgForm) {
   if (form.valid) {
-    // if(this.schoolChoosed.id==-1 || this.academyChoosed.id==-1 || this.majorChoosed.id==-1){
-    //   let toast = await this.toastController.create({
-    //     message: '请选择学校、学院、专业！',
-    //     duration: 2000
-    //   });
-    //   toast.present();
-    // } else {
-      var param = {
-        image: this.user.image,
-        name: this.user.name,
-        schoolId: this.user.schoolId,
-        school: this.user.school, 
-      };
-      console.log(param);
-      var api = '/course';
-      this.httpService.post_data(api, param).then(async (response: any) => {
-        console.log(response);
-        // this.course_code = response.data.data.code;
-        // console.log(this.course_name);
-        // const alert = await this.alertController.create({
-        //   message: '班课创建成功！',
-        //   buttons: [
-        //     {
-        //       text: '确认',
-        //       cssClass: 'secondary',
-        //       handler: (blah) => {
-        //         this.router.navigate(['/course/create-success'], {queryParams:{code: this.course_code, name: this.course_name }});
-        //       }
-        //     }
-        //   ]
-        });
-        // await alert.present();
-      // });
+    if(this.user.name=="name_null" || this.user.sno=="-1"){
+      let toast = await this.toastController.create({
+        message: '名字、学号/工号为必填项目！',
+        duration: 2000
+      });
+      toast.present();
+    } else if(this.user.password==null && this.over==false){
+      let toast = await this.toastController.create({
+        message: '初次登录必须补全密码！',
+        duration: 2000
+      });
+      toast.present();
+    } else {
+      if(this.over==false){
+        var param = {
+          image: this.user.image,
+          name: this.user.name,
+          schoolId: this.schoolChoosed.id,
+          sno: this.user.sno,
+          sex: this.user.sex,
+          password: this.user.password 
+        };
+        this.putUserInfo(param);
+      } else {
+        var param_over = {
+          image: this.user.image,
+          name: this.user.name,
+          schoolId: this.schoolChoosed.id,
+          sno: this.user.sno,
+          sex: this.user.sex,
+        };
+        this.putUserInfo(param_over);
+      }
     }
+  }
+}
+
+  putUserInfo(param: any){
+    var api = '/userinfo';
+    console.log(param);
+    this.httpService.put(api, param).then(async (response: any) => {
+      console.log(response);
+      if(response.data.respCode!=-1){
+        const alert = await this.alertController.create({
+          message: '用户信息修改成功！',
+          buttons: [
+            {
+              text: '确认',
+              cssClass: 'secondary',
+              handler: (blah) => {
+                this.router.navigate(['/mine/usermsg']);
+              }
+            }
+          ]
+        });
+        await alert.present();
+      }
+    });
   }
 }

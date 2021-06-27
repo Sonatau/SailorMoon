@@ -68,7 +68,7 @@ export class ChangePassPage implements OnInit {
           }else{
             let alert = await this.alertController.create({
               header: '提示',
-              message: '密码修改失败！',
+              message: '密码修改失败！请输入正确的旧密码',
               buttons: ['确定']
             });
             alert.present();

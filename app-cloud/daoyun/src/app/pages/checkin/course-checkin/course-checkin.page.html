@@ -1,14 +1,82 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/course/course-detail']">
+      <ion-button color="medium" expand="block" fill="clear" shape="round" (click)="returndetail()">
           <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
       </ion-button>
       </ion-buttons>
-    <ion-title>course-checkin</ion-title>
+    <ion-title>签到历史</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content 
+     pullingIcon="chevron-down">
+    </ion-refresher-content>
+  </ion-refresher>
+
+  <div *ngIf="total!=0">
+    <ion-list id="list" lines="full" *ngFor="let item of list; let i=index">
+
+        <ion-item style="width:100%">
+            <ion-grid>
+                <ion-row (click)="gotoResult(i)">
+
+                    <ion-col size="11">
+                        <ion-label>
+                            <ion-text style="color: #7468be;">{{checkinType[item.type]}}</ion-text>
+                            <p>{{item.startTimeStr}}&nbsp;&nbsp;&nbsp;活动经验&nbsp;{{item.exp}}</p>
+                        </ion-label>
+                    </ion-col>
+
+                    <ion-col size="1">
+                        <ion-icon solt="end" name="chevron-forward-outline" color="primary"
+                        style="margin-top: 50%; font-size: large;"></ion-icon>
+                    </ion-col>
+
+                </ion-row>
+            </ion-grid>
+        </ion-item>
+
+    </ion-list>
+
+    <ion-item *ngIf="flag==1" lines="none">
+        <ion-label style="text-align: center;">
+             <p>你已经看到我的底线啦~</p>
+        </ion-label>
+    </ion-item>
+
+    <ion-infinite-scroll threshold="10%" id="infinite-scroll" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+            loading-spinner="bubbles" loading-text="加载中...">
+        </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+
+</div>
+
+<div *ngIf="total==0 && flag==1">
+    <ion-grid>
+        <ion-item lines="none"></ion-item>
+        <ion-item lines="none"></ion-item>
+        
+        <ion-row>
+            <ion-col></ion-col>
+            <ion-col><img src="assets/img/components/empty.png"></ion-col>
+            <ion-col></ion-col>
+        </ion-row>
+
+        <ion-row>
+            <ion-col>
+                <ion-label style="text-align: center;">
+                    <p>当前班课没有历史签到~</p>
+                </ion-label>
+            </ion-col>
+        </ion-row>
+
+    </ion-grid>
+
+  </div>
 
 </ion-content>

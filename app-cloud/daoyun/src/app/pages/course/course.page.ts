@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ModalController, ActionSheetController, LoadingController, AlertController } from '@ionic/angular';
+import { ModalController, ActionSheetController, LoadingController } from '@ionic/angular';
 import { BarcodeScanner } from '@ionic-native/barcode-scanner/ngx';
 import { SearchCourseComponent } from 'src/app/shared/components/search-course/search-course.component';
 import { EventService } from 'src/app/shared/services/event.service';
@@ -30,7 +30,6 @@ export class CoursePage implements OnInit {
     public actionSheetController: ActionSheetController,
     public loadingController: LoadingController,
     private barcodeScanner: BarcodeScanner,
-    private alertController: AlertController,
     public eventService: EventService) { 
       this.eventService.eventEmit.on('detail-change',()=>{
         console.log('course-eventListener');
@@ -39,14 +38,9 @@ export class CoursePage implements OnInit {
       })
     }
 
-  //糊弄
-  public join;
-  public status;
-
   ngOnInit() {
     this.isTeacher = localStorage.getItem("isTeacher");
     // console.log('course-ngOnInit');
-    // this.initData();
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -54,7 +48,6 @@ export class CoursePage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   ionViewWillEnter(){
-    // this.initData();
     if(this.return_flag==0){
       this.initData();
     }
@@ -67,9 +60,6 @@ export class CoursePage implements OnInit {
     this.total = 0;
     this.flag = 0;
     this.getCourse();
-    //糊弄
-    this.join = localStorage.getItem("course_join");
-    this.status = localStorage.getItem("course_status");
   }
 
   async getCourse() {
@@ -78,12 +68,13 @@ export class CoursePage implements OnInit {
     });
     await loading.present();
     var params = {
-      page: this.page
+      page: this.page,
+      isSelf: true
     }
     var api = '/course';
     this.httpService.get(api, params).then(async (response: any) => {
       await loading.dismiss();
-      console.log(response);
+      // console.log(response);
       this.total = response.data.data.total;
       if(response.data.data.list.length < this.page_max){
         this.flag = 1;
@@ -120,10 +111,6 @@ export class CoursePage implements OnInit {
       event.target.complete();
     }, 500);
   }
-
-//---------------------------------------------------------------------------------------------------------------------------//
-//---------------------------------------------------------------------------------------------------------------------------//
-//---------------------------------------------------------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------------------------------------------------------//
 //----------------------------------------------------一些跳转&搜索----------------------------------------------------------//
@@ -188,67 +175,16 @@ export class CoursePage implements OnInit {
     this.router.navigate(['/course/course-detail'], {queryParams:{code: this.list[index].code} });
   }
 
-  //---------------------------------------------------------------------------------------------------------------------------//
-//---------------------------------------------------------------------------------------------------------------------------//
-//---------------------------------------------------------------------------------------------------------------------------//
-
 //---------------------------------------------------------------------------------------------------------------------------//
 //----------------------------------------------------扫码加入！！！----------------------------------------------------------//
 //---------------------------------------------------------------------------------------------------------------------------//
 
   onScan() {
     this.barcodeScanner.scan().then(barcodeData => {
-      // console.log('Barcode data', barcodeData);
-      this.joinClass(barcodeData.text);
+      this.router.navigate(['/course/course-detail'], {queryParams:{code: barcodeData.text} });
     }).catch(err => {
       console.log('Error', err);
     });
-  }
-
-  joinClass(join_code: String){
-    var params = {
-      code: join_code
-    }
-    var api = '/course-member';//后台接口
-    this.httpService.post_params(api, params).then(async (response: any) => {
-      if(response.data.respCode == -1){
-        let alert = await this.alertController.create({
-          header: '提示',
-          message: response.data.msg,
-          buttons: ['确定']
-        });
-        alert.present();
-      }else if(response.data.respCode == 1){
-        if(this.join=="0"){
-          let alert = await this.alertController.create({
-            header: '提示',
-            message: "该班课不允许加入",
-            buttons: ['确定']
-          });
-          alert.present();
-        } else if (this.status == "0"){
-          let alert = await this.alertController.create({
-            header: '提示',
-            message: "该班课已结束",
-            buttons: ['确定']
-          });
-          alert.present();
-        }else {
-          let alert = await this.alertController.create({
-            header: '提示',
-            message: '加入成功！',
-            buttons: [{
-              text: '确认',
-              cssClass: 'primary',
-              handler: (blah) => {
-                this.router.navigate(['/course/course-detail'], {queryParams:{code: join_code} });
-              }
-            }]
-          });
-          alert.present();
-        }
-      }
-    })
   }
 
 }

@@ -11,7 +11,6 @@ import { HttpService } from '../../services/http.service';
 })
 export class SearchCourseComponent implements OnInit {
 
-  public courseType: string;
   public isTeacher: any;
   public target = "";
 
@@ -25,12 +24,6 @@ export class SearchCourseComponent implements OnInit {
     public httpService: HttpService,
     public http: HttpClient, 
     public loadingController: LoadingController) {
-      this.isTeacher = localStorage.getItem("isTeacher");
-      if (this.isTeacher == 1) {
-        this.courseType = '我创建的';
-      } else {
-        this.courseType = '我加入的';
-      }
   }
 
   ngOnInit() {
@@ -56,17 +49,23 @@ export class SearchCourseComponent implements OnInit {
   getCourse() {
     var params = {
       page: this.page,
-      name: this.target
+      name: this.target,
+      isSelf: false
     }
     var api = '/course';
     this.httpService.get(api, params).then(async (response: any) => {
-      // console.log(response);
-      this.total = response.data.data.total;
-      if(response.data.data.list.length < this.page_max){
+      console.log(response);
+      if(response.data.respCode==-1){
+        this.total = 0;
         this.flag = 1;
-      }
-      for(let i=0; i<response.data.data.list.length; i++){
-        this.list.push(response.data.data.list[i]);
+      }else{
+        this.total = response.data.data.total;
+        if(response.data.data.list.length < this.page_max){
+          this.flag = 1;
+        }
+        for(let i=0; i<response.data.data.list.length; i++){
+          this.list.push(response.data.data.list[i]);
+        }
       }
     })
   }
