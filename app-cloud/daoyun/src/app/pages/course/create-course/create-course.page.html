@@ -14,14 +14,10 @@
       <ion-list lines="full">
  
         <ion-item-divider color="stable">
-          <!-- <ion-thumbnail *ngIf="course_cover != 'image_null'" slot="start"> -->
             <img *ngIf="course_cover != 'image_null'" slot="start" class="cover_img"
               src={{course_cover}}>
-          <!-- </ion-thumbnail> -->
-          <!-- <ion-thumbnail slot="start" (click)="onPresentActiveSheet()"> -->
             <img *ngIf="course_cover == 'image_null'" slot="start" class="cover_img"
-            (click)="addPicture()" src="assets/img/course/add.png">
-          <!-- </ion-thumbnail> -->
+            (click)="onPresentActiveSheet()" src="assets/img/course/add.png">
         </ion-item-divider>
 
         <ion-item (click)="openPicker(0,'term')">
