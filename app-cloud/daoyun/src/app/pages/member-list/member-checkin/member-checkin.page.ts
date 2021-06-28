@@ -30,7 +30,7 @@ export class MemberCheckinPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   ionViewWillEnter(){
-    this.stuId = this.activatedRoute.snapshot.queryParams['stuId'];
+    this.stuId = localStorage.getItem('UserId');
     this.initList();
 	}
 

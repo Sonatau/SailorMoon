@@ -34,9 +34,9 @@
                 <img src="assets/img/course/cover-default.jpg">
               </ion-thumbnail>
               <ion-label>
-                  <h5>&nbsp;&nbsp;&nbsp;{{course.name}}</h5>
-                  <h5>&nbsp;&nbsp;&nbsp;{{course.teacher}}</h5>
-                  <h5>&nbsp;&nbsp;&nbsp;{{course.term}}</h5>
+                  <h3 style="color: #7468BE; font-size: 18px;">&nbsp;&nbsp;{{course.name}}</h3>
+                  <h5>&nbsp;&nbsp;&nbsp;老师：{{course.teacher}}</h5>
+                  <h5>&nbsp;&nbsp;&nbsp;学期：{{course.term}}</h5>
               </ion-label>
               <ion-button *ngIf="course_admin == 1" fill="clear" (click)="gotoEdit()" style="margin-top: -40px; width: 30px;">
                   <ion-icon slot="icon-only" name="create-outline"></ion-icon>
@@ -117,15 +117,18 @@
     <ion-button class="lesson-btn" fill="clear" style="color:#7468be" (click)="gotoMemberList()">成员列表</ion-button>
 </ion-item>
 
-<ion-item *ngIf="checkin_admin=='1' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px yellowgreen;">
-    <ion-button class="lesson-btn" fill="clear" style="color:yellowgreen" (click)="gotoCheckinList()">签到历史</ion-button>
-</ion-item>
-
 <ion-item *ngIf="isTeacher=='1' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px green;">
     <ion-button class="lesson-btn" fill="clear" style="color:green" (click)="createCheckin()">发起签到</ion-button>
 </ion-item>
 <ion-item *ngIf="isTeacher=='0' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px green;">
   <ion-button class="lesson-btn" fill="clear" style="color:green" (click)="gotoCheckin()">参与签到</ion-button>
+</ion-item>
+
+<ion-item *ngIf="checkin_admin=='1' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px blue;">
+    <ion-button class="lesson-btn" fill="clear" style="color:blue" (click)="gotoCheckinList()">签到历史</ion-button>
+</ion-item>
+<ion-item *ngIf="isTeacher=='0' && inCourse==true" class="lesson-row" lines="none" style="border:solid 1px blue;">
+    <ion-button class="lesson-btn" fill="clear" style="color:blue" [routerLink]="['/member-list/member-checkin']">签到记录</ion-button>
 </ion-item>
 
 

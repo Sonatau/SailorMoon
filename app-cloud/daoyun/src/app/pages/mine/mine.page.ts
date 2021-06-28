@@ -65,6 +65,7 @@ export class MinePage implements OnInit {
       if(response.data.data.user.sno != "-1"){
         this.user.sno = response.data.data.user.sno;
       }
+      this.user.exp = response.data.data.user.exp;
     })
     if(localStorage.getItem('isTeacher')=='1'){
       this.role = '老师';

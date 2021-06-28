@@ -22,16 +22,16 @@
 <ion-content>
     <ion-toolbar *ngIf="isTeacher=='0'"
       style="--background:linear-gradient(#7468be 0%,#7468be 60%,white 60%,white 100%);--border-width: 0 0 0px;">
-      <div style="width: 100%;height: 20px;opacity: 0;"></div>
-      <ion-grid>
+      <div style="width: 100%;opacity: 0;"></div>
+      <!-- <ion-grid>
           <ion-row class="text1">
               <ion-label>第{{stu_rank}}名</ion-label>
           </ion-row>
           <ion-row class="text2">
               <ion-label>当前获得&nbsp;{{stu_exp}}&nbsp;经验值</ion-label>
           </ion-row>
-      </ion-grid>
-      <ion-card mode="ios" (click)="gotoMemCheck(stu_rank-1)">
+      </ion-grid> -->
+      <!-- <ion-card mode="ios" (click)="gotoMemCheck(stu_rank-1)">
           <ion-item lines="none" style="margin-top: 10px;">
               <ion-avatar class="my-thum">
                   <ion-icon class="my-thum-icon" color="light" name="calendar-outline"></ion-icon>
@@ -42,7 +42,32 @@
                   <h2>签到记录</h2>
               </ion-label>
           </ion-item>
-      </ion-card>
+      </ion-card> -->
+
+      <ion-card mode="ios" [routerLink]="['/member-list/member-checkin']">
+        <ion-grid>
+            <ion-row style="width:100%;height:10px"></ion-row>
+            <ion-row>
+                <ion-col size="4">
+                    <ion-avatar class="my-thum-stu" *ngIf="stu_image!='image_null'">
+                      <img class="my-thum-stu" src={{stu_image}}>
+                    </ion-avatar>
+                    <ion-avatar class="my-thum-stu" *ngIf="stu_image=='image_null'">
+                      <img class="my-thum-image-stu" src="assets/icon/head.png">
+                    </ion-avatar>
+                </ion-col>
+                <ion-col size="8">
+                  <ion-row style="width:100%;height:10px"></ion-row>
+                    <ion-label>
+                      <ion-row><ion-text style="color:#7468be; font-size: 18px; font-weight: 1000;">第{{stu_rank}}名&nbsp;&nbsp;&nbsp;经验值{{stu_exp}}</ion-text></ion-row>
+                      <ion-text style="color:black; font-size: 16px; font-weight: 700;">{{stu_name}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{stu_no}}</ion-text>
+                    </ion-label>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+        <ion-row style="width:100%;height:10px"></ion-row>
+    </ion-card>
+
   </ion-toolbar>
 
   <ion-toolbar *ngIf="isTeacher=='1'">

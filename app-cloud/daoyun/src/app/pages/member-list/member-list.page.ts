@@ -23,6 +23,9 @@ export class MemberListPage implements OnInit {
 
   public stu_rank: any;
   public stu_exp: any;
+  public stu_image: string;
+  public stu_name: string;
+  public stu_no: string;
 
   constructor(public modalController: ModalController,
     private router: Router,
@@ -89,6 +92,7 @@ export class MemberListPage implements OnInit {
       } else {
         this.orderByExp();
       }
+      // console.log(this.memberList);
     });
   }
 
@@ -112,6 +116,9 @@ export class MemberListPage implements OnInit {
       if(this.memberList[i].id==localStorage.getItem('UserId')){
         this.stu_rank = this.memberList[i].rank;
         this.stu_exp = this.memberList[i].courseExp;
+        this.stu_image = this.memberList[i].image;
+        this.stu_name = this.memberList[i].name;
+        this.stu_no = this.memberList[i].sno;
       }
     }
   }
@@ -119,10 +126,6 @@ export class MemberListPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
   //------------------------------------------------------一些跳转啊------------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
-
-  gotoMemCheck(index: number){
-    this.router.navigate(['/member-list/member-checkin'], {queryParams:{stuId: this.memberList[index].id} });
-  }
 
   gotodetail(){
     this.router.navigate(['/course/course-detail'], {queryParams:{code: this.course.code} });
