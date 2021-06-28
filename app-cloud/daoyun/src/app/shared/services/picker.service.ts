@@ -23,7 +23,7 @@ export class PickerService {
       name: "请选择",
       id: -1
     }
-    console.log(this.optionsList);
+    // console.log(this.optionsList);
     const picker = await this.pickerController.create({
       columns: this.getColumns(),
       buttons: [

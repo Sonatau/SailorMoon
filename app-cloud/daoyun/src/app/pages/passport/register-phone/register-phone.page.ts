@@ -50,9 +50,9 @@ export class RegisterPhonePage implements OnInit {
         phone: this.register_phone,
       };
       var api = '/send-message';
-      console.log(params);
+      // console.log(params);
       this.httpService.get_withoutToken(api, params).then((response: any) => {
-        console.log(response);
+        // console.log(response);
         this.return_code = response.data.respCode;
         // console.log(this.return_code);
       })
@@ -110,10 +110,10 @@ export class RegisterPhonePage implements OnInit {
             sno: this.temp_sno,
             image: this.temp_image
           }
-          console.log(params);
+          // console.log(params);
           this.httpService.post_withoutToken(api, params).then(async (response: any) => {
             await loading.dismiss();
-            console.log(response);
+            // console.log(response);
             if(response.data.respCode == -1){
               let alert = await this.alertController.create({
                 header: '提示',
@@ -151,9 +151,9 @@ export class RegisterPhonePage implements OnInit {
         device: 0
       };
       this.httpService.post_withoutToken(api, params).then(async (response: any) => {
-        console.log(response);
+        // console.log(response);
         this.return_code = response.data.respCode;
-        console.log(this.return_code);
+        // console.log(this.return_code);
         if(this.return_code == '1'){
           localStorage.setItem("token", response.data.data.token);
           if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');

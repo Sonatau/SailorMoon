@@ -42,38 +42,38 @@ export class LoginPage implements OnInit {
     }
   }
 
-  ionViewWillEnter() {
-    this.github_code = this.activatedRoute.snapshot.queryParams.code;
-    console.log(this.github_code)
-    if(this.github_code != null){
-      var api = 'http://192.168.43.225:8080/login-github';
-      var params = {//后台所需参数
-          code: this.github_code
-      };
-      console.log(params);
-      //post_withoutToken
-      this.httpService.post_byURL(api, params).then((response: any) => {
-        console.log(response);
-        this.return_code = response.data.respCode;
-        if(this.return_code == '1'){
-          localStorage.setItem("token", response.data.data.token);
-          if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');
-          else localStorage.setItem("isTeacher", '0');
-          if(response.data.data.admin.course == '1') localStorage.setItem("course-admin", '1');
-          else localStorage.setItem("course-admin", '0');
-          if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
-          else localStorage.setItem("checkin-admin", '0');
-          this.router.navigateByUrl('/tabs/course');
-          localStorage.setItem("isLogin", "1");
-          this.setLoginTime();
-        } else{
-          // console.log('当前github账户未注册，请先注册！');
-          // this.router.navigateByUrl('/register');
-          console.log('github链接超时！');
-        }
-      })
-    }
-  }
+  // ionViewWillEnter() {
+  //   this.github_code = this.activatedRoute.snapshot.queryParams.code;
+  //   console.log(this.github_code)
+  //   if(this.github_code != null){
+  //     var api = 'http://192.168.43.225:8080/login-github';
+  //     var params = {//后台所需参数
+  //         code: this.github_code
+  //     };
+  //     console.log(params);
+  //     //post_withoutToken
+  //     this.httpService.post_byURL(api, params).then((response: any) => {
+  //       console.log(response);
+  //       this.return_code = response.data.respCode;
+  //       if(this.return_code == '1'){
+  //         localStorage.setItem("token", response.data.data.token);
+  //         if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');
+  //         else localStorage.setItem("isTeacher", '0');
+  //         if(response.data.data.admin.course == '1') localStorage.setItem("course-admin", '1');
+  //         else localStorage.setItem("course-admin", '0');
+  //         if(response.data.data.admin.checkin == '1') localStorage.setItem("checkin-admin", '1');
+  //         else localStorage.setItem("checkin-admin", '0');
+  //         this.router.navigateByUrl('/tabs/course');
+  //         localStorage.setItem("isLogin", "1");
+  //         this.setLoginTime();
+  //       } else{
+  //         // console.log('当前github账户未注册，请先注册！');
+  //         // this.router.navigateByUrl('/register');
+  //         console.log('github链接超时！');
+  //       }
+  //     })
+  //   }
+  // }
 
   ngOnInit() {
   }
@@ -91,7 +91,7 @@ export class LoginPage implements OnInit {
       };
       var api = '/send-message';
       this.httpService.get_withoutToken(api, params).then((response: any) => {
-        console.log(response);
+        // console.log(response);
         this.return_code = response.data.respCode;
       })
     }
@@ -188,9 +188,9 @@ export class LoginPage implements OnInit {
         };
       }
       this.httpService.post_withoutToken(api, params).then(async (response: any) => {
-        console.log(response);
+        // console.log(response);
         this.return_code = response.data.respCode;
-        console.log(this.return_code);
+        // console.log(this.return_code);
         if(this.return_code == '1'){
           localStorage.setItem("token", response.data.data.token);
           if(response.data.data.role == '1') localStorage.setItem("isTeacher", '1');
@@ -221,11 +221,11 @@ export class LoginPage implements OnInit {
   //----------------------------------------------------------------------------------//
   //-----------------------------------GitHub登录-------------------------------------//
   //----------------------------------------------------------------------------------//
-  loginByGitHub(){
-    //const GitHubURL = this.inAppBrowser.create('https://github.com/login/oauth/authorize?client_id=58d1213474db1685dec2&redirect_uri=http://localhost:8100/login');
-    const GitHubURL = this.inAppBrowser.create('https://gitee.com/oauth/authorize?client_id=f932d5da2a36977bd4fc7b61df56aaa31764c8ad195c63c34e4b21e825f3df87&redirect_uri=http://localhost:8100/login&response_type=code')
-    GitHubURL.show();
-  }
+  // loginByGitHub(){
+  //   //const GitHubURL = this.inAppBrowser.create('https://github.com/login/oauth/authorize?client_id=58d1213474db1685dec2&redirect_uri=http://localhost:8100/login');
+  //   const GitHubURL = this.inAppBrowser.create('https://gitee.com/oauth/authorize?client_id=f932d5da2a36977bd4fc7b61df56aaa31764c8ad195c63c34e4b21e825f3df87&redirect_uri=http://localhost:8100/login&response_type=code')
+  //   GitHubURL.show();
+  // }
   //----------------------------------------------------------------------------------//
   //----------------------------------------------------------------------------------//
 

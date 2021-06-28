@@ -72,7 +72,7 @@ export class EditUsermsgPage implements OnInit {
     var api = '/userinfo';//后台接口
     var params = { };
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       this.user.image = response.data.data.user.image;
       if(response.data.data.user.name != "name_null"){
         this.user.name = response.data.data.user.name;
@@ -121,7 +121,7 @@ export class EditUsermsgPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
   async openPicker() {
     this.schoolChoosed = await this.pickerService.createPicker(this.schoolList);
-    console.log(this.schoolChoosed);
+    // console.log(this.schoolChoosed);
   }
 
 async onSubmit(form: NgForm) {
@@ -165,9 +165,9 @@ async onSubmit(form: NgForm) {
 
   putUserInfo(param: any){
     var api = '/userinfo';
-    console.log(param);
+    // console.log(param);
     this.httpService.put(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
         const alert = await this.alertController.create({
           message: '用户信息修改成功！',

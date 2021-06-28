@@ -13,21 +13,16 @@
 
   <ion-item-divider class="row-text">
       <ion-label>缺勤列表</ion-label>
-      <ion-note slot="end" color="tertiary" style="padding: 10px 0 0 0;font-size: 15px;margin-right: 10px;">{{failTotal}}人</ion-note>
+      <ion-note slot="end" color="tertiary" style="padding: 10px 0 0 0;font-size: 15px;margin-right: 10px;">{{failTotal+noTotal}}人</ion-note>
   </ion-item-divider>
   <ion-list>
-      <ion-item *ngFor="let item of failList; let i = index" (click)="makeSuccess(i)">
-        <!-- <ion-thumbnail>
-            <img src="assets/icon/head.png">
-        </ion-thumbnail> -->
-
+      <ion-item *ngFor="let item of noList; let i = index" (click)="makeSuccess(i, 'no')">
         <ion-avatar class="my-thum" *ngIf="item.image!='image_null'">
             <img class="my-thum" src={{item.image}}>
         </ion-avatar>
         <ion-avatar class="my-thum" *ngIf="item.image=='image_null'">
             <img class="my-thum-image" src="assets/icon/head.png">
         </ion-avatar>
-
         <ion-label>
             <h3>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.name}}&nbsp;&nbsp;
@@ -39,23 +34,39 @@
       </ion-item>
   </ion-list>
 
+  <ion-list>
+    <ion-item *ngFor="let item of failList; let i = index" (click)="makeSuccess(i, 'fail')">
+      <ion-avatar class="my-thum" *ngIf="item.image!='image_null'">
+          <img class="my-thum" src={{item.image}}>
+      </ion-avatar>
+      <ion-avatar class="my-thum" *ngIf="item.image=='image_null'">
+          <img class="my-thum-image" src="assets/icon/head.png">
+      </ion-avatar>
+      <ion-label>
+          <h3>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.name}}&nbsp;&nbsp;
+              <ion-icon *ngIf="item.sex=='1'" name="female-outline" style="color:#ed576b"></ion-icon>
+              <ion-icon *ngIf="item.sex=='0'" name="male-outline" style="color:#3dc2ff"></ion-icon>
+          </h3>
+          <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.sno}}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
   <ion-item-divider class="row-text">
       <ion-label>出勤列表</ion-label>
       <ion-note slot="end" color="tertiary" style="padding: 10px 0 0 0;font-size: 15px;margin-right: 10px;">{{successTotal}}人</ion-note>
   </ion-item-divider>
   <ion-list>
       <ion-item *ngFor="let item of successList; let i = index" (click)="makeFail(i)">
-        <!-- <ion-thumbnail>
-            <img src="assets/icon/head.png">
-        </ion-thumbnail> -->
-
+        
         <ion-avatar class="my-thum" *ngIf="item.image!='image_null'">
             <img class="my-thum" src={{item.image}}>
         </ion-avatar>
         <ion-avatar class="my-thum" *ngIf="item.image=='image_null'">
             <img class="my-thum-image" src="assets/icon/head.png">
         </ion-avatar>
-
+        
         <ion-label>
             <h3>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{item.name}}&nbsp;&nbsp;

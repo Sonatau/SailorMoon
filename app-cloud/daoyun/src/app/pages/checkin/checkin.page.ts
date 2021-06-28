@@ -71,8 +71,8 @@ export class CheckinPage implements OnInit {
     }
     var api = '/attendance-info';
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
-      if(response.respCode!=-1){
+      // console.log(response);
+      if(response.data.respCode!=-1){
         if(response.data.data.attendance==null){
           this.checkinState = "已结束";
         }else{
@@ -136,21 +136,22 @@ export class CheckinPage implements OnInit {
   //----------------------------------------------------------------------------------//
   //-----------------------------------签到状态轮询------------------------------------//
   //----------------------------------------------------------------------------------//
-  getCheckResult = function () {
+  getCheckResult(){
     var params = {
       attendanceId: this.checkin.id,
       realTime: true
     }
     var api = '/attendance-result'
     this.httpService.get(api, params).then(async (response: any) => {
-      // console.log(response.data);
+      //console.log(response.data);
       this.successTotal = response.data.data.total;
+      this.checkin.state = response.data.data.state;
     })
     this.timeNow = this.getTimeStr(Date.now()/1000);
     if(this.checkin.type==1){
       var sec = Number(this.getTimeStamp(this.checkin.expectEndTimeStr)) - Number(this.getTimeStamp(this.timeNow));
-      this.showTime = (sec/60).toString().padStart(2,'0') + ':' + (sec%60).toString().padStart(2,'0')
-      if(sec==0){
+      this.showTime = Math.trunc((sec/60)).toString().padStart(2,'0') + ':' + (sec%60).toString().padStart(2,'0')
+      if(sec<=0 && this.checkin.state==0){
         this.endCheckin(1);
       }
     }else{
@@ -211,12 +212,14 @@ export class CheckinPage implements OnInit {
             + Math.cos(this.Rad(Number(teacher_loc[0])))*Math.cos(this.Rad(Number(this.local[0])))*Math.pow(Math.sin(b/2),2)
             ));
           this.dis = this.dis * this.EARTH_RADIUS * 1000;
-          console.log(this.dis);
+          // console.log(this.local);
+          // console.log(teacher_loc);
+          // console.log(this.dis);
           if(this.dis<=this.checkin.distance){
             var param_0 = {
               studentId: localStorage.getItem('UserId'),
               attendanceId: this.checkin.id,
-              state: 1,
+              state: 0,
               attendanceTimeStr: this.timeNow
             }
             this.postCheckin(param_0);
@@ -236,7 +239,7 @@ export class CheckinPage implements OnInit {
           var param_1 = {
             studentId: localStorage.getItem('UserId'),
             attendanceId: this.checkin.id,
-            state: 1,
+            state: 0,
             attendanceTimeStr: checkinTime
           }
           this.postCheckin(param_1);
@@ -259,8 +262,17 @@ export class CheckinPage implements OnInit {
   postCheckin(param: any){
     var api = "/attendance-result";
     this.httpService.post_data(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
+        let alert = await this.alertController.create({
+          header: '提示',
+          message: '签到成功！',
+          buttons: [{
+            text: '确认',
+            cssClass: 'primary',
+          }],
+        });
+        alert.present();
         this.setCheckin();
       }
     })
@@ -273,8 +285,9 @@ export class CheckinPage implements OnInit {
     }
     var api = "/attendance";
     this.httpService.delete(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
+        this.stopRequest();
         this.setCheckin();
       }else{
         let toast = await this.toastController.create({

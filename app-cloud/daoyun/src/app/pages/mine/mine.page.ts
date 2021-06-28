@@ -34,7 +34,7 @@ export class MinePage implements OnInit {
     private alertController: AlertController,
     public eventService: EventService) {
       this.eventService.eventEmit.on('msg-change',()=>{
-        console.log('mine-msg-eventListener');
+        // console.log('mine-msg-eventListener');
         this.initUserInfo();
         this.return_flag = 1;
       })
@@ -57,7 +57,7 @@ export class MinePage implements OnInit {
     var api = '/userinfo';//后台接口
     var params = { };
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       this.user.image = response.data.data.user.image;
       if(response.data.data.user.name != "name_null"){
         this.user.name = response.data.data.user.name;

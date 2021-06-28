@@ -54,7 +54,7 @@ export class SearchCourseComponent implements OnInit {
     }
     var api = '/course';
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode==-1){
         this.total = 0;
         this.flag = 1;

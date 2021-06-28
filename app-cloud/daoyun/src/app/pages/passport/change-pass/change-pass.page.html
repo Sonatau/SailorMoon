@@ -1,7 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-icon slot="start" name="chevron-back-outline" [routerLink]="['/tabs/mine']"></ion-icon>
-    <ion-title class="ion-text-center">修改密码</ion-title>
+      <ion-buttons slot="start">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/tabs/mine']">
+              <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title style="text-align:center;margin-right: 30px;">修改密码</ion-title>
   </ion-toolbar>
 </ion-header>
 

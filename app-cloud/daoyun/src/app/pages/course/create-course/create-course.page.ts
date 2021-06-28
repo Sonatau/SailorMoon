@@ -2,10 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AlertController, ToastController, Platform,  PickerController } from '@ionic/angular';
+import { AlertController, ToastController, Platform,  PickerController, ActionSheetController } from '@ionic/angular';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { PickerService } from 'src/app/shared/services/picker.service';
-import { PictureService } from 'src/app/shared/services/picture.service';
+import { ImagePicker, ImagePickerOptions } from '@ionic-native/image-picker/ngx';
+import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+
 
 @Component({
   selector: 'app-create-course',
@@ -59,12 +61,14 @@ export class CreateCoursePage implements OnInit {
     private router: Router,
     public httpService: HttpService,
     public pickerService: PickerService,
-    public pictureService: PictureService,
     public http: HttpClient,
     private alertController: AlertController,
     private toastController: ToastController,
     private pickerController: PickerController,
-    public platform: Platform
+    public platform: Platform,
+    public actionSheetCtrl: ActionSheetController,
+    private camera: Camera,
+    private imagePicker: ImagePicker
   ) { }
 
   ngOnInit() { }
@@ -247,11 +251,71 @@ export class CreateCoursePage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
   //-----------------------------------------------------选择班课封面-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
-  addPicture(){
-    var img = this.pictureService.getPicture();
-    if(img!=null){
-      this.course_cover = img;
-    }
+  /**
+   * 上传图片
+   * @returns {Promise<void>}
+   */
+   async onPresentActiveSheet() {
+    const actionSheet = await this.actionSheetCtrl.create({
+      header: '选择您的操作',
+      buttons: [
+        {
+          text: '拍照',
+          // role: 'destructive',
+          handler: () => {
+            console.log('进入相机');
+            this.onCamera();
+          }
+        }, {
+          text: '相册',
+          handler: () => {
+            console.log('进入相册');
+            this.onImagePicker();
+          }
+        }, {
+          text: '取消',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancel clicked');
+          }
+        }
+      ]
+    });
+    await actionSheet.present();
+  }
+
+  /**
+   * 拍照
+   */
+   onCamera() {
+    const options: CameraOptions = {
+      quality: 10,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE
+    };
+    this.camera.getPicture(options).then((imageData) => {
+      this.course_cover = 'data:image/jpeg;base64,' + imageData;
+    }, (err) => {
+    });
+  }
+
+  /**
+   * 相册
+   */
+  onImagePicker() {
+    const options: ImagePickerOptions = {
+      maximumImagesCount: 1,
+      quality: 10,
+      outputType: 1
+    };
+    console.log('in imagePicker');
+    this.imagePicker.getPictures(options).then((results) => {
+      for (let i = 0; i < results.length; i++) {
+        //console.log('Image URI: ' + results[i]);
+        this.course_cover = 'data:image/jpeg;base64,' + results[i];
+      }
+    }, (err) => {console.log(err); });
   }
 
   //---------------------------------------------------------------------------------------------------------------------------//
@@ -279,7 +343,7 @@ export class CreateCoursePage implements OnInit {
           };
           var api = '/lesson';
           this.httpService.post_data(api, param_add).then(async (response: any) => {
-            console.log(response);
+            // console.log(response);
             this.lessonChoosed.id = response.data.data.id;
             this.lessonChoosed.name = this.course_lesson;
             this.createCourse();
@@ -304,7 +368,7 @@ export class CreateCoursePage implements OnInit {
     };
     var api = '/course';
     this.httpService.post_data(api, param_creat).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       this.course_code = response.data.data.code;
       const alert = await this.alertController.create({
         message: '班课创建成功！',

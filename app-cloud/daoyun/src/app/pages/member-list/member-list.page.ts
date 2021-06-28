@@ -48,7 +48,7 @@ export class MemberListPage implements OnInit {
     if(this.isTeacher=='0'){
       this.initSelf();
     }
-    console.log('member-ionViewWillEnter');
+    // console.log('member-ionViewWillEnter');
 	}
 
   initList(){
@@ -68,7 +68,7 @@ export class MemberListPage implements OnInit {
     };
     var api = '/course-member';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       this.memberNum = response.data.data.total;
       if(response.data.data.total!=0){
         for(let i=0; i<this.memberNum; i++){

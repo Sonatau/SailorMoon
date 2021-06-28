@@ -59,6 +59,7 @@ export class CreateCheckinPage implements OnInit {
             courseId: this.courseId,
             startTimeStr: this.beginStr,
             expectEndTimeStr: this.endStr,
+            local: 'null'
           }
           this.post(param_1);
         // } else if(this.type==2){
@@ -75,9 +76,9 @@ export class CreateCheckinPage implements OnInit {
 
   post(param: any){
     var api = '/attendance';
-    console.log(param);
+    // console.log(param);
     this.httpService.post_data(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode==1){
         let alert = await this.alertController.create({
           header: '提示',
@@ -128,22 +129,5 @@ export class CreateCheckinPage implements OnInit {
     var timeTamp = new Date(dateStr).getTime()/1000;
     return timeTamp;
   }
-
-  //----------------------------------------------------------------------------------//
-  //------------------------------------设置系统参数-------------------------------------//
-  //----------------------------------------------------------------------------------//
-  // getSysparam(keyWord: string){
-  //   var param = {
-  //     page: 1
-  //   };
-  //   var api = '/system-manage';
-  //   this.httpService.get(api, param).then(async (response: any) => {
-  //     // console.log(response);
-  //     for(let i=0; i<response.data.data.total; i++){
-  //       if(response.data.data.list[i].keyWord==keyWord)
-  //         return response.data.data.list[i].value;
-  //     }
-  //   })
-  // }
 
 }

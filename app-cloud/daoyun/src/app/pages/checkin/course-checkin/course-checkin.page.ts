@@ -59,7 +59,7 @@ export class CourseCheckinPage implements OnInit {
     var api = '/attendance';
     this.httpService.get(api, params).then(async (response: any) => {
       await loading.dismiss();
-      console.log(response);
+      // console.log(response);
       if(response.data.data.list.length < this.page_max){
         this.flag = 1;
       }
