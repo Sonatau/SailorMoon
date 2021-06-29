@@ -117,7 +117,7 @@ export class HttpService {
         data: params,
         withCredentials: false
       }).then(function (response) {
-        console.log(response);
+        // console.log(response);
         resolve(response);
       })
         .catch(function (error) {

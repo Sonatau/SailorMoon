@@ -15,6 +15,8 @@ export class CheckinResultPage implements OnInit {
   public failTotal = 0;
   public successList = [];
   public successTotal = 0;
+  public noList = [];
+  public noTotal = 0;
   public timeNow;
 
   constructor(public activatedRoute: ActivatedRoute,
@@ -40,6 +42,8 @@ export class CheckinResultPage implements OnInit {
     this.failTotal = 0;
     this.successList = [];
     this.successTotal = 0;
+    this.noList = [];
+    this.noTotal = 0;
     this.getData();
   }
   
@@ -51,11 +55,13 @@ export class CheckinResultPage implements OnInit {
     };
     var api = '/attendance-result';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       this.successList = response.data.data.success;
       this.successTotal = response.data.data.success.length;
       this.failList = response.data.data.fail;
       this.failTotal = response.data.data.fail.length;
+      this.noList = response.data.data.no;
+      this.noTotal = response.data.data.no.length;
     });
   }
 
@@ -67,47 +73,72 @@ export class CheckinResultPage implements OnInit {
   //-----------------------------------------------------修改签到状态-----------------------------------------------------------//
   //---------------------------------------------------------------------------------------------------------------------------//
 
-  async makeSuccess(index: number){
-    const actionSheet = await this.actionSheetController.create({
-      mode: "ios",
-      buttons: [
-        {
-          text: '手动补签',
-          handler: () => {
-            this.timeNow = this.getTimeStr(Date.now()/1000);
-            var param = {
-              studentId: this.failList[index].id,
-              attendanceId: this.checkinId,
-              state: 0,
-              attendanceTimeStr: this.timeNow
-            }
-            var api = '/attendance-result';
-            this.httpService.post_data(api, param).then(async (response: any) => {
-              console.log(response);
-              if(response.data.respCode!=-1){
-                let toast = await this.toastController.create({
-                  message: '补签成功！',
-                  duration: 2000
-                });
-                toast.present();
-                this.initList();
-              } else {
-                let toast = await this.toastController.create({
-                  message: '补签失败！',
-                  duration: 2000
-                });
-                toast.present();
+  async makeSuccess(index: number, type:string){
+    if(type=='no'){
+      const actionSheet = await this.actionSheetController.create({
+        mode: "ios",
+        buttons: [
+          {
+            text: '手动补签',
+            handler: () => {
+              this.timeNow = this.getTimeStr(Date.now()/1000);
+              var param = {
+                studentId: this.noList[index].id,
+                attendanceId: this.checkinId,
+                state: 0,
+                attendanceTimeStr: this.timeNow
               }
-            });
+              var api = '/attendance-result';
+              this.httpService.post_data(api, param).then(async (response: any) => {
+                // console.log(response);
+                if(response.data.respCode!=-1){
+                  let toast = await this.toastController.create({
+                    message: '记录出勤成功！',
+                    duration: 2000
+                  });
+                  toast.present();
+                  this.initList();
+                } else {
+                  let toast = await this.toastController.create({
+                    message: '记录出勤失败！',
+                    duration: 2000
+                  });
+                  toast.present();
+                }
+              });
+            }
+          },
+          {
+            text: '取消',
+            role: 'destructive'
           }
-        },
-        {
-          text: '取消',
-          role: 'destructive'
-        }
-      ]
-    });
-    await actionSheet.present();
+        ]
+      });
+      await actionSheet.present();
+    } else {
+      const actionSheet = await this.actionSheetController.create({
+        mode: "ios",
+        buttons: [
+          {
+            text: '手动补签',
+            handler: () => {
+              var param = {
+                id: this.failList[index].attendanceResultId,
+                studentId: this.failList[index].id,
+                attendanceId: this.checkinId,
+                state: 0
+              }
+              this.putState(param, '出勤');
+            }
+          },
+          {
+            text: '取消',
+            role: 'destructive'
+          }
+        ]
+      });
+      await actionSheet.present();
+    }
   }
 
   async makeFail(index: number){
@@ -123,24 +154,7 @@ export class CheckinResultPage implements OnInit {
               attendanceId: this.checkinId,
               state: 1
             }
-            var api = '/attendance-result';
-            this.httpService.put(api, param).then(async (response: any) => {
-              console.log(response);
-              if(response.data.respCode!=-1){
-                let toast = await this.toastController.create({
-                  message: '记录缺勤成功！',
-                  duration: 2000
-                });
-                toast.present();
-                this.initList();
-              } else {
-                let toast = await this.toastController.create({
-                  message: '记录缺勤失败！',
-                  duration: 2000
-                });
-                toast.present();
-              }
-            });
+            this.putState(param, '缺勤');
           }
         },
         {
@@ -150,6 +164,27 @@ export class CheckinResultPage implements OnInit {
       ]
     });
     await actionSheet.present();
+  }
+
+  putState(param: any, option: string){
+    var api = '/attendance-result';
+    this.httpService.put(api, param).then(async (response: any) => {
+      // console.log(response);
+      if(response.data.respCode!=-1){
+        let toast = await this.toastController.create({
+          message: '记录'+option+'成功！',
+          duration: 2000
+        });
+        toast.present();
+        this.initList();
+      } else {
+        let toast = await this.toastController.create({
+          message: '记录'+option+'失败！',
+          duration: 2000
+        });
+        toast.present();
+      }
+    });
   }
 
   getTimeStr(timestamp){

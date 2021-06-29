@@ -10,10 +10,13 @@ import { HttpService } from 'src/app/shared/services/http.service';
 export class MemberCheckinPage implements OnInit {
 
   public stuId;
-  public List = [];
-  public total = 0;
+  public failList = [];
+  public failTotal = 0;
+  public successList = [];
+  public successTotal = 0;
+  public noList = [];
+  public noTotal = 0;
   public checkinType = ['定位签到', '限时签到'];
-  public state = ['','已签','','', '缺勤'];
 
   constructor(public activatedRoute: ActivatedRoute,
     public httpService: HttpService,
@@ -27,13 +30,17 @@ export class MemberCheckinPage implements OnInit {
   //---------------------------------------------------------------------------------------------------------------------------//
 
   ionViewWillEnter(){
-    this.stuId = this.activatedRoute.snapshot.queryParams['stuId'];
+    this.stuId = localStorage.getItem('UserId');
     this.initList();
 	}
 
   initList(){
-    this.List = [];
-    this.total = 0;
+    this.failList = [];
+    this.failTotal = 0;
+    this.successList = [];
+    this.successTotal = 0;
+    this.noList = [];
+    this.noTotal = 0;
     this.getData();
   }
   
@@ -44,15 +51,13 @@ export class MemberCheckinPage implements OnInit {
     };
     var api = '/attendance-history';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
-      this.total = response.data.data.total;
-      if(response.data.data.total!=0){
-        // for(let i=0; i<this.total; i++){
-        //   this.List.push({
-        //   })
-        // }
-        this.List = response.data.data.list;
-      }
+      // console.log(response);
+      this.successList = response.data.data.success;
+      this.successTotal = response.data.data.success.length;
+      this.failList = response.data.data.fail;
+      this.failTotal = response.data.data.fail.length;
+      this.noList = response.data.data.no;
+      this.noTotal = response.data.data.no.length;
     });
   }
 

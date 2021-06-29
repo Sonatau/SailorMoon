@@ -36,7 +36,7 @@ export class UsermsgPage implements OnInit {
     public loadingController: LoadingController,
     public eventService: EventService) {
       this.eventService.eventEmit.on('user-detail-change',()=>{
-        console.log('usermsg-eventListener');
+        // console.log('usermsg-eventListener');
         this.initUserInfo();
         this.return_flag = 1;
       })
@@ -64,7 +64,7 @@ export class UsermsgPage implements OnInit {
     var api = '/userinfo';//后台接口
     var params = { };
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.data.user.email!=null){
         this.user.email = response.data.data.user.email;
       }

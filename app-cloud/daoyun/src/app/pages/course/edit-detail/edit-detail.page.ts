@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { AlertController, ToastController, PickerController, Platform, ActionSheetController } from '@ionic/angular';
 import { HttpService } from 'src/app/shared/services/http.service';
 import { Course } from '../course';

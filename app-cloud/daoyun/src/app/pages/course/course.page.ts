@@ -32,7 +32,7 @@ export class CoursePage implements OnInit {
     private barcodeScanner: BarcodeScanner,
     public eventService: EventService) { 
       this.eventService.eventEmit.on('detail-change',()=>{
-        console.log('course-eventListener');
+        // console.log('course-eventListener');
         this.initData();
         this.return_flag = 1;
       })
@@ -51,7 +51,7 @@ export class CoursePage implements OnInit {
     if(this.return_flag==0){
       this.initData();
     }
-    console.log('course-ionViewWillEnter');
+    // console.log('course-ionViewWillEnter');
 	}
 
   initData(){

@@ -55,7 +55,7 @@ export class CourseDetailPage implements OnInit {
     this.course_admin = localStorage.getItem("course-admin");
     this.checkin_admin = localStorage.getItem("checkin-admin");
     this.setCourse();
-    console.log('course_detail-ionViewWillEnter');
+    // console.log('course_detail-ionViewWillEnter');
 	}
 
   ionViewWillLeave(){
@@ -98,7 +98,7 @@ export class CourseDetailPage implements OnInit {
     };
     var api = '/course';
     this.httpService.get(api, param_in).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.data.total==0){
         this.inCourse = false;
         this.setCourse();
@@ -347,9 +347,9 @@ updateCourse(){
 
   post(param: any){
     var api = '/attendance';
-    console.log(param);
+    // console.log(param);
     this.httpService.post_data(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode==1){
         let alert = await this.alertController.create({
           header: '提示',
@@ -407,8 +407,33 @@ updateCourse(){
     };
     var api = '/course-member';
     this.httpService.get(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       localStorage.setItem('memberNum', response.data.data.total); 
     });
+    // console.log(this.inCourse);
+    if(this.isTeacher=='1' && this.inCourse==true){
+      var params = {
+        courseId: this.course.id
+      }
+      var api = '/attendance-info';
+      this.httpService.get(api, params).then(async (response: any) => {
+        // console.log(response);
+        if(response.data.data.attendance!=null){
+          let alert = await this.alertController.create({
+            header: '提示',
+            message: '有正在进行的签到！',
+            buttons: [{
+              text: '确认',
+              cssClass: 'primary',
+              handler: (blah) => {
+                this.router.navigate(['/checkin']);
+              }
+            }],
+            backdropDismiss: false
+          });
+          alert.present();
+        }
+      });
+    }
   }
 }

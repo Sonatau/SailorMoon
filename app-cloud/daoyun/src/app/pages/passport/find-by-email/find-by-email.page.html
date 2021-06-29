@@ -1,7 +1,11 @@
 <ion-header>
   <ion-toolbar>
-    <ion-icon slot="start" name="chevron-back-outline" [routerLink]="['/login']"></ion-icon>
-    <ion-title class="ion-text-center">找回密码</ion-title>
+      <ion-buttons slot="start">
+          <ion-button color="medium" expand="block" fill="clear" shape="round" [routerLink]="['/login']">
+              <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
+          </ion-button>
+      </ion-buttons>
+      <ion-title style="text-align:center;margin-right: 30px;">找回密码</ion-title>
   </ion-toolbar>
 </ion-header>
 
