@@ -71,7 +71,7 @@ export class CheckinPage implements OnInit {
     }
     var api = '/attendance-info';
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
         if(response.data.data.attendance==null){
           this.checkinState = "已结束";
@@ -144,7 +144,7 @@ export class CheckinPage implements OnInit {
     }
     var api = '/attendance-result'
     this.httpService.get(api, params).then(async (response: any) => {
-      console.log(response.data);
+      // console.log(response.data);
       this.successTotal = response.data.data.total;
       this.checkin.state = response.data.data.state;
       if(this.checkin.state!=0){
@@ -266,7 +266,7 @@ export class CheckinPage implements OnInit {
   postCheckin(param: any){
     var api = "/attendance-result";
     this.httpService.post_data(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
         let alert = await this.alertController.create({
           header: '提示',
@@ -289,7 +289,7 @@ export class CheckinPage implements OnInit {
     }
     var api = "/attendance";
     this.httpService.delete(api, param).then(async (response: any) => {
-      console.log(response);
+      // console.log(response);
       if(response.data.respCode!=-1){
         this.stopRequest();
         this.setCheckin();
