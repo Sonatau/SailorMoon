@@ -5,21 +5,15 @@
           <ion-icon slot="start" name="chevron-back-outline"></ion-icon>
       </ion-button>
       </ion-buttons>
-    <ion-title>时限设置</ion-title>
+    <ion-title class="ion-text-center">时限设置</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <form (ngSubmit)="onSubmit(checkinForm)" #checkinForm="ngForm" novalidate>
-      <ion-item lines="none"></ion-item>
-
-      <!-- <ion-item lines="none" *ngIf="type==2">
-          <ion-input name="str" type="text" style="border-bottom: solid 1px #7468BE" placeholder="请输入口令"
-          [(ngModel)]="pass" #str="ngModel"></ion-input>
-      </ion-item> -->
 
       <ion-item lines="none">
-        <ion-note>请选择限定时间：</ion-note>
+        <ion-note style="font-size: larger;">请选择限定时间：</ion-note>
       </ion-item>
       <ion-radio-group name="time" #time="ngModel" [(ngModel)]="timeLimit">
         <ion-item>
